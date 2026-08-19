@@ -12,6 +12,7 @@ from . import filter as filter_mod
 AI_RATIO_MAX = 0.3
 MIN_EVIDENCE = 3
 MIN_TEXT_LEN = 120
+LINK_LIMIT_PER_1000 = 15
 
 # ---- 启发式信号词（全部可调） ----
 GENERIC_FILLERS = ["总之", "总的来说", "综上所述", "在当今", "一方面", "另一方面",
@@ -35,6 +36,18 @@ _EVIDENCE_PATTERNS = [
     re.compile(r"[“\"‘\u201c][^”\"’\u201d]{6,}[”\"’\u201d]"),
     re.compile(r"https?://\S+|(?:\[\d+\]|\((?:来源|参考)[^)]*\)|参见\s*[^。；;]{2,10})"),
 ]
+
+_LINK_RE = re.compile(r"https?://[^\s)\]}>]+")
+
+
+def link_density_per_1000(content):
+    """估算每千字符的链接信号数；href 与裸链接按一种口径计数。"""
+    if not content:
+        return 0.0
+    text = str(content)
+    hrefs = len(re.findall(r"href\s*=", text, re.I))
+    links = hrefs if hrefs else len(_LINK_RE.findall(text))
+    return round(links * 1000.0 / max(1, len(text.strip())), 2)
 
 
 def ai_ratio_heuristic(content):
@@ -100,6 +113,8 @@ def is_inspiring(content):
         return False
     has_data = evidence_count(text) >= 1
     has_viewpoint = _has_viewpoint(text)
+    if link_density_per_1000(text) > LINK_LIMIT_PER_1000 and not has_viewpoint:
+        return False
     if _has_any(FRAMEWORK_MARKERS, text) and (has_viewpoint or has_data):
         return True
     if has_viewpoint and has_data:

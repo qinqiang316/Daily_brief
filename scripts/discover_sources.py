@@ -46,6 +46,31 @@ NOISE_DOMAINS = {
     "qiita.com", "dev.to", "medium.com",
 }
 
+# 明确 CMS/资讯聚合平台；只收平台域名，避免误杀旗下真正的主流传媒子域。
+CMS_DOMAINS = {
+    "cloud.tencent.com", "developer.aliyun.com", "baijiahao.baidu.com",
+    "sohu.com", "163.com",
+}
+NOISE_DOMAINS |= CMS_DOMAINS
+
+# 纯源码托管平台。github.io / gitlab.io 个人博客不算托管仓库，必须放行。
+HOSTING_DOMAINS = {
+    "github.com", "gitlab.com", "bitbucket.org", "gitee.com",
+    "sourceforge.net", "codeberg.org",
+}
+HOSTING_SUBDOMAINS = {
+    "raw.githubusercontent.com", "gist.github.com",
+}
+
+# 资源清单/导航页硬信号。
+LIST_TITLE_MARKERS = ("合集", "汇总", "清单", "导航", "资源", "必读", "收藏",
+                      "整理", "大全", "列表")
+LIST_TITLE_RE = re.compile(r"(?:\d+\s*(?:大|个)|N\s*(?:大|个)|\btop\b)", re.I)
+LIST_URL_RE = re.compile(
+    r"/(?:list|catalog|sitemap|links?|directory|collection)(?=/|[?#.]|$)",
+    re.I)
+LINK_LIMIT_PER_1000 = quality.LINK_LIMIT_PER_1000
+
 # 不用 site: 限定，专用于跳出固定源探测新域名
 DISCOVERY_QUERIES = [
     {"query": "高质量 深度 科技 人工智能 独立博客", "max_results": 8, "direction": "AI"},
@@ -87,6 +112,37 @@ def _in_noise(domain):
     for i in range(len(parts)):
         candidate = ".".join(parts[i:])
         if candidate in NOISE_DOMAINS:
+            return True
+    return False
+
+
+def _noise_reason(domain):
+    """区分 CMS 聚合与社交/UGC，用于否决原因的可读性。"""
+    if not domain:
+        return ""
+    parts = domain.split(".")
+    for i in range(len(parts)):
+        if ".".join(parts[i:]) in CMS_DOMAINS:
+            return "CMS/资讯聚合"
+    return "聚合/社交/内容农场站" if _in_noise(domain) else ""
+
+
+def _in_hosting(domain):
+    """命中源码托管平台，但保留 github.io / gitlab.io 个人博客。"""
+    if not domain:
+        return False
+    return (domain in HOSTING_DOMAINS or domain in HOSTING_SUBDOMAINS)
+
+
+def _has_resource_page_markers(url, title):
+    if title:
+        if any(m in title for m in LIST_TITLE_MARKERS):
+            return True
+        if LIST_TITLE_RE.search(title):
+            return True
+    if url:
+        path = url.lower().split("://", 1)[-1]
+        if LIST_URL_RE.search(path):
             return True
     return False
 
@@ -153,11 +209,22 @@ def _search(queries):
     return items
 
 
-def _source_quality(url, content, ev):
+def _source_quality(url, content, ev, title=""):
+    """来源质量的硬性否决；任一命中即不适合作为长期关注源。"""
     reasons = []
     domain = _domain(url)
-    if _in_noise(domain):
-        reasons.append("聚合/社交/内容农场站")
+    noise_reason = _noise_reason(domain)
+    if noise_reason:
+        reasons.append(noise_reason)
+    if _in_hosting(domain):
+        reasons.append("源码托管站")
+    link_dense = quality.link_density_per_1000(content) > LINK_LIMIT_PER_1000
+    if _has_resource_page_markers(url, title):
+        reasons.append("资源清单/导航页")
+    elif link_dense and not ev.get("inspiring") and ev.get("evidence", 0) >= 30:
+        reasons.append("低原创高链接/清单页")
+    elif link_dense:
+        reasons.append("资源清单/导航页")
     seg = [x for x in url.lower().split("://", 1)[-1].split("/") if x]
     if len(seg) <= 1:
         reasons.append("主页/列表页")
@@ -225,7 +292,8 @@ def main(argv=None):
         ev = quality.evaluate(content)
         if not ev["pass"]:
             continue
-        ok_source, src_reasons = _source_quality(url, content, ev)
+        ok_source, src_reasons = _source_quality(
+            url, content, ev, item.get("title", ""))
         if not ok_source:
             log("来源质量未过: %s %s" % (domain, "，".join(src_reasons)))
             continue
