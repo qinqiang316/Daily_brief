@@ -12,6 +12,10 @@ from modules.window import BRIEF_DIR, TZ, compute_window
 from modules import filter as filter_mod
 from modules import rank, retrieve
 
+# 兼容导出：旧脚本(validate_brief 等)仍引用 collect_brief.DEDUP_FILE / norm_url
+DEDUP_FILE = filter_mod.DEDUP_FILE
+norm_url = filter_mod.norm_url
+
 CAND_DIR = os.path.join(BRIEF_DIR, "_candidates")
 LIKES_FILE = os.path.join(BRIEF_DIR, "data", "likes.json")
 MAX_CANDIDATES, MAX_HN, MIN_WORDS = rank.MAX_CANDIDATES, rank.MAX_HN, filter_mod.MIN_WORDS
