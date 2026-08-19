@@ -1,0 +1,6 @@
+# Daily Brief 运行依赖
+# 核心脚本（collect_brief.py / validate_brief.py / likes.py / add_like.py）仅用 Python 标准库。
+# 搜索依赖 anysearch skill（含 API key）：
+#   ~/.hermes/skills/anysearch/scripts/anysearch_cli.py
+#   ~/.hermes/skills/anysearch/.env
+# 运行解释器：~/.hermes/hermes-agent/venv/bin/python（或任意 python3）

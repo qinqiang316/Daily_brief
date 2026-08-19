@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# 个人运行数据（运行时生成，不含源码）
+data/
+_candidates/
+Daily-Brief-*.md
+Monthly-Academic-Brief-*.md
+
+# 密钥与配置
+.env
+*.key
+
+# macOS
+.DS_Store
