@@ -7,6 +7,7 @@ from datetime import datetime
 from . import filter as filter_mod
 from .retrieve import anysearch_http_batch, chunked, parse_search_markdown, run_cli, wc
 from .window import log
+from . import profile as profile_mod
 
 SCRIPTS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "scripts"))
 if SCRIPTS_DIR not in sys.path: sys.path.insert(0, SCRIPTS_DIR)
@@ -18,11 +19,17 @@ LIKES_FILE = os.path.join("/Users/qqiang/AI project/05-日常工具/DailyBrief",
 def build_extra_queries(now):
     likes = likes_mod.load_likes(LIKES_FILE)
     pref_dir = likes_mod.preference_direction(likes)
-    explore_dir = likes_mod.explore_direction(pref_dir, now)
+    profile = profile_mod.compute_profile(likes)
+    explore_queries = likes_mod.build_explore_queries(
+        pref_dir, likes, profile, now
+    )
+    explore_dir = (
+        explore_queries[0]["direction"]
+        if explore_queries else likes_mod.explore_direction(pref_dir, now)
+    )
     extra = []
     if pref_dir: extra.extend(likes_mod.build_pref_queries(pref_dir, likes, now))
-    eq = likes_mod.build_explore_query(explore_dir, now)
-    if eq: extra.append(eq)
+    extra.extend(explore_queries)
     if pref_dir:
         log("点赞 %d 条 | 偏好方向: %s（样本达标，已启用偏好优先采集）| 探索方向: %s | 增强查询 %d 条" % (len(likes), pref_dir, explore_dir, len(extra)))
     elif extra:

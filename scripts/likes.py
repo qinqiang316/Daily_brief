@@ -7,8 +7,8 @@
   1. 读写 data/likes.json（用户对简报文章的点赞记录）
   2. 方向推断：URL 域名 + 标题关键词 → 6 大方向之一
   3. 偏好方向：点赞计数最多者（并列取最近点赞）
-  4. 探索方向：从其余方向按日期轮换（每日 1 条探索查询）
-  5. 生成偏好查询（≤2 条）与探索查询（1 条），注入 collect_brief.py
+  4. 探索方向：空白/低关注方向优先，样本不足时回退日期轮换
+  5. 生成偏好查询（≤2 条）与探索查询（≤2 条），注入 collect_brief.py
 
 数据文件：
   <DailyBrief>/data/likes.json
@@ -16,13 +16,14 @@
 
 防茧房设计（强哥 2026-08-13 定）：
   - 偏好方向最多 2 条定向查询（个性化但不垄断候选池）
-  - 探索方向每天轮换 1 条（6 大方向除偏好外循环）
+  - 探索优先投空白/低关注方向；样本不足时每日轮换回退
   - 候选池为探索内容保底 ≤2 席；validate 硬校验探索条目必须进简报
 """
 
 import json
 import os
 import re
+import sys
 from datetime import datetime, timedelta, timezone
 
 BRIEF_DIR = "/Users/qqiang/AI project/05-日常工具/DailyBrief"
@@ -106,7 +107,7 @@ PREF_QUERY_TEMPLATES = {
     ],
 }
 
-# 探索方向查询模板（每日轮换 1 条）
+# 探索方向查询模板（数据驱动查询不可用时的回退路径）
 EXPLORE_QUERY_TEMPLATES = {
     "AI": {"query": "site:jiqizhixin.com 大模型 新进展 {month}", "max_results": 8},
     "科技": {"query": "site:36kr.com 硬件 开源 开发者 {month}", "max_results": 8},
@@ -297,18 +298,60 @@ def build_explore_query(explore_dir, now=None):
     return q
 
 
+def _load_profile_module():
+    """延迟加载 profile 模块，避免脚本入口与 modules 之间形成顶层循环导入。"""
+    root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    if root not in sys.path:
+        sys.path.insert(0, root)
+    try:
+        from modules import profile as profile_mod
+        return profile_mod
+    except Exception:
+        return None
+
+
+def build_explore_queries(pref_dir, likes, profile=None, now=None):
+    """数据驱动探索查询（≤2 条）；画像不足时回退原有日期轮换。"""
+    now = now or datetime.now(TZ)
+    profile_mod = _load_profile_module()
+    if profile_mod is not None:
+        if profile is None:
+            try:
+                profile = profile_mod.compute_profile(likes)
+            except Exception:
+                profile = None
+        if profile is not None:
+            try:
+                queries = profile_mod.breakout_queries(
+                    profile,
+                    now,
+                    max_q=MAX_EXPLORE_SEATS,
+                    thin_threshold=profile_mod.THIN_DIRECTION_SHARE,
+                )
+                if queries:
+                    return queries[:MAX_EXPLORE_SEATS]
+            except Exception:
+                pass
+
+    fallback_dir = explore_direction(pref_dir, now)
+    eq = build_explore_query(fallback_dir, now)
+    return [eq] if eq else []
+
+
 def build_extra_queries(now=None):
     """组合偏好查询 + 探索查询。返回 (extra_queries, pref_dir, explore_dir)"""
     now = now or datetime.now(TZ)
     likes = load_likes()
     pref_dir = preference_direction(likes)
-    explore_dir = explore_direction(pref_dir, now)
     extra = []
     if pref_dir:
         extra.extend(build_pref_queries(pref_dir, likes, now))
-    eq = build_explore_query(explore_dir, now)
-    if eq:
-        extra.append(eq)
+    explore_queries = build_explore_queries(pref_dir, likes, None, now)
+    extra.extend(explore_queries)
+    explore_dir = (
+        explore_queries[0]["direction"]
+        if explore_queries else explore_direction(pref_dir, now)
+    )
     return extra, pref_dir, explore_dir
 
 
