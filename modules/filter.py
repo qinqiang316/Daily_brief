@@ -3,7 +3,7 @@ import os
 import re
 from datetime import datetime
 
-from .window import BRIEF_DIR, log
+from .window import BRIEF_DIR, OUTPUT_DIR, log
 
 DEDUP_FILE = os.path.join(BRIEF_DIR, "data", "_dedup_urls.json")
 MIN_WORDS = 500
@@ -45,11 +45,11 @@ def load_dedup():
 
 def auto_update_dedup():
     existing, urls = load_dedup(), set(load_dedup())
-    if os.path.isdir(BRIEF_DIR):
-        for f in os.listdir(BRIEF_DIR):
+    if os.path.isdir(OUTPUT_DIR):
+        for f in os.listdir(OUTPUT_DIR):
             if not re.match(r"Daily-Brief-\d{4}-\d{2}-\d{2}[^.]*\.md$", f): continue
             try:
-                with open(os.path.join(BRIEF_DIR, f), encoding="utf-8", errors="ignore") as fh: text = fh.read()
+                with open(os.path.join(OUTPUT_DIR, f), encoding="utf-8", errors="ignore") as fh: text = fh.read()
                 for m in re.finditer(r"https?://[^\s)\]>]+", text):
                     u = norm_url(m.group(0))
                     if u: urls.add(u)

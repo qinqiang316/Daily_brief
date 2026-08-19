@@ -6,8 +6,7 @@ __pycache__/
 # 个人运行数据（运行时生成，不含源码）
 data/
 _candidates/
-Daily-Brief-*.md
-Monthly-Academic-Brief-*.md
+output/
 
 # 密钥与配置
 .env

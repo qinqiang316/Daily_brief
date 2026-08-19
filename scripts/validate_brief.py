@@ -24,6 +24,7 @@ import sys
 from datetime import datetime
 
 BRIEF_DIR = "/Users/qqiang/AI project/05-日常工具/DailyBrief"
+OUTPUT_DIR = os.path.join(BRIEF_DIR, "output")
 SCRIPTS_DIR = os.path.join(BRIEF_DIR, "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
 import collect_brief  # 复用 norm_url / BRIEF_DIR / CAND_DIR / DEDUP_FILE（模块顶层无副作用）
@@ -71,7 +72,7 @@ def main():
         elif not cand and a.endswith(".json"):
             cand = a
     if not brief:
-        brief = find_latest(BRIEF_DIR, "Daily-Brief-", ".md")
+        brief = find_latest(OUTPUT_DIR, "Daily-Brief-", ".md")
     if not cand:
         cand = find_latest(CAND_DIR, "Daily-Brief-", ".json")
     if not brief or not os.path.exists(brief):

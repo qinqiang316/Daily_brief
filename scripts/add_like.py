@@ -33,6 +33,7 @@ import likes as likes_mod
 
 TZ = timezone(timedelta(hours=8))
 BRIEF_DIR = likes_mod.BRIEF_DIR
+OUTPUT_DIR = likes_mod.OUTPUT_DIR
 
 REF_RE = re.compile(r"\[(\d+)\]\s*\[([^\]]*)\]\((https?://[^)\s]+)\)")
 
@@ -52,11 +53,11 @@ def find_brief(num):
     if os.path.isfile(num):
         return num
     candidates = []
-    if os.path.isdir(BRIEF_DIR):
-        for f in os.listdir(BRIEF_DIR):
+    if os.path.isdir(OUTPUT_DIR):
+        for f in os.listdir(OUTPUT_DIR):
             m = re.match(r"Daily-Brief-(\d{4}-\d{2}-\d{2})\.md$", f)
             if m:
-                candidates.append((m.group(1), os.path.join(BRIEF_DIR, f)))
+                candidates.append((m.group(1), os.path.join(OUTPUT_DIR, f)))
     candidates.sort(reverse=True)
     for d, p in candidates:
         if num in d:

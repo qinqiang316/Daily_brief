@@ -23,6 +23,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from add_like import parse_brief_refs, find_brief
 
 BRIEF_DIR = "/Users/qqiang/AI project/05-日常工具/DailyBrief"
+OUTPUT_DIR = os.path.join(BRIEF_DIR, "output")
 LIKE_BASE = "http://127.0.0.1:8900/like"
 SECTION = "## 👍 点赞"
 

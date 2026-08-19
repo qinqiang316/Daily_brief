@@ -28,6 +28,7 @@ from datetime import datetime, timedelta, timezone
 
 BRIEF_DIR = "/Users/qqiang/AI project/05-日常工具/DailyBrief"
 LIKES_FILE = os.path.join(BRIEF_DIR, "data", "likes.json")
+OUTPUT_DIR = os.path.join(BRIEF_DIR, "output")
 TZ = timezone(timedelta(hours=8))
 
 # 6 大方向（与 today-brief skill 一致）

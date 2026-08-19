@@ -4,6 +4,7 @@ import sys
 from datetime import datetime, timedelta, timezone
 
 BRIEF_DIR = "/Users/qqiang/AI project/05-日常工具/DailyBrief"
+OUTPUT_DIR = os.path.join(BRIEF_DIR, "output")
 TZ = timezone(timedelta(hours=8))
 
 def log(msg):
@@ -12,8 +13,8 @@ def log(msg):
 
 def get_latest_brief_date():
     latest = None
-    if os.path.isdir(BRIEF_DIR):
-        for f in os.listdir(BRIEF_DIR):
+    if os.path.isdir(OUTPUT_DIR):
+        for f in os.listdir(OUTPUT_DIR):
             m = re.match(r"Daily-Brief-(\d{4}-\d{2}-\d{2})\.md$", f)
             if m and (latest is None or m.group(1) > latest):
                 latest = m.group(1)
