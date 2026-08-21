@@ -19,6 +19,7 @@ if THIS_DIR not in sys.path:
     sys.path.insert(0, THIS_DIR)
 
 import add_like
+import brief_record
 import collect_brief
 import discover_sources
 import like_ctl
@@ -201,6 +202,58 @@ def _add_status(sp):
     p.set_defaults(func=cmd_status)
 
 
+def cmd_records(args):
+    """列出简报记录 / 按日期范围查询 / 统计分布。"""
+    if args.stats:
+        st = brief_record.stats_records()
+        print("=== 简报记录统计 ===")
+        print("总记录: %d | 总文章: %d" % (st["total_records"], st["total_articles"]))
+        if st["directions"]:
+            print("方向分布:")
+            for d, c in sorted(st["directions"].items(), key=lambda x: -x[1]):
+                print("  %s: %d" % (d, c))
+        if st["topics"]:
+            print("话题分布 (Top 10):")
+            for t, c in sorted(st["topics"].items(), key=lambda x: -x[1])[:10]:
+                print("  %s: %d" % (t, c))
+        if st["sources"]:
+            print("来源分布 (Top 10):")
+            for s, c in sorted(st["sources"].items(), key=lambda x: -x[1])[:10]:
+                print("  %s: %d" % (s, c))
+        return 0
+
+    if args.record_from and args.record_to:
+        records = brief_record.query_records(args.record_from, args.record_to)
+    else:
+        records = brief_record.list_records(args.n)
+
+    if not records:
+        print("暂无简报记录")
+        return 0
+
+    print("=== 简报记录（最近 %d 条） ===" % len(records))
+    for r in records:
+        s = r.get("summary", {})
+        dirs = s.get("directions", {})
+        dir_str = " | ".join("%s:%d" % (d, c) for d, c in sorted(dirs.items(), key=lambda x: -x[1]))
+        print("  %s | %d篇 | %s" % (r.get("date"), s.get("total_articles", 0), dir_str))
+        if r.get("articles"):
+            for a in r["articles"][:3]:
+                print("    · %s [%s] %s" % (a.get("direction", "?"), a.get("source", "?"), a.get("title", "")[:40]))
+            if len(r["articles"]) > 3:
+                print("    ... 等 %d 篇" % len(r["articles"]))
+    return 0
+
+
+def _add_records(sp):
+    p = sp.add_parser("records", help="简报记录管理")
+    p.add_argument("-n", type=int, default=5, help="列出最近 n 条记录（默认 5）")
+    p.add_argument("--from", dest="record_from", help="起始日期 (YYYY-MM-DD)")
+    p.add_argument("--to", dest="record_to", help="截止日期 (YYYY-MM-DD)")
+    p.add_argument("--stats", action="store_true", help="统计来源/方向/话题分布")
+    p.set_defaults(func=cmd_records)
+
+
 def main():
     ap = argparse.ArgumentParser(
         prog="dailybrief",
@@ -214,6 +267,7 @@ def main():
     _add_serve(sp)
     _add_links(sp)
     _add_status(sp)
+    _add_records(sp)
 
     args = ap.parse_args()
     if not getattr(args, "func", None):

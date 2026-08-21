@@ -27,6 +27,7 @@ BRIEF_DIR = "/Users/qqiang/AI project/05-日常工具/DailyBrief"
 OUTPUT_DIR = os.path.join(BRIEF_DIR, "output")
 SCRIPTS_DIR = os.path.join(BRIEF_DIR, "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
+import brief_record
 import collect_brief  # 复用 norm_url / BRIEF_DIR / CAND_DIR / DEDUP_FILE（模块顶层无副作用）
 import likes as likes_mod
 
@@ -182,6 +183,8 @@ def main():
     print("偏好: 方向=%s | 点赞=%d | 候选内偏好=%d | 深度总结标记=%d | 探索: 方向=%s 候选=%d 收录=%d"
           % (pref_dir or "无", likes_count, pref_count_in_cand, pref_marks,
              explore_dir or "无", len(explore_urls), len(explore_hit)))
+    # PASS 后自动记录简报元数据
+    brief_record.record_brief(brief, cand)
     return 0
 
 
