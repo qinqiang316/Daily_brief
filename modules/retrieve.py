@@ -57,7 +57,7 @@ def parse_search_markdown(md):
             fallback_qi += 1
     return items
 
-def anysearch_http_batch(queries):
+def _get_anysearch_api_key():
     api_key = os.environ.get("ANYSEARCH_API_KEY", "")
     if not api_key:
         for env_path in ANYSEARCH_ENV_CANDIDATES:
@@ -73,6 +73,10 @@ def anysearch_http_batch(queries):
                     pass
             if api_key:
                 break
+    return api_key
+
+def anysearch_http_batch(queries):
+    api_key = _get_anysearch_api_key()
     if not api_key:
         log("anysearch HTTP 兜底：找不到 API key")
         return None
@@ -90,6 +94,70 @@ def anysearch_http_batch(queries):
     except Exception as e:
         log("anysearch HTTP 兜底失败: %s" % e)
         return None
+
+def parse_extract_markdown(raw):
+    """解析 extract 返回的原始文本/JSON，提取其中的 [标题](url) 链接列表。"""
+    if not raw:
+        return []
+    content = raw
+    if isinstance(raw, str):
+        try:
+            data = json.loads(raw)
+            if isinstance(data, dict):
+                if "result" in data and isinstance(data["result"], dict):
+                    res_content = data["result"].get("content", [])
+                    for c in res_content:
+                        if isinstance(c, dict) and c.get("type") == "text":
+                            try:
+                                inner = json.loads(c.get("text", ""))
+                                if isinstance(inner, dict) and "content" in inner:
+                                    content = inner["content"]
+                                    break
+                            except Exception:
+                                content = c.get("text", "")
+                                break
+                elif "content" in data:
+                    content = data["content"]
+        except Exception:
+            content = raw
+
+    items = []
+    if isinstance(content, str):
+        for title, url in re.findall(r"\[([^\]]+)\]\((https?://[^\s)]+)\)", content):
+            t = re.sub(r"\s+", " ", title).strip()
+            u = url.strip()
+            if t and u:
+                items.append({"title": t, "url": u})
+    return items
+
+def anysearch_http_extract(url):
+    """通过 HTTP JSON-RPC tools/call 调用 anysearch extract。"""
+    api_key = _get_anysearch_api_key()
+    if not api_key:
+        log("anysearch HTTP extract 兜底：找不到 API key")
+        return None
+    payload = {"jsonrpc": "2.0", "id": 1, "method": "tools/call",
+               "params": {"name": "extract", "arguments": {"url": url}}}
+    try:
+        req = urllib.request.Request(ANYSEARCH_ENDPOINT, data=json.dumps(payload).encode(),
+                                      headers={"Content-Type": "application/json",
+                                               "Authorization": "Bearer " + api_key}, method="POST")
+        with urllib.request.urlopen(req, timeout=30) as r:
+            items = parse_extract_markdown(r.read().decode("utf-8", errors="replace"))
+        if items:
+            log("anysearch HTTP extract 成功: %d 条" % len(items))
+        return items or None
+    except Exception as e:
+        log("anysearch HTTP extract 失败: %s" % e)
+        return None
+
+def anysearch_extract(url):
+    """优先 CLI，失败走 HTTP 兜底调用 anysearch extract，返回解析后的条目列表 [{"title": ..., "url": ...}]。"""
+    out = run_cli(["extract", "--url", url])
+    items = parse_extract_markdown(out) if out else None
+    if not items:
+        items = anysearch_http_extract(url)
+    return items or []
 
 def fetch_article_text(url, timeout=15, limit=2500):
     try:

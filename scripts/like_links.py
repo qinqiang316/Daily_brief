@@ -22,7 +22,7 @@ import urllib.parse
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from add_like import parse_brief_refs, find_brief
 
-BRIEF_DIR = "/Users/qqiang/AI project/05-日常工具/DailyBrief"
+BRIEF_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 OUTPUT_DIR = os.path.join(BRIEF_DIR, "output")
 LIKE_BASE = "http://127.0.0.1:8900/like"
 SECTION = "## 👍 点赞"
@@ -41,7 +41,8 @@ def add_like_section(brief_path, dry=False):
     refs = parse_brief_refs(brief_path)
     if not refs:
         return False, "简报中未解析到参考资料，无法生成点赞区"
-    lines = ["", SECTION, ""]
+    prefix = "\n" if text and not text.endswith("\n") else ""
+    lines = [prefix + SECTION, ""]
     lines.append("> 点链接即可为这篇文章点赞（本机浏览器有效；手机端可发文字指令「点赞 N」）。")
     lines.append("")
     for n in sorted(refs):

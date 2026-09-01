@@ -23,7 +23,7 @@ import re
 import sys
 from datetime import datetime
 
-BRIEF_DIR = "/Users/qqiang/AI project/05-日常工具/DailyBrief"
+BRIEF_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 OUTPUT_DIR = os.path.join(BRIEF_DIR, "output")
 SCRIPTS_DIR = os.path.join(BRIEF_DIR, "scripts")
 sys.path.insert(0, SCRIPTS_DIR)
@@ -116,17 +116,26 @@ def main():
     generated_at = data.get("generated_at", "")
     pref_info = data.get("preference", {})
 
-    # 去重集合
-    dedup_urls = set()
-    if os.path.exists(dedup):
-        try:
-            with open(dedup, encoding="utf-8") as f:
-                for u in json.load(f):
-                    nu = collect_brief.norm_url(u)
-                    if nu:
-                        dedup_urls.add(nu)
-        except Exception as e:
-            errors.append("读去重集合失败: %s" % e)
+    # 去重集合：排除当前正在校验的简报自身，确保只和历史/其他简报比对
+    historical_dedup_urls = set()
+    current_brief_abs = os.path.abspath(brief)
+    if os.path.isdir(OUTPUT_DIR):
+        for f in os.listdir(OUTPUT_DIR):
+            if not re.match(r"Daily-Brief-\d{4}-\d{2}-\d{2}[^.]*\.md$", f):
+                continue
+            fp = os.path.abspath(os.path.join(OUTPUT_DIR, f))
+            if fp == current_brief_abs:
+                continue
+            try:
+                with open(fp, encoding="utf-8", errors="ignore") as fh:
+                    for m in re.finditer(r"https?://[^\s)\]>]+", fh.read()):
+                        nu = collect_brief.norm_url(m.group(0))
+                        if nu:
+                            host = nu.split("/")[2].lower() if "://" in nu else ""
+                            if host not in ("127.0.0.1:8900", "localhost:8900", "127.0.0.1", "localhost"):
+                                historical_dedup_urls.add(nu)
+            except Exception as e:
+                errors.append("扫描历史简报 %s 失败: %s" % (f, e))
 
     brief_urls = extract_urls(brief)
     if not brief_urls:
@@ -136,12 +145,18 @@ def main():
     # 1) 简报 ⊆ 候选（候选池外的 URL 若命中历史去重 → 追加说明，双重违规）
     outside = brief_urls - cand_urls
     if outside:
-        dup2 = outside & dedup_urls
+        dup2 = outside & historical_dedup_urls
         msg = "简报 %d 条 URL 不在候选池" % len(outside)
         if dup2:
             msg += "，其中 %d 条已在历史简报推送过: %s" % (len(dup2), " ".join(sorted(dup2)[:8]))
         msg += ": %s" % " ".join(sorted(outside)[:8])
         errors.append(msg)
+
+    # 2) 简报 URL 不得命中历史去重集合（已推送过的内容不得复现）
+    dup = brief_urls & historical_dedup_urls
+    if dup:
+        errors.append("简报 %d 条 URL 命中历史去重集合（已推送过不得复现）: %s"
+                      % (len(dup), " ".join(sorted(dup)[:8])))
 
     # 3) 日期未验证不得出现
     unv = brief_urls & unverified_urls
@@ -173,7 +188,7 @@ def main():
         brief_text = fh.read()
     deep_sec = brief_text.split("## 今日热门文章", 1)
     deep_text = deep_sec[1].split("## 今日主题趋势", 1)[0] if len(deep_sec) > 1 else ""
-    pref_marks = len(re.findall(r"（偏好命中）", deep_text))
+    pref_marks = len(re.findall(r"[（\(]偏好命中[）\)]", deep_text))
     if pref_marks > likes_mod.MAX_PREF_DEEP:
         errors.append("深度总结区偏好命中 %d 条 > 上限 %d（防信息茧房，探索内容 1-2 篇/天）"
                       % (pref_marks, likes_mod.MAX_PREF_DEEP))
@@ -187,11 +202,11 @@ def main():
         for idx, line in enumerate(lines):
             for m in re.findall(r"https?://[^\s)\]>]+", line):
                 u = collect_brief.norm_url(m)
-                if u in leftover_urls:
+                if u in leftover_unv:
                     in_sec = 0 <= sec_line_idx <= idx < sec_end_idx
                     if not in_sec:
-                        errors.append("未推荐源速览链接出现在速览节之外: %s" % u)
-                    elif u in leftover_unv and "日期未验证" not in line:
+                        errors.append("未推荐源速览日期未验证链接出现在速览节之外: %s" % u)
+                    elif "日期未验证" not in line:
                         errors.append("未推荐源速览日期未验证条目缺少标注: %s" % u)
 
     if errors:

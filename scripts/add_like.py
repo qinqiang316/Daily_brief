@@ -42,16 +42,21 @@ def parse_brief_refs(brief_path):
     """从简报 md 提取参考资料 {序号: (标题, URL)}"""
     with open(brief_path, encoding="utf-8", errors="ignore") as f:
         text = f.read()
+    if "## 参考资料" in text:
+        ref_text = text.split("## 参考资料", 1)[1]
+        ref_text = re.split(r"\n##\s+", ref_text, maxsplit=1)[0]
+    else:
+        ref_text = text
     refs = {}
-    for m in REF_RE.finditer(text):
+    for m in REF_RE.finditer(ref_text):
         refs[int(m.group(1))] = (m.group(2).strip(), m.group(3).strip())
     return refs
 
 
-def find_brief(num):
-    """按序号找简报文件（精确日期或最新）"""
-    if os.path.isfile(num):
-        return num
+def find_brief(target=None):
+    """按文件名/日期找简报文件（若无参数或找不到匹配则返回最新简报）"""
+    if target and os.path.isfile(target):
+        return target
     candidates = []
     if os.path.isdir(OUTPUT_DIR):
         for f in os.listdir(OUTPUT_DIR):
@@ -59,14 +64,15 @@ def find_brief(num):
             if m:
                 candidates.append((m.group(1), os.path.join(OUTPUT_DIR, f)))
     candidates.sort(reverse=True)
-    for d, p in candidates:
-        if num in d:
-            return p
+    if target:
+        for d, p in candidates:
+            if target in d or target in p:
+                return p
     return candidates[0][1] if candidates else None
 
 
 def add_like(url, title="", direction=None):
-    """写入一条点赞（去重）；返回 (ok, msg)"""
+    """写入一条点赞（去重）；返回 (ok, msg, dup)"""
     nu = likes_mod.norm_url(url)
     if not nu:
         return False, "URL 无效", False
