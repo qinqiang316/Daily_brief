@@ -102,6 +102,17 @@ def main():
                 explore_urls.add(u)
             if c.get("is_preferred"):
                 pref_count_in_cand += 1
+    # 未推荐源速览（source_leftovers）：允许进简报参考资料区；日期未验证的
+    # 只能出现在「未推荐来源速览」节且该行必须标注"（日期未验证）"，见下方专项校验
+    leftover_urls = set()
+    leftover_unv = set()
+    for lo in data.get("source_leftovers", []):
+        u = collect_brief.norm_url(lo.get("url", ""))
+        if u:
+            cand_urls.add(u)
+            leftover_urls.add(u)
+            if not lo.get("date_verified"):
+                leftover_unv.add(u)
     generated_at = data.get("generated_at", "")
     pref_info = data.get("preference", {})
 
@@ -167,6 +178,22 @@ def main():
         errors.append("深度总结区偏好命中 %d 条 > 上限 %d（防信息茧房，探索内容 1-2 篇/天）"
                       % (pref_marks, likes_mod.MAX_PREF_DEEP))
 
+    # 7) 未推荐源速览专项：日期未验证 leftover 只能在速览节、且行内必须标注"（日期未验证）"
+    if leftover_urls:
+        sec_marker = "## 未推荐来源速览"
+        lines = brief_text.splitlines()
+        sec_line_idx = next((i for i, l in enumerate(lines) if sec_marker in l), -1)
+        sec_end_idx = next((i for i, l in enumerate(lines) if l.startswith("## 参考资料") and i > sec_line_idx), len(lines))
+        for idx, line in enumerate(lines):
+            for m in re.findall(r"https?://[^\s)\]>]+", line):
+                u = collect_brief.norm_url(m)
+                if u in leftover_urls:
+                    in_sec = 0 <= sec_line_idx <= idx < sec_end_idx
+                    if not in_sec:
+                        errors.append("未推荐源速览链接出现在速览节之外: %s" % u)
+                    elif u in leftover_unv and "日期未验证" not in line:
+                        errors.append("未推荐源速览日期未验证条目缺少标注: %s" % u)
+
     if errors:
         print("FAIL: %d 项违规" % len(errors))
         for e in errors:
@@ -175,6 +202,7 @@ def main():
         print("简报: %s" % brief)
         return 1
     print("PASS: 简报 %d 条 URL 全部来自候选池，无去重复现，无日期未验证条目" % len(brief_urls))
+    print("未推荐源速览放行 %d 条（source_leftovers）" % len(data.get("source_leftovers", [])))
     print("简报: %s" % brief)
     print("候选: %s" % cand)
     pref_dir = pref_info.get("pref_dir")

@@ -5,7 +5,7 @@ import sys
 from datetime import datetime
 
 from . import filter as filter_mod
-from .retrieve import anysearch_http_batch, chunked, parse_search_markdown, run_cli, wc
+from .retrieve import anysearch_http_batch, chunked, fetch_article_text, parse_search_markdown, run_cli, wc
 from .window import log
 from . import profile as profile_mod
 
@@ -37,7 +37,8 @@ def build_extra_queries(now):
     else: log("暂无点赞，不注入偏好查询（探索方向: %s）" % explore_dir)
     return extra, pref_dir, explore_dir
 
-def search_batch_with_tags(name, queries, candidates, src_stats, pref_dir):
+def search_batch_with_tags(name, queries, candidates, src_stats, pref_dir, src_map=None):
+    """src_map: 若传入，为每条结果打 source_key/source_label 并按源归组（未推荐源速览用）。"""
     total = 0
     for bi, sub in enumerate(chunked(queries, 5)):
         sub_cli = [{"query": q["query"], "max_results": q.get("max_results", 8)} for q in sub]
@@ -50,6 +51,11 @@ def search_batch_with_tags(name, queries, candidates, src_stats, pref_dir):
             qidx = it.pop("query_idx", None)
             if qidx is not None and 0 <= qidx < len(sub):
                 q = sub[qidx]; it["direction"] = q.get("direction"); it["is_preferred"] = bool(q.get("preferred")); it["is_explore"] = bool(q.get("explore"))
+                if src_map is not None:
+                    key = "%s:%d" % (name, bi * 5 + qidx)
+                    label = "查询 %s#%d: %s" % (name, bi * 5 + qidx + 1, q["query"][:48])
+                    it["source_key"] = key; it["source_label"] = label
+                    src_map.setdefault(key, {"label": label, "direction": q.get("direction"), "items": []})["items"].append(it)
             else: it.update(direction=None, is_preferred=False, is_explore=False)
         total += len(batch); candidates.extend(batch)
     src_stats[name] = total
@@ -79,7 +85,14 @@ def filter_candidates(candidates, dedup, window_start, today, pref_dir):
             if hn_count >= MAX_HN: continue
             hn_count += 1
         content = re.sub(r"\s+", " ", c.get("content", "")).strip()
-        if wc(content) < filter_mod.MIN_WORDS and not is_hn: continue
+        if wc(content) < filter_mod.MIN_WORDS and not is_hn:
+            text = fetch_article_text(url, timeout=12)
+            if not text:
+                continue
+            content = text
+            log("国内源预抓正文成功: %s (%d字)" % (title[:40], wc(content)))
+            if wc(content) < filter_mod.MIN_WORDS:
+                continue
         pub, verified, month_only = ((c.get("publish_date"), True, False) if is_hn and c.get("publish_date") else filter_mod.extract_publish_date(c))
         if pub and pub > today_s: continue
         mf = re.search(r"newsDetail_forward_(\d{6,})", url)
@@ -97,7 +110,7 @@ def filter_candidates(candidates, dedup, window_start, today, pref_dir):
         hard, reasons = filter_mod.ai_watermark_check(content)
         if hard:
             log("水文硬剔除: %s（%s）" % (title[:40], "，".join(reasons))); continue
-        kept.append({"title": title[:200], "url": url, "domain": domain, "direction": c.get("direction"), "is_preferred": bool(c.get("is_preferred")) or bool(pref_dir and c.get("direction") == pref_dir), "is_explore": bool(c.get("is_explore")), "publish_date": pub, "date_verified": verified or bool(pub), "window_outside_days": outside, "hn_points": c.get("hn_points"), "word_count": wc(content), "watermark_suspect": bool(reasons), "watermark_reasons": reasons, "content": content[:filter_mod.CONTENT_LIMIT]})
+        kept.append({"title": title[:200], "url": url, "domain": domain, "direction": c.get("direction"), "is_preferred": bool(c.get("is_preferred")) or bool(pref_dir and c.get("direction") == pref_dir), "is_explore": bool(c.get("is_explore")), "publish_date": pub, "date_verified": verified or bool(pub), "window_outside_days": outside, "hn_points": c.get("hn_points"), "word_count": wc(content), "watermark_suspect": bool(reasons), "watermark_reasons": reasons, "content": content[:filter_mod.CONTENT_LIMIT], "source_key": c.get("source_key"), "source_label": c.get("source_label")})
         seen_urls.add(url)
     return kept
 

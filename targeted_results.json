@@ -1,0 +1,963 @@
+{
+  "10.48175/ijarsct-37263": {
+    "doi": "https://doi.org/10.48175/ijarsct-37263",
+    "doi_clean": "10.48175/ijarsct-37263",
+    "title": "Design and Development of an Electromagnetic Braking System: A Study on Contactless Eddy-Current Retardation",
+    "pub_date": "2026-06-27",
+    "journal": "International Journal of Advanced Research in Science Communication and Technology",
+    "publisher": "Shivkrupa Publication's",
+    "authors": [
+      "Mahadev E. Biradar Kartik S. Choudhary",
+      "Prof. V. T. Pawar Nidhi A. Bhele"
+    ],
+    "abstract": "The rising concern of safety, energy efficiency, and decreased maintenance in today’s transportation system is making researchers search for alternative ways of braking systems that are beyond the traditional method based on friction. The design, analysis, and conceptual development of the Electromagnetic Braking System (EMBS), which utilizes electromagnetic induction and eddy current generation as means of achieving non-contact retardation, have been discussed in this paper. The EMBS prototype includes two controlled electromagnets, a rotor motor, a metal disc, and an additional fan to take care of thermal losses. When the electromagnets are powered up, the varying magnetic flux will induce eddy currents in the spinning disc; according to Lenz’s Law, the eddy currents will produce an opposing magnetic field, which will result in retarding force without the necessity of any mechanical contact. Mechanical and structural design calculations related to support structure, shaft, bearings, chain drive, and motor selection have been made, taking into account the limitations of allowable stress and buckling. The literature review of ten recent publications on rotor materials, magnets, heat dissipation, and smart control systems was done in order to make informed decisions about the system’s design. It is clear from the comparative analysis that the suggested EMBS can decrease the rate of wear by 70-90% and the rate of degradation caused by heat by 60-80% compared to traditional friction brakes while enhancing the smoothness of the process.",
+    "cited_by": 0,
+    "oa_url": "https://doi.org/10.48175/ijarsct-37263",
+    "query": "maglev eddy current brake"
+  },
+  "10.3390/en19092118": {
+    "doi": "https://doi.org/10.3390/en19092118",
+    "doi_clean": "10.3390/en19092118",
+    "title": "Characteristic Analysis of Eddy Current Braking System with AC Excitation and Auxiliary Capacitor",
+    "pub_date": "2026-04-28",
+    "journal": "Energies",
+    "publisher": "Multidisciplinary Digital Publishing Institute",
+    "authors": [
+      "Xu Niu",
+      "Baoquan Kou",
+      "Lu Zhang"
+    ],
+    "abstract": "The eddy current braking system (ECBS) is a crucial non-contact technology for high-speed railway. Conventional DC-excited systems face significant challenges such as excessive rail heating and high-capacity power supply requirements. This paper proposes a novel ECBS with AC excitation and auxiliary capacitor to achieve integrated energy recovery and power supply optimization. To evaluate its performance, a rigorous analytical framework is developed. First, a 2D subdomain model is established by incorporating the longitudinal end effect to solve the magnetic field distribution. Subsequently, an equivalent circuit is derived from the subdomain results to investigate steady-state braking characteristics and power flow. Analysis results demonstrate that the proposed system not only generates controllable braking force but also converts a portion of kinetic energy into storable electrical energy, effectively mitigating secondary rail heating. Most significantly, the implementation of an optimal auxiliary capacitor (134 μF) is found to reduce the required inverter capacity compared to inverter-only conditions. These findings provide a theoretical foundation and a practical design tool for developing high-performance, energy-efficient braking systems in high-speed transportation.",
+    "cited_by": 0,
+    "oa_url": "https://www.mdpi.com/1996-1073/19/9/2118/pdf?version=1777374914",
+    "query": "high-speed maglev emergency braking"
+  },
+  "10.22214/ijraset.2026.77507": {
+    "doi": "https://doi.org/10.22214/ijraset.2026.77507",
+    "doi_clean": "10.22214/ijraset.2026.77507",
+    "title": "A Comprehensive Research Study on Electromagnetic Suspension (EMS) Based Maglev Transport Systems: Technical, Environmental and Feasibility Analysis for India",
+    "pub_date": "2026-02-19",
+    "journal": "International Journal for Research in Applied Science and Engineering Technology",
+    "publisher": "International Journal for Research in Applied Science and Engineering Technology (IJRASET)",
+    "authors": [
+      "Munira Faher"
+    ],
+    "abstract": "Magnetic levitation (maglev) transportation systems represent a significant advancement in modern transport engineering by eliminating mechanical contact between vehicle and guideway. This study presents a comprehensive technical assessment of Electromagnetic Suspension (EMS) based maglev systems, emphasizing scientific foundations, propulsion mechanisms, infrastructure engineering, energy dynamics, environmental implications, and applicability within the Indian context. By critically examining operational systems such as the Shanghai Maglev Train and Japan’s JR SCMaglev, the research evaluates performance benchmarks and economic feasibility. The analysis suggests that while EMS maglev technology demonstrates strong operational efficiency and environmental promise, substantial capital investment, precision engineering requirements, and infrastructural transformation pose major implementation challenges in developing economies",
+    "cited_by": 0,
+    "oa_url": "https://doi.org/10.22214/ijraset.2026.77507",
+    "query": "maglev eddy current brake"
+  },
+  "10.23967/j.rimni.2026.10.74579": {
+    "doi": "https://doi.org/10.23967/j.rimni.2026.10.74579",
+    "doi_clean": "10.23967/j.rimni.2026.10.74579",
+    "title": "Hybrid AI-Quantum Computational Framework for Efficient Eddy Current Repulsion Force Simulation",
+    "pub_date": "2026-01-01",
+    "journal": "Revista Internacional de Métodos Numéricos para Cálculo y Diseño en Ingeniería",
+    "publisher": "International Centre for Numerical Methods in Engineering",
+    "authors": [
+      "Z. Zhang",
+      "Y. Ryu",
+      "W. Li",
+      "J. Wang"
+    ],
+    "abstract": "Eddy current repulsion forces are essential to the operation of magnetic levitation, electromagnetic braking, and wireless power transfer systems, yet their accurate simulation remains computationally intensive due to the complexity of Maxwell’s equations and the need for fine-resolution meshing in transient, high-frequency domains. This paper presents a hybrid AI-Quantum computational framework that accelerates eddy current simulation by combining adaptive meshing via Physics-Informed Neural Networks for adaptive meshing, quantum-assisted solvers (HarrowHassidim-Lloyd algorithm and Variational Quantum Eigensolver) for selected finite element subdomains, and GPU-accelerated finite element methods, and reduced-order modeling based on Proper Orthogonal Decomposition and Quantum Autoencoders. The framework selectively routes well-conditioned sparse subblocks to quantum solvers while retaining classical GPU-based methods elsewhere. Validation across three representative applications—electromagnetic braking, magnetic levitation, and wireless power transfer—demonstrates that the hybrid solver maintains accuracy within 5%–8% of full FEM results while reducing computational cost by 1.3×–2× speedup in the tested scenarios. These results confirm the feasibility of integrating AI and near-term quantum computing into electromagnetic simulation workflows and provide guidance on complexity, resource requirements, and scalability.OPEN ACCESS Received: 14/10/2025 Accepted: 22/12/2025 Published: 29/05/2026",
+    "cited_by": 0,
+    "oa_url": "https://www.scipedia.com/wd/images/3/36/Draft_content_483418588-3982-document.pdf",
+    "query": "maglev eddy current brake"
+  },
+  "10.30939/ijastech..1827614": {
+    "doi": "https://doi.org/10.30939/ijastech..1827614",
+    "doi_clean": "10.30939/ijastech..1827614",
+    "title": "Electromechanical eLSD for EV Drivelines: High-Density Torque Actuation and Low-Energy Brake Hold Mechanism",
+    "pub_date": "2026-08-19",
+    "journal": "International Journal of Automotive Science And Technology",
+    "publisher": null,
+    "authors": [
+      "Siddhesh Pimpale"
+    ],
+    "abstract": "Torque transfer is an integral aspect of the automotive industry, across all vehicle architectures including internal combustion engines, battery electric, hybrid, and hydrogen fuel cell to increase performance, efficiency, and vehicle stability in all driving conditions. Traditional differential mechanisms used for torque transfer to each wheel often fail to provide enough torque biasing under varying load conditions to maintain optimal wheel slip in low friction surfaces. This paper presents grounded design methodology for high performance electronic limited slip differential (eLSD) incorporating advanced controller architecture and brake hold functionality. The study unifies optimal sizing of torque amplification components with 1.2 Nm electronically controlled BLDC actuator and a 101.5 reduction gear ratio to achieve 2000 Nm locking torque. Analytical results determine an axial force requirement of ~25.7 kN, distributed across four load‑bearing balls at ~6.4 kN each. Hertzian stress evaluation identifies optimal ball diameters of 12 mm to maintain stresses below 4000Mpa, ensuring durability without involving exotic material and complex manufacturing process. Time‑domain simulations confirm sub‑200 millisecond engagement, validating the architecture for high‑bandwidth torque vectoring and vehicle‑stability interventions. An integrated controller and optional low‑energy brake‑hold mechanism reduce power consumption during sustained engagement by more than 90%. Overall, the proposed framework provides a rigorous analytical foundation for the design of compact, durable, and energy‑efficient eLSD systems for modern driveline applications.",
+    "cited_by": 0,
+    "oa_url": "https://dergipark.org.tr/en/download/article-file/5438606",
+    "query": "train electro-mechanical brake clamping force"
+  },
+  "10.1016/j.csite.2026.108322": {
+    "doi": "https://doi.org/10.1016/j.csite.2026.108322",
+    "doi_clean": "10.1016/j.csite.2026.108322",
+    "title": "Thermal Network Analysis of a Hybrid Excitation Eddy Current Damper and Temperature-Dependent Electrical Conductivity of the Conductor",
+    "pub_date": "2026-07-01",
+    "journal": "Case Studies in Thermal Engineering",
+    "publisher": "Elsevier BV",
+    "authors": [
+      "Wenbin Yang",
+      "Haitao Zhang",
+      "Xixi Wen",
+      "Z H Chen",
+      "Xugang Hua",
+      "Huawei Niu",
+      "Zhiwen Huang",
+      "Wenxi Wang"
+    ],
+    "abstract": "This study investigates the thermal behavior of a segmented outer-rotor electromagnetic–permanent magnet hybrid excitation eddy current damper (EM–PM ECD). A thermal network model based on the equivalent thermal circuit method is developed to predict the temperature distribution within the device. To validate the model, a dedicated experimental setup capable of simultaneously measuring rotor and stator temperatures is designed and implemented. The predicted temperatures agree well with experimental measurements, with a maximum deviation of 1.9 °C. The results reveal that the coupled thermal effects of copper losses in the excitation coils and eddy current losses in the conductor dominate the temperature rise in the electromagnetic components and consequently influence the damping torque. The influence of forced-air cooling on the transient temperature rise and steady-state temperature of different components is further analyzed. Electrical conductivity measurements show that the linear temperature-dependent conductivity model accurately describes the behavior of copper, copper–iron alloys, and aluminum alloys over the tested temperature range. In addition, an electromagnetic–thermal coupled finite element model incorporating temperature-dependent material properties is established. The model significantly improves the prediction accuracy of the damping force–speed characteristics, with a maximum deviation of 1.7% compared with experimental results.",
+    "cited_by": 0,
+    "oa_url": "https://www.sciencedirect.com/science/article/pii/S2214157X26006854/pdf",
+    "query": "eddy current brake rail vehicle"
+  },
+  "10.1007/s00707-026-04801-7": {
+    "doi": "https://doi.org/10.1007/s00707-026-04801-7",
+    "doi_clean": "10.1007/s00707-026-04801-7",
+    "title": "Augmented simplified modelling of elastic pole shoe–rail frictional sliding contact in magnetic track brakes",
+    "pub_date": "2026-06-29",
+    "journal": "Acta Mechanica",
+    "publisher": "Springer Science+Business Media",
+    "authors": [
+      "A. Steininger",
+      "Emin Koçbay",
+      "Eray Arslan",
+      "Johannes Edelmann"
+    ],
+    "abstract": "Abstract The magnetic track brake, widely used as an emergency brake in railway vehicles, generates additional braking force through direct conformal contact with the rail. While finite element simulations can accurately reproduce this interaction, their computational cost is prohibitive for many applications. This work introduces an augmented contact model that extends a previously reported simplified elastic half-plane approach by additionally accounting for small overall elastic deformations while maintaining favourable computational efficiency. A two-step iterative scheme is employed, in which first contact resolution and then elastic deformations are handled in succession. The contact between a single pole shoe and the rail is simulated and compared with prior studies and reference results in the commercial finite element software Abaqus . The proposed model achieves good agreement with the reference solutions while preserving low computational cost. These findings establish the method as an efficient, reliable, and practical tool for pole shoe–rail contact analysis in both academic and engineering contexts.",
+    "cited_by": 0,
+    "oa_url": "https://link.springer.com/content/pdf/10.1007/s00707-026-04801-7.pdf",
+    "query": "eddy current brake rail vehicle"
+  },
+  "10.3390/app16094132": {
+    "doi": "https://doi.org/10.3390/app16094132",
+    "doi_clean": "10.3390/app16094132",
+    "title": "Dynamic Analysis of the Maglev Vehicle–Turnout System Considering Spatial Magnetic–Rail Interaction",
+    "pub_date": "2026-04-23",
+    "journal": "Applied Sciences",
+    "publisher": "Multidisciplinary Digital Publishing Institute",
+    "authors": [
+      "Qiliang Zhang",
+      "Enze Yu",
+      "Long Zhang",
+      "Xiulu Zhang",
+      "Guofang Li",
+      "Wangcai Ding"
+    ],
+    "abstract": "The dynamic performance of medium- and low-speed maglev vehicle–track coupling systems, as well as the dynamic response of the vehicle body and suspension frame under suspension electromagnet failure, is of great significance for the safe operation of maglev tracks. Based on vehicle–track coupling dynamics theory, and considering the spatial dynamic magnetic rail relationship in combination with the suspension control system, a dynamic vehicle–track model incorporating suspension electromagnet failure is established. The effect of such failures on electromagnet suspension force and overall vehicle performance are analyzed. The results indicate that the theoretically calculated electromagnetic force differs significantly from the actual force. Under four electromagnet operating conditions, lateral displacement has the greatest influence on suspension force. By considering the magnetic saturation of ferromagnetic materials and the leakage effect of suspension gaps, a spatial dynamic magnetic orbit relationship is established. A single-pole suspension electromagnet fault has little effect on overall vehicle performance. When the suspension electromagnet on one side fails, the suspension frame tilts toward that side and is supported and operated by a sled. When three suspension points fail, the entire suspension frame loses its suspension state and operates fully under sled support. When a suspension frame electromagnet becomes stuck, severe fluctuations in suspension force and vehicle vibration acceleration occur. These fluctuations increase with vehicle operating speed, seriously endangering operational performance. The findings provide a fundamental theoretical basis for the safe operation and maintenance of medium- and low-speed maglev vehicles under fault conditions.",
+    "cited_by": 0,
+    "oa_url": "https://www.mdpi.com/2076-3417/16/9/4132/pdf?version=1776943337",
+    "query": "train anti-skid braking adhesion control"
+  },
+  "10.47176/jafm.19.4.3994": {
+    "doi": "https://doi.org/10.47176/jafm.19.4.3994",
+    "doi_clean": "10.47176/jafm.19.4.3994",
+    "title": "Optimization of High-speed Train Wind Brake Devices using a Dynamic Weighted Hybrid Surrogate Model Based on Local Error Evaluation",
+    "pub_date": "2026-02-07",
+    "journal": "Journal of Applied Fluid Mechanics",
+    "publisher": "Isfahan University of Technology",
+    "authors": [
+      "B. K. Wang",
+      "Y. H. Lu",
+      "D. Feng",
+      "Q. Y. He",
+      "Y. H. Xianyu",
+      "J. P. Wang"
+    ],
+    "abstract": "With the continuous increase in the speed of high-speed trains (HSTs), traditional friction braking no longer meets the requirement for rapid stopping over short distances. Wind brake devices (WBDs) serve as a crucial supplementary mechanism to enhance braking performance. Therefore, investigating methods to improve their aerodynamic braking force under multifactor influences holds significant importance. This study presents a hybrid surrogate model (HSM) with dynamic weighting based on local error evaluation, which integrates the modeling characteristics of multiple classical surrogate models. The proposed model fulfills the fitting accuracy and adaptability requirements of surrogate models in the optimization of WBDs. Initial sampling points are generated using Optimal Latin Hypercube Sampling (OLHS), and their corresponding geometries are created through the Morph mesh deformation method. The responses of these sampling points are obtained using computational fluid dynamics (CFD) simulations. The accuracy of the numerical calculation method is validated through scaled wind tunnel experiments. Then, the NSGA-II algorithm is employed for optimization. The results indicate that the drag of the head car equipped with WBDs increases by 11.2%, while the lift decreases by 21%. Analyses of the flow field and pressure distribution further demonstrate that the optimized WBDs attenuate the large windward vortex, expand and intensify the leeward low-pressure region, and modify vortex morphology to raise flow separation and reattachment, collectively enhancing braking force and reducing lift. The application of the HSM considerably improves computational accuracy and efficiency.",
+    "cited_by": 0,
+    "oa_url": "https://www.jafmonline.net/article_2845_4a5f6782b2f55c2e9156fdaf3addb772.pdf",
+    "query": "high-speed maglev emergency braking"
+  },
+  "10.1007/s11432-025-4671-y": {
+    "doi": "https://doi.org/10.1007/s11432-025-4671-y",
+    "doi_clean": "10.1007/s11432-025-4671-y",
+    "title": "A survey of braking control techniques for railway vehicles",
+    "pub_date": "2026-02-04",
+    "journal": "Science China Information Sciences",
+    "publisher": "Springer Nature",
+    "authors": [
+      "Jiuhe Wang",
+      "Zhiyong Chen",
+      "Zhiwen Chen",
+      "Zhiwen Chen",
+      "Zhiwen Chen",
+      "Chunhua Yang",
+      "Weihua Gui"
+    ],
+    "abstract": "Abstract Braking control techniques for railway vehicles have seen significant advancements over the past few decades, with notable developments in recent years. Due to the complexity of railway vehicle systems, these techniques span a wide range of tasks. This paper provides a comprehensive review of the latest braking technologies, organized into an integrated framework across three levels: vehicle, carriage, and wheel. The focus is placed on their mathematical formulations and practical relevance. At each of these levels, the key functionalities are braking trajectory optimization, braking force distribution, and braking torque distribution, respectively. The review covers both theoretical progress and real-world applications, with an emphasis on the common braking mode rather than emergency braking. Additionally, it highlights recent advancements in validation platforms and explores potential future directions for braking control techniques.",
+    "cited_by": 2,
+    "oa_url": "https://link.springer.com/content/pdf/10.1007/s11432-025-4671-y.pdf",
+    "query": "electro-pneumatic brake valve leakage fault train"
+  },
+  "10.1007/s40820-026-02263-z": {
+    "doi": "https://doi.org/10.1007/s40820-026-02263-z",
+    "doi_clean": "10.1007/s40820-026-02263-z",
+    "title": "Triboelectric Wearable Sensors for Human-Centric Smart Electronics: From Self-Powered Sensing to Artificial Intelligence-Assisted Human–Machine Interface Systems",
+    "pub_date": "2026-06-16",
+    "journal": "Nano-Micro Letters",
+    "publisher": "Springer Science+Business Media",
+    "authors": [
+      "Yoonsang Ra",
+      "Sumin Cho",
+      "Xinge Guo",
+      "Dongwhi Choi",
+      "Chengkuo Lee"
+    ],
+    "abstract": "As intelligent electronics become increasingly integrated into daily life, health care, virtual interaction, and assistive systems, human-machine interfaces (HMIs) require sensing platforms that are not only wearable and self-powered but also capable of translating human signals into adaptive machine functions. Triboelectric wearable sensors are particularly attractive in this regard because they directly transduce human-generated mechanical stimuli, provide broad material and structural design freedom, and are readily adaptable to body-interfaced formats. In this review, wearability refers to body-mounted, skin-interfaced, textile-integrated, or otherwise human-attached triboelectric sensing platforms, whereas human-centric smart electronics refers to downstream electronic systems that remain functionally anchored to human-originated sensing, interpretation, feedback, or control. From this perspective, we review triboelectric wearable sensors from fundamentals to applications, covering working principles, material selection, device architectures, and fabrication strategies. We further discuss artificial intelligence-assisted signal processing, triboelectric artificial synapses, and neuromorphic computing as key bridges from self-powered sensing to intelligent HMI. Representative application spaces, including health care, gesture recognition, device control, immersive virtual interaction, wearable-to-robotic extensions, and intelligent transportation are discussed only when wearable triboelectric sensing serves as the primary human-input interface. Finally, the remaining challenges and future directions toward next-generation human-centric smart electronics are outlined.",
+    "cited_by": 1,
+    "oa_url": "https://link.springer.com/content/pdf/10.1007/s40820-026-02263-z.pdf",
+    "query": "train electric pneumatic brake blending control"
+  },
+  "10.3390/jmmp10020060": {
+    "doi": "https://doi.org/10.3390/jmmp10020060",
+    "doi_clean": "10.3390/jmmp10020060",
+    "title": "Wear and Thermal Analysis of Cu-MMC Brake Pad Fabricated by Powder Metallurgy for Railway Braking Applications",
+    "pub_date": "2026-02-10",
+    "journal": "Journal of Manufacturing and Materials Processing",
+    "publisher": "Multidisciplinary Digital Publishing Institute",
+    "authors": [
+      "Rusnaldy Rusnaldy",
+      "Nur Kollis Fathurrohman",
+      "Sultan Haydar At-Toriq",
+      "Paryanto Paryanto"
+    ],
+    "abstract": "This study evaluates the performance of a copper-based metal matrix composite (Cu-MMC) brake pad fabricated by powder metallurgy for high-speed railway braking applications. The material was produced via homogeneous powder mixing, compaction at 650 MPa, and sintering at 950 °C for 2 h to promote densification and metallurgical bonding. The fabricated Cu-MMC exhibited densities of 5.71–5.98 g/cm3, porosities of 5.85–10.1%, and hardness values of 62–73 HV, indicating effective microstructural control. Tribological performance was assessed using a brake dynamometer at an equivalent speed of 160 km/h and a contact pressure of 0.95 MPa. The composite demonstrated a low specific wear rate of 0.11–0.14 cm3/MJ, meeting the TJ/CL 307-2014 standard for high-energy braking. Surface analysis revealed stable frictional behavior dominated by oxidative–abrasive, adhesive, and delamination wear mechanisms. Thermal evaluation showed a maximum operating temperature of 225–235 °C, below the softening temperature of copper, confirming adequate thermal stability.",
+    "cited_by": 1,
+    "oa_url": "https://www.mdpi.com/2504-4494/10/2/60/pdf?version=1770732367",
+    "query": "train electric pneumatic brake blending control"
+  },
+  "10.3390/wevj17050230": {
+    "doi": "https://doi.org/10.3390/wevj17050230",
+    "doi_clean": "10.3390/wevj17050230",
+    "title": "Stability Control of Vehicles with Brake Failure Based on the TD3 Adaptive Sliding Mode Control Algorithm",
+    "pub_date": "2026-04-24",
+    "journal": "World Electric Vehicle Journal",
+    "publisher": "Multidisciplinary Digital Publishing Institute",
+    "authors": [
+      "R J Wang",
+      "Feng Wei",
+      "Renkai Ding",
+      "Zhengrong Chen",
+      "Wei Liu",
+      "Dong Sun"
+    ],
+    "abstract": "To address the issue of vehicle instability and veering during braking when a single wheel fails in an electric vehicle’s electromechanical braking (EMB) system, an integrated application-oriented control framework based on adaptive sliding mode control (ASMC) is proposed. To address the shortcomings of SMC—such as difficulty in suppressing oscillations and the high workload associated with parameter tuning—a novel composite reaching law function was designed, and the TD3 algorithm was employed to optimize the sliding mode control parameters. When a failure in the EMB system is detected, the upper-layer control uses an improved ASMC algorithm to calculate the vehicle’s additional yaw moment. The lower-layer control employs an optimal control algorithm to distribute braking force, taking into account braking intensity, yaw moment, and tire utilization. This approach is integrated with sliding mode steering control to enhance vehicle stability during braking. To meet the driver’s braking requirements, a backpropagation (BP) neural network is first employed to identify braking intent. Based on this, the additional yaw moment is calculated by the upper-layer controller, and the brake force distribution is optimized through the lower-layer controller, thereby improving the vehicle’s stability. Through co-simulation analysis using Simulink-2024a and CarSim-2019.1, the results show that, compared to traditional algorithms, the proposed hierarchical control strategy reduced the maximum sideslip angle by 51.4%, decreased the maximum yaw rate by 47.2%, and reduced the maximum lateral offset by 45.6%. This control strategy enables enhanced stability across various braking intensity conditions.",
+    "cited_by": 0,
+    "oa_url": "https://www.mdpi.com/2032-6653/17/5/230/pdf?version=1777035676",
+    "query": "train anti-skid braking adhesion control"
+  },
+  "10.3390/app16031547": {
+    "doi": "https://doi.org/10.3390/app16031547",
+    "doi_clean": "10.3390/app16031547",
+    "title": "Real-Time Axle-Load Sensing and AI-Enhanced Braking-Distance Prediction for Multi-Axle Heavy-Duty Trucks",
+    "pub_date": "2026-02-03",
+    "journal": "Applied Sciences",
+    "publisher": "Multidisciplinary Digital Publishing Institute",
+    "authors": [
+      "Duk Sun Yun",
+      "Byung Chul Lim"
+    ],
+    "abstract": "Accurate braking-distance prediction for heavy-duty multi-axle trucks remains challenging due to the large gross vehicle weight, tandem-axle interactions, and strong transient load transfer during emergency braking. Recent studies on tire–road friction estimation, commercial-vehicle braking control (EBS/AEBS), and weigh-in-motion (WIM) sensing have highlighted that unmeasured vertical-load dynamics and time-varying friction are key sources of prediction uncertainty. To address these limitations, this study proposes an integrated sensing–simulation–AI framework that combines real-time axle-load estimation, full-scale robotic braking tests, fused road-friction sensing, and physics-consistent machine-learning modeling. A micro-electro-mechanical systems (MEMS)-based load-angle sensor was installed on the leaf-spring panel linking tandem axles, enabling the continuous estimation of dynamic vertical loads via a polynomial calibration model. Full-scale on-road braking tests were conducted at 40–60 km/h under systematically varied payloads (0–15.5 t) using an actuator-based braking robot to eliminate driver variability. A forward-looking optical friction module was synchronized with dynamic axle-load estimates and deceleration signals, and additional scenarios generated in a commercial ASM environment expanded the operational domain across a broader range of friction, grade, and loading conditions. A gradient-boosting regression model trained on the hybrid dataset reproduced measured stopping distances with a mean absolute error (MAE) of 1.58 m and a mean absolute percentage error (MAPE) of 2.46%, with most predictions falling within ±5 m across all test conditions. The results indicate that incorporating real-time dynamic axle-load sensing together with fused friction estimation improves braking-distance prediction compared with static-load assumptions and purely kinematic formulations. The proposed load-aware framework provides a scalable basis for advanced driver-assistance functions, autonomous emergency braking for heavy trucks, and infrastructure-integrated freight safety management. All full-scale braking tests were carried out at approximately 60% of the nominal service-brake pressure, representing non-panic but moderately severe braking conditions, and the proposed model is designed to accurately predict the resulting stopping distance under this prescribed braking regime rather than to minimize the absolute stopping distance itself.",
+    "cited_by": 3,
+    "oa_url": "https://www.mdpi.com/2076-3417/16/3/1547/pdf",
+    "query": "train electro-mechanical brake clamping force"
+  },
+  "10.3390/machines14020163": {
+    "doi": "https://doi.org/10.3390/machines14020163",
+    "doi_clean": "10.3390/machines14020163",
+    "title": "Braking Force Control for Direct-Drive Brake Units Based on Data-Driven Adaptive Control",
+    "pub_date": "2026-02-01",
+    "journal": "Machines",
+    "publisher": "Multidisciplinary Digital Publishing Institute",
+    "authors": [
+      "Chunrong He",
+      "Xiaoxiang Gong",
+      "Haitao He",
+      "H. Zhang",
+      "Yu Liu",
+      "Haiquan Ye",
+      "Chunxi Chen"
+    ],
+    "abstract": "To address the increasing demands for faster response and higher control accuracy in the braking systems of electric and intelligent vehicles, a novel brake-by-wire actuation unit and its braking force control methods are proposed. The braking unit employs a permanent-magnet linear motor as the driving actuator and utilizes the lever-based force-amplification mechanism to directly generate the caliper force. Compared with the “rotary motor and motion conversion mechanism” configuration in other electromechanical braking systems, the proposed scheme significantly simplifies the force-transmission path, reduces friction and structural complexity, thereby enhancing the overall dynamic response and control accuracy. Due to the strong nonlinearity, time-varying parameters, and significant thermal effects of the linear motor, the braking force is prone to drift. As a result, achieving accurate force control becomes challenging. This paper proposes a model-free adaptive control method based on compact-form dynamic linearization. This method does not require an accurate mathematical model. It achieves dynamic linearization and direct control of complex nonlinear systems by online estimation of pseudo partial derivatives. Finally, the proposed control method is validated through comparative simulations and experiments against the fuzzy PID controller. The results show that the model-free adaptive control method exhibits significantly faster braking force response, smaller steady-state error, and stronger robustness against external disturbances. It enables faster dynamic response and higher braking force tracking accuracy. The study demonstrates that the proposed brake-by-wire scheme and its control method provide a potentially new approach for next-generation high-performance brake-by-wire systems.",
+    "cited_by": 0,
+    "oa_url": "https://www.mdpi.com/2075-1702/14/2/163/pdf",
+    "query": "train electro-mechanical brake clamping force"
+  },
+  "10.15282/ijame.23.2.2026.15.1034": {
+    "doi": "https://doi.org/10.15282/ijame.23.2.2026.15.1034",
+    "doi_clean": "10.15282/ijame.23.2.2026.15.1034",
+    "title": "A review of regenerative brake control strategies for electric vehicles under varying road conditions",
+    "pub_date": "2026-06-26",
+    "journal": "International Journal of Automotive and Mechanical Engineering",
+    "publisher": "Universiti Malaysia Pahang",
+    "authors": [
+      "Li QianQian",
+      "Mohamad Heerwan Bin Peeie",
+      "M.I. Ishak"
+    ],
+    "abstract": "Regenerative braking system (RBS) is a technology that converts a vehicle’s kinetic energy into electrical energy during braking, significantly improving energy efficiency, increasing driving range, and reducing emissions to contribute to environmental sustainability. However, RBS has certain limitations and disadvantages, including the complexity of its components, high implementation costs, space constraints, and compatibility with other vehicle components. Additionally, the effectiveness of RBS is influenced by external factors such as temperature variations, road conditions, and driver behaviour. The objective of this paper is to discuss regenerative brake control strategies on various road surfaces. In this review, the priority of journal and conference proceedings on the regenerative topic over the past 10 years has been examined. To optimise energy recovery, researchers have proposed various regenerative braking control strategies, including fuzzy logic, proportional-integral-derivative, fractional-order proportional–integral–derivative, model predictive control, and sliding mode control. The significance of these control strategies for the future of electric vehicles cannot be overstated, underscoring the need for further research and development in this area. Furthermore, the study of regenerative brake control strategies in slippery road conditions needs improvement, as controlling wheel lock while simultaneously enhancing regenerative brake energy recovery is complex. The review found that the regenerative brake strategy performs best on dry asphalt. Integrating RBS with the control system can prevent skidding, thereby improving braking performance. These research findings underscore the importance of regenerative brake control strategies for electric vehicles.",
+    "cited_by": 0,
+    "oa_url": "https://journal.ump.edu.my/index.php/ijame/article/download/11731/4030",
+    "query": "train anti-skid braking adhesion control"
+  },
+  "10.1038/s41598-026-41679-w": {
+    "doi": "https://doi.org/10.1038/s41598-026-41679-w",
+    "doi_clean": "10.1038/s41598-026-41679-w",
+    "title": "Constraint optimization and key factor analysis based vehicle emergency braking strategy generator",
+    "pub_date": "2026-02-27",
+    "journal": "Scientific Reports",
+    "publisher": "Nature Portfolio",
+    "authors": [
+      "Rui Xu",
+      "Shijie Xu",
+      "Peng Jiang",
+      "Xiangfen Zhang",
+      "Feiniu Yuan",
+      "Xiqiang Guan",
+      "Ziyou Chen",
+      "Ruifeng Zhai",
+      "Yixuan Wang",
+      "Tianyi Lu",
+      "Wenhao Lu"
+    ],
+    "abstract": "Enhancing vehicle emergency braking performance is crucial for vehicular safety and reliability. We have observed that the traditional vehicle dynamics based model predictive control (MPC) algorithm which is used to produce emergency braking strategy fails to achieve the minimization of emergency braking distance. To address this issue, this article employed a simulation based approach to improve emergency braking performance via machine learning based algorithms. We design a data optimization model which optimizes the longitudinal forces and slip ratios of the four wheels based on back-propagation neural network (BPNN) and constraint optimization algorithm to reduce emergency braking distance. In addition, a Balltree nearest neighbor search based generator is proposed to produce superior emergency braking strategies for real-time purpose. The experimental results demonstrate that the emergency braking strategy which we optimized achieves an average enhancement of 13% in emergency braking performance compared to the traditional MPC algorithm. Unlike other machine learning based algorithms that have a delay of over 0.01 s, the proposed generator has an execution time of 0.0008 s, meeting the delay requirements under emergency braking conditions.",
+    "cited_by": 0,
+    "oa_url": "https://www.nature.com/articles/s41598-026-41679-w_reference.pdf",
+    "query": "train anti-skid braking adhesion control"
+  },
+  "10.3390/app16031150": {
+    "doi": "https://doi.org/10.3390/app16031150",
+    "doi_clean": "10.3390/app16031150",
+    "title": "Chassis Control Methodologies for Steering-Braking Maneuvers in Distributed-Drive Electric Vehicles",
+    "pub_date": "2026-01-23",
+    "journal": "Applied Sciences",
+    "publisher": "Multidisciplinary Digital Publishing Institute",
+    "authors": [
+      "Kang Xiangli",
+      "Zhipeng Qiu",
+      "Xuan Zhao",
+      "Weiyu Liu"
+    ],
+    "abstract": "This review addresses the pivotal challenge in distributed-drive electric vehicle (DDEV) dynamics control: how to optimally distribute braking and steering forces during combined maneuvers to simultaneously enhance lateral stability, safety, and energy efficiency. The over-actuated nature of DDEVs presents a unique opportunity for precise torque vectoring but also introduces complex coupled dynamics, making vehicles prone to instability such as rollover during aggressive steering–braking scenarios. Moving beyond a simple catalog of methods, this work provides a structured synthesis and evolutionary analysis of chassis control methodologies. The problem is first deconstructed into two core control objectives: lateral stability and longitudinal braking performance. This is followed by a critical analysis of how integrated control architectures resolve the inherent conflicts between them. The analysis reveals a clear trajectory from independent control loops to intelligent, context-aware coordination. It further identifies a paradigm shift from the conventional goal of merely maintaining stability toward proactively managing stability boundaries to enhance system resilience. Furthermore, this review highlights the growing integration with high-level motion planning in automated driving. By synthesizing the current knowledge and mapping future directions toward deeply integrated, intelligent control systems, it serves as both a reference for researchers and a design guide for engineers aiming to unlock the full potential of the distributed drive paradigm.",
+    "cited_by": 1,
+    "oa_url": "https://www.mdpi.com/2076-3417/16/3/1150/pdf?version=1769156172",
+    "query": "train anti-skid braking adhesion control"
+  },
+  "10.1080/10402004.2026.2614906": {
+    "doi": "https://doi.org/10.1080/10402004.2026.2614906",
+    "doi_clean": "10.1080/10402004.2026.2614906",
+    "title": "Analysis of Differences in Traction and Braking Wheel–Rail Adhesion Characteristics under Conditions of Third-Body Contamination",
+    "pub_date": "2026-01-13",
+    "journal": "Tribology Transactions",
+    "publisher": "Taylor & Francis",
+    "authors": [
+      "Gengwei Zhai",
+      "Chun Tian",
+      "Jiajun Zhou",
+      "Gaowei Zhou",
+      "Mengling Wu",
+      "W. Huang"
+    ],
+    "abstract": "Train idling in traction and skidding in braking pose significant risks to operational safety. The traction and braking performance of rail vehicles is constrained by the wheel-rail adhesion state. Optimizing the target acceleration/deceleration design values and adhesion control strategies based on wheel-rail adhesion characteristics can enhance adhesion utilization and ensure train operational safety. Current research has primarily investigated wheel-rail adhesion characteristics with third bodies under either traction or braking conditions separately, without systematic comparative analysis of their differences. This limitation hinders further optimization of adhesion control strategies for both traction and braking. To systematically investigate and compare potential differences in wheel-rail adhesion characteristics between traction and braking under conditions of third-body contamination, this paper performed wheel-rail adhesion characteristic tests under various conditions. These conditions included different speeds (20–80 km/h), axle loads (11–17 t), and progressively increasing maximum slip ratios (with the maximum slip ratio incrementally raised until the adhesion improvement point emerged) with water and anti-wear fluid as third bodies. The results indicate a significant discrepancy in the slip ratio conditions required for adhesion improvement on the adhesion coefficient-slip ratio curve between traction and braking conditions: a higher slip ratio is required for adhesion improvement under traction conditions compared to braking conditions. Ultimately, this paper elucidates and validates the underlying mechanisms by which distinct wheel-rail contact temperatures under traction and braking conditions give rise to differences in adhesion characteristics.",
+    "cited_by": 1,
+    "oa_url": null,
+    "query": "train anti-skid braking adhesion control"
+  },
+  "10.3390/lubricants14010029": {
+    "doi": "https://doi.org/10.3390/lubricants14010029",
+    "doi_clean": "10.3390/lubricants14010029",
+    "title": "Numerical Simulation of Wheel–Rail Adhesion Under Wet Conditions and Large Creepage During Braking",
+    "pub_date": "2026-01-08",
+    "journal": "Lubricants",
+    "publisher": "Multidisciplinary Digital Publishing Institute",
+    "authors": [
+      "Pengcheng Shi",
+      "Bing Wu",
+      "Jiaqing Huang",
+      "Zhaoyang Wang",
+      "Jianyong Zuo"
+    ],
+    "abstract": "Low adhesion conditions can lead to significant wheel slip during braking for high-speed trains, resulting in severe wheel–rail rolling contact fatigue issues. The objective of this paper is to reproduce the dynamic wheel–rail adhesion characteristics of high-speed train braking with large creepage using the transient non-Hertzian ECF model under wet conditions and to clarify the underlying mechanisms. The Kik–Piotrowski (KP) model is used to solve the wheel–rail normal contact problem, and the corresponding non-elliptical adaptive method is adopted to modify the ECF model considering time-dependent effects for solving the tangential contact problem. The dynamic large creepage adhesion characteristics of high-speed trains under wet conditions during braking are analyzed. Furthermore, the effect of braking initial speeds and longitudinal creepage variation curves on dynamic adhesion characteristics is discussed. The results indicate that the large creepage adhesion characteristic curve of high-speed trains during braking exhibits a loading stable phase and an unloading stable phase, both of which effectively enhance the utilization of wheel–rail adhesion.",
+    "cited_by": 0,
+    "oa_url": "https://www.mdpi.com/2075-4442/14/1/29/pdf?version=1767887655",
+    "query": "train anti-skid braking adhesion control"
+  },
+  "10.62051/ijmsts.v5n4.05": {
+    "doi": "https://doi.org/10.62051/ijmsts.v5n4.05",
+    "doi_clean": "10.62051/ijmsts.v5n4.05",
+    "title": "Fabrication Technology of SiC Particle Reinforced Aluminum Matrix Composite Brake Discs for High-Speed Trains Research Progress",
+    "pub_date": "2026-08-27",
+    "journal": "International Journal of Materials Science and Technology Studies",
+    "publisher": null,
+    "authors": [
+      "Xiangling Wang",
+      "Yuan Wang"
+    ],
+    "abstract": "With low density, high specific strength, favorable thermal conductivity and wear resistance, SiC particle‑reinforced aluminum matrix composites are highly promising candidate materials for lightweight brake discs of high‑speed trains. This paper summarizes the fundamental theories, various preparation technologies and existing engineering challenges of brake discs made from such composites. It illustrates strengthening mechanisms including load transfer, thermal mismatch and dislocation obstruction, and analyzes the influences of SiC/Al interfacial reactions, particle agglomeration and pore defects on the thermo‑mechanical fatigue, fracture and wear properties of materials. The control essentials, advantages and disadvantages, as well as engineering adaptability of processes such as powder metallurgy, stir casting, pressure infiltration, friction stir processing and additive manufacturing are compared. It is indicated that stir casting is suitable for large‑size components; friction stir processing can construct gradient wear‑resistant microstructures; dual‑configuration microstructures and particle surface coatings can achieve synergistic improvement of strength and ductility. Current material applications mainly face bottlenecks including difficult particle dispersion, formation of interfacial brittle phases, initiation of thermal fatigue cracks, and conflicts between manufacturing scale and cost. The research demonstrates that brake discs require coordination between material microstructure regulation and structural thermo‑mechanical coupling design, which provides references for subsequent process optimization and engineering development of SiCp/Al brake discs for high‑speed trains.",
+    "cited_by": 0,
+    "oa_url": "https://ojs.ijmsts.org/index.php/IJMSTS/article/download/6232/6706",
+    "query": "brake Journal of Central South University"
+  },
+  "10.1007/s40534-026-00451-6": {
+    "doi": "https://doi.org/10.1007/s40534-026-00451-6",
+    "doi_clean": "10.1007/s40534-026-00451-6",
+    "title": "Influence and optimization of the pad connection structure on the braking wear and vibration behaviour of high-speed trains",
+    "pub_date": "2026-08-19",
+    "journal": "Railway Engineering Science",
+    "publisher": "Springer Science+Business Media",
+    "authors": [
+      "Peixuan Li",
+      "Zhiwei Wang",
+      "Fucai Jiang",
+      "Jiliang Mo",
+      "Fan Zhang",
+      "Huaqian Zhang",
+      "Chunguang Zhao"
+    ],
+    "abstract": "Abstract The braking performance of high-speed trains directly affects their operational safety. To thoroughly investigate and optimize the wear and vibration characteristics of the disc brake device, this study established a transient dynamic model of the braking device that considers the connection structures of floating brake pads, such as gaskets, disc springs, and snap rings, as well as the complex frictional contact between the disc and the pad. The effectiveness of the model was validated using bench test data. Compared to traditional models, this model possesses the unique advantage of simultaneously analyzing the vibration, contact, and wear characteristics of different internal brake pad structures and the disc/pad interface. Based on this, the influence of a critical component in the connection structure—the gasket—on the vibration and wear characteristics of the floating brake pad was systematically investigated. It was found that the inclination angle of the gasket has a significant regulatory effect on the contact state of the braking interface, the vibration response, and the wear rate. The results indicate that through structural optimization, when the gasket inclination angle is 87.5°, the root-mean-square value of the braking friction–vibration acceleration is reduced by over 20% compared to the original design, and the uneven wear of the brake pad is also reduced by 32.4%. The optimized structure exhibits excellent vibration reduction and anti-wear performance, and was subsequently validated through bench tests. Furthermore, the transient dynamic analysis method proposed in this study can also be applied to investigate the influence of the friction block shape and size on the friction–vibration behaviour, providing methodological support for regulating the braking performance of high-speed trains.",
+    "cited_by": 0,
+    "oa_url": "https://link.springer.com/content/pdf/10.1007/s40534-026-00451-6.pdf",
+    "query": "brake Railway Engineering Science"
+  },
+  "10.1016/j.csite.2026.108375": {
+    "doi": "https://doi.org/10.1016/j.csite.2026.108375",
+    "doi_clean": "10.1016/j.csite.2026.108375",
+    "title": "Entropy generation analysis of frictional heat-induced thermomechanical dissipation in railway brake discs",
+    "pub_date": "2026-07-23",
+    "journal": "Case Studies in Thermal Engineering",
+    "publisher": "Elsevier BV",
+    "authors": [
+      "Jiacheng Shen",
+      "Jianyong Zuo",
+      "Shize Zheng",
+      "Yu Pan"
+    ],
+    "abstract": "This study proposes an entropy-generation-based approach for quantifying frictional heat-induced thermomechanical dissipation in railway brake discs during service. The total entropy generation is decomposed into thermal and mechanical components, corresponding to irreversible heat transfer and plastic deformation, respectively. A three-dimensional thermomechanical brake disc model is developed and validated against full-scale bench test results, and is then used to investigate the spatial and temporal entropy generation characteristics under multiple braking scenarios. The results show that entropy generation increases markedly with the initial braking speed, while the dominant dissipation mechanism varies with location and service period. During braking, thermal entropy generation is mainly concentrated in the mid-radius region of the friction surface because of intense heat input and steep temperature gradients. During cooling, the contribution of the radiating ribs becomes more prominent as heat is transferred from the disc body to the surrounding air, for the element in radiating rib region, more than 70% of the thermal entropy generation is accumulated during cooling. Mechanical entropy generation is primarily localized near bolt-hole edges and radiating-rib corners, where geometric discontinuities and interface constraints promote stress concentration and plastic strain accumulation. At higher initial speeds, the mechanical entropy generated during the cooling period becomes increasingly important and should not be neglected in thermomechanical damage evaluation, for the element in bolt-hole region, its cooling-period contribution increases from 28.75% at 250 km/h to 58.40% at 350 km/h. The proposed entropy-generation approach converts thermal and mechanical dissipation into a consistent quantitative metric, enabling integrated identification of thermally critical regions, fatigue-prone locations, and potential design-improvement targets in railway brake discs.",
+    "cited_by": 0,
+    "oa_url": "https://www.sciencedirect.com/science/article/pii/S2214157X26007380/pdf",
+    "query": "brake disc temperature field thermal stress high-speed train"
+  },
+  "10.3390/lubricants14070267": {
+    "doi": "https://doi.org/10.3390/lubricants14070267",
+    "doi_clean": "10.3390/lubricants14070267",
+    "title": "Influences of Pearlite Interlamellar Spacing on Wear and Rolling Contact Fatigue Behaviors of Pearlitic Rails on Field Tracks",
+    "pub_date": "2026-07-10",
+    "journal": "Lubricants",
+    "publisher": "Multidisciplinary Digital Publishing Institute",
+    "authors": [
+      "Junjie Fei",
+      "Hongfang Qi",
+      "Bei Yuan",
+      "Minbiao Wan",
+      "L. Q. Zhang"
+    ],
+    "abstract": "As a core load-bearing component for railway vehicles, rails are largely responsible for the safety and stability of train operation, and their service performance is inherently governed by material microstructure. In this study, rails with varied pearlite interlamellar spacing were prepared and laid on field tracks for 8 months of service testing to investigate the influence of pearlite interlamellar spacing on rail wear and rolling contact fatigue (RCF). The results indicate that decreasing pearlite interlamellar spacing facilitated tread work hardening and reduced cumulative wear loss of rails. At the early service stage, rails with coarse pearlite lamellae exhibited earlier RCF crack initiation and longer crack morphologies, while rails featuring finer pearlite lamellae exhibited the latest-occurring crack initiation. With prolonged service duration, wear loss rose continuously, and the tread hardening rate first increased sharply and then tended to gradually become stable. Obvious differences in damage evolution were observed for rails with different pearlite interlamellar spacing. Coarse-lamellar rail suffered sparse short cracks dominated by wear; fine-lamellar rail developed dense fast-growing cracks controlled by RCF; and medium-lamellar rail achieved a relatively good balance between wear and RCF. A competitive relationship exists between wear and RCF during rail service. Reasonable regulation of pearlite interlamellar spacing facilitates a balanced evolution of wear and RCF, which provides a feasible microstructural optimization strategy for improving the service performance and service life of pearlitic rails.",
+    "cited_by": 0,
+    "oa_url": "https://www.mdpi.com/2075-4442/14/7/267/pdf?version=1783684414",
+    "query": "brake disc temperature field thermal stress high-speed train"
+  },
+  "10.62051/ijmee.v8n5.02": {
+    "doi": "https://doi.org/10.62051/ijmee.v8n5.02",
+    "doi_clean": "10.62051/ijmee.v8n5.02",
+    "title": "Asperity-Coupled Flash Heating, Stress Oscillation, and Synergistic Plastic Dissipation in Dual-Roughness Disc-Pad Brake Interfaces",
+    "pub_date": "2026-07-06",
+    "journal": "International Journal of Mechanical and Electrical Engineering",
+    "publisher": null,
+    "authors": [
+      "Pengfei Cui",
+      "Ye Wang"
+    ],
+    "abstract": "To investigate the local flash temperature, stress oscillations, and elastoplastic energy dissipation induced by asperity interactions on both sides of a high-speed train disc brake, a three-dimensional transient thermo-mechanically coupled finite element model of a dual-roughness disc-pad interface was established. A fixed Weierstrass-Mandelbrot fractal morphology was used to evaluate temperature, von Mises stress, thermal penetration depth, thermoelastic power, plastic dissipation, and frequency-domain responses. The peak temperatures of the brake disc and brake pad reached 1409.5 °C and 1571.9 °C, respectively, and the corresponding peak von Mises stresses were 1079.4 MPa and 1024.6 MPa. The dominant stress frequency was 3395.6 Hz, with a relative oscillation amplitude of 312.10%. Plastic power accounted for approximately 32% and 37% of the theoretical input power in the disc and pad, respectively. Misaligned asperity contact and repeated jumps in contact stiffness jointly caused near-surface heat accumulation, high-frequency instability, and synergistic plastic dissipation.",
+    "cited_by": 0,
+    "oa_url": "https://wepub.org/index.php/IJMEE/article/download/6208/6709",
+    "query": "brake disc temperature field thermal stress high-speed train"
+  },
+  "10.3390/lubricants14070259": {
+    "doi": "https://doi.org/10.3390/lubricants14070259",
+    "doi_clean": "10.3390/lubricants14070259",
+    "title": "Finite Element Analysis of Thermal Frictional Contact Characteristics of a Functionally Graded Coated Brake Disc",
+    "pub_date": "2026-06-30",
+    "journal": "Lubricants",
+    "publisher": "Multidisciplinary Digital Publishing Institute",
+    "authors": [
+      "Xiuli Liu",
+      "Changyao Zhang",
+      "Lingfeng Gao",
+      "Jing Liu"
+    ],
+    "abstract": "To address the issues of local high temperatures, thermal stress concentration, and the susceptibility to spalling of homogeneous ceramic coatings in disc brakes under high-frequency thermal–mechanical cyclic loading, this paper proposes a surface design scheme incorporating a functionally graded material (FGM) coating along the thickness direction. A three-dimensional thermal frictional contact model of a graded coated brake disc with continuously varying material properties (silicon carbide/gray cast iron) along the thickness direction is established by developing user subroutines on the Abaqus finite element platform. The effects of exponential, power-law, and trigonometric gradient distributions on the transient temperature and stress fields are systematically compared. The results indicate that the high thermal conductivity silicon carbide coating significantly reduces the disc surface temperature; however, a homogeneous coating induces interfacial thermal stress concentration due to a sudden stiffness mismatch. The graded design effectively mitigates the stress concentration through a smooth transition of material properties. Taking the power-law function (n = 1.5) as an example, this design not only significantly reduces the maximum disc surface temperature but also limits the residual equivalent stress at the end of braking to 245 MPa, which is approximately 24.8% lower than that of the homogeneous coating (325.8 MPa). The study demonstrates that the gradient function exerts a stronger regulatory effect on the stress field than on the temperature field, meaning the two cannot be simultaneously optimized. Nevertheless, exponential functions and power-law functions with small exponents can achieve a favorable balance of thermal–mechanical performance. This research reveals the mechanism by which thickness-direction gradient distributions regulate thermal–mechanical coupling behavior, providing a theoretical basis for the gradient design of thermal fatigue-resistant friction components.",
+    "cited_by": 0,
+    "oa_url": "https://www.mdpi.com/2075-4442/14/7/259/pdf?version=1782825729",
+    "query": "train brake disc thermal cracking fatigue"
+  },
+  "10.3390/ma19132756": {
+    "doi": "https://doi.org/10.3390/ma19132756",
+    "doi_clean": "10.3390/ma19132756",
+    "title": "Polytetrafluoroethylene and Aluminum Powder as an Alternative to Copper in Car Brake Composite Friction Materials—Part 2, Simulation Studies of Braking Process",
+    "pub_date": "2026-06-29",
+    "journal": "Materials",
+    "publisher": "Multidisciplinary Digital Publishing Institute",
+    "authors": [
+      "Andrzej Borawski"
+    ],
+    "abstract": "Currently, most design solutions are disc brake systems, in which, during braking, the rotating disc, along with the wheel, rubs against stationary brake pads, converting kinetic energy into thermal energy released into the atmosphere. Brake pads are made of composite materials. One of the key components is copper. Its presence is crucial and plays a crucial role in friction materials. In this work, an attempt was made to replace copper, which is unfortunately harmful to both the environment and humans, with aluminum powder and polytetrafluoroethylene powder. Samples of the proposed prototype friction materials were manufactured, and their thermal and tribological properties were determined (research described in the previous work). Knowledge of the materials' properties allowed for simulation studies. Calculations were prepared for three different scenarios. The results showed that the heating process using the proposed materials during braking is very similar to that of materials with a conventional composition. Of the materials tested, composition where copper was replaced by polytetrafluoroethylene and aluminum in a 4:1 ratio gave the most promising results. In tests, this material had the lowest maximum brake pad temperature values, which contributes to a reduced risk of fading. Also, by \"pushing\" thermal energy into the brake disc, it contributes to the fastest dissipation of this energy. This suggests that the materials can be used in real-world braking systems.",
+    "cited_by": 0,
+    "oa_url": "https://www.mdpi.com/1996-1944/19/13/2756/pdf?version=1782720416",
+    "query": "train brake disc thermal cracking fatigue"
+  },
+  "10.1088/2053-1591/ae7d99": {
+    "doi": "https://doi.org/10.1088/2053-1591/ae7d99",
+    "doi_clean": "10.1088/2053-1591/ae7d99",
+    "title": "Improved friction and wear properties of resin friction pads against C/C–SiC brake discs with the addition of Al 2 O 3",
+    "pub_date": "2026-06-15",
+    "journal": "Materials Research Express",
+    "publisher": "IOP Publishing",
+    "authors": [
+      "Wenmin Kuang",
+      "Xiang Xiong",
+      "Xin Chu"
+    ],
+    "abstract": "Abstract In the present work, the tribological performances of C/C–SiC ceramic brake disc (CCB) paired three types of organic resin brake pads-low metal (LM), semi-metal (SM), and asbestos-free organic (NAO) suitable for automobiles were compared firstly. Among these three materials, LM exhibits the highest thermal conductivity and coefficient of friction, as well as the lowest wear coefficient. Consequently, it is a more suitable candidate for the friction plate in CCB brake discs. To further improve the performance of LM brake pad, Al 2 O 3 particles were added with the content of 3 wt. %, 5 wt.%, and 7 wt.%, respectively. The effects of Al 2 O 3 content on the friction and wear characteristics of the LM pad at varying braking speeds, pressures, and temperatures were comprehensively studied by a full-size brake dynamometer in accordance with the Society of Automotive Engineers J2522 standard. The results demonstrated that LM brake pads presented the best tribological performance when paired with CCB. The addition of Al 2 O 3 effectively stabilized the friction coefficient within the qualified industrial range of 0.35–0.45, reduced sensitivity to speed, pressure and fading, and significantly enhanced wear resistance. The sample with 3 wt.% Al 2 O 3 achieved the optimal effect: its mass wear was reduced by approximately 79.9%, and the wear of the matched CCB disc was decreased by 52.2%. However, the friction coefficient slightly exceeded the standard at higher Al 2 O 3 contents of 5 wt.% and 7 wt.%.",
+    "cited_by": 0,
+    "oa_url": "https://iopscience.iop.org/article/10.1088/2053-1591/ae7d99/pdf",
+    "query": "carbon ceramic brake disc railway"
+  },
+  "10.1080/17452759.2026.2664360": {
+    "doi": "https://doi.org/10.1080/17452759.2026.2664360",
+    "doi_clean": "10.1080/17452759.2026.2664360",
+    "title": "Machine learning-assisted optimisation of direct energy deposition for high wear-resistant TiC-reinforced coating on CuCrZr surface",
+    "pub_date": "2026-05-12",
+    "journal": "Virtual and Physical Prototyping",
+    "publisher": "Taylor & Francis",
+    "authors": [
+      "Changlin Huang",
+      "Xia Li",
+      "Yu Guo",
+      "Chaoyi Ding",
+      "Zeqi Hu",
+      "Yan Wen",
+      "Lin Hua",
+      "Lechun Xie"
+    ],
+    "abstract": "CuCrZr alloys exhibit excellent properties, including high electrical and thermal conductivity, making them the preferred material for critical electrical conduction and heat dissipation components in extreme environments. To address the low hardness and inadequate wear resistance of copper alloys, an 8wt.% TiC/Ti-6Al-4 V coating was manufactured on CuCrZr alloys via laser powder direct energy deposition (LP-DED). A Gaussian process regression (GPR) model based on Bayesian optimisation precisely constructed an optimisation model linking laser power (p), scanning speed (v), and shear strength. The optimal parameters (p = 1510 W, v = 150 mm/min) for maximum shear strength was obtained and the maximum shear strength reached 91.7 ± 2.7 MPa, consistent with the experimental results. Microstructural analysis showed a graded structure of (TiC/Ti-6Al-4 V)/Cu-Ti transition layer/CuCrZr, which was uniformly distributed with the eutectic and dendritic TiC in (TiC/Ti-6Al-4 V) coating and Cu-Ti transition layer. The electrical conductivity of the coating is retained ∼90% of the substrate, the microhardness was increased by ∼570% due to TiC and Cu-Ti intermetallic compounds (IMCs), and the wear resistance was improved by ∼43%. The wear mechanism changed from the adhesive-fatigue wear to the abrasive wear. This work demonstrates a machine learning (ML) assisted strategy for fabricating high-wear-resistance conductive coatings on CuCrZr alloys.",
+    "cited_by": 0,
+    "oa_url": "https://www.tandfonline.com/doi/pdf/10.1080/17452759.2026.2664360?needAccess=true",
+    "query": "train brake disc thermal cracking fatigue"
+  },
+  "10.1186/s42269-026-01435-6": {
+    "doi": "https://doi.org/10.1186/s42269-026-01435-6",
+    "doi_clean": "10.1186/s42269-026-01435-6",
+    "title": "Development and performance evaluation of eco-friendly, asbestos-free brake pads using doum shell biomaterial",
+    "pub_date": "2026-05-07",
+    "journal": "Bulletin of the National Research Centre/Bulletin of the National Research Center",
+    "publisher": "Springer Science+Business Media",
+    "authors": [
+      "Chidiadi Bethel Mba",
+      "U. H Alozie",
+      "Macdonald Chinyere Sunday",
+      "Isaac Ifeanyi Iwediba",
+      "Kelechi Jude Onyeukwu",
+      "Onyekachi Monday Okafor",
+      "Emmanuel Onyebuchi Iwediba",
+      "Daniel Edem Effiong",
+      "Uzochukwu Frankline Onwuka"
+    ],
+    "abstract": "Abstract The accelerated growth of population and the rise in the number of vehicle owners are expected to create a sharp demand in the global market for brake pads, which will exert an acute demand to substitute asbestos-containing materials. Asbestos, which was previously employed in friction composites, is dangerous and does not withstand hot climates; hence, substitutes with safer ones are required. This paper explores the utilization of doum palm shell (DPS) as an agro-waste that contains silica as a reinforcement in asbestos-free brake pads manufactured using phenolic (PR) and epoxy (EP) binders. DPS is biodegradable, economical, and locally available, and it helps in valorizing waste and recovering resources that are sustainable. Graphite, glass fibre, aluminium oxide, and alkali-treated DPS were used to create brake pads. FTIR analysis showed better bonding, and TGA showed better thermal stability in EP and more char yield with better flame resistance in PR. Compressive strengths of EP samples of 47–77 MPa and impact energies of 4.27–7.09 J/m² were obtained in mechanical tests, compared to 70.12–80.20 MPa and 8.75 J/m² in PR samples. Hardness peaked at 95.6 Hv in S1PR. The tribological analysis showed that PR composites had lower wear levels and increased friction coefficients, while EP had high thermal resistance and lower water absorption (0.098%). The best performance was recorded in S2PR with 20 g DPS and 15 g glass fibre, which had a balance between strength and friction. Phenolic binders outperformed epoxy in tribological criteria, while epoxy had greater heat stability. The results reveal that DPS is a potential reinforcement in the manufacturing process of sustainable brake pads. Future research ought to address fade and recovery behaviour, thermo-mechanical coupling, and long-term durability. Graphical Abstract",
+    "cited_by": 0,
+    "oa_url": "https://link.springer.com/content/pdf/10.1186/s42269-026-01435-6.pdf",
+    "query": "train brake disc thermal cracking fatigue"
+  },
+  "10.62411/tc.v25i3.17418": {
+    "doi": "https://doi.org/10.62411/tc.v25i3.17418",
+    "doi_clean": "10.62411/tc.v25i3.17418",
+    "title": "IoT-Based Early Warning System for Brake Fading Risk Based on the Increase Rate in Temperature and Vehicle Speed",
+    "pub_date": "2026-08-26",
+    "journal": "Techno Com",
+    "publisher": "Nuswantoro Dian University",
+    "authors": [
+      "Raka Pratindy",
+      "Andi Ilham Anggoro",
+      "Rafly Aura Permana Hervianto",
+      "Citra Andini Permatasari",
+      "Noval Syafiq Raihan"
+    ],
+    "abstract": "Brake fading is a critical safety problem caused by excessive heat accumulation on disc brake components during repeated or prolonged braking, leading to a significant reduction in braking force. This research develops an ESP32-based early warning system that monitors disc brake temperature and vehicle speed in real time to detect brake fading risk before a critical condition occurs. The system uses a K-type thermocouple with a MAX6675 module for temperature acquisition and a BN-220 GPS module for speed acquisition, with OLED, LED, and buzzer as local outputs, plus a Telegram bot and web dashboard for remote monitoring. The R&D method was applied, covering design, hardware/firmware implementation, sensor calibration, and road testing on a real vehicle. Calibration results show a thermocouple accuracy of 97.10% (error 2.90%) and a GPS speed-reading accuracy with an average error of 2.75% against the vehicle speedometer. Road tests across six speed variations (20–120 km/h) confirm that brake disc temperature rises proportionally with speed, with the warning indicator correctly switching from green to yellow at the caution threshold and to red with an active buzzer above the critical threshold. The system is expected to serve as a preventive safety tool supporting motor vehicle inspection and testing. Keywords – brake fading, early warning system, disc brake, ESP32, Internet of Things",
+    "cited_by": 0,
+    "oa_url": "https://publikasi.dinus.ac.id/technoc/article/download/17418/6275",
+    "query": "railway brake pad friction wear high speed"
+  },
+  "10.30811/jpl.v24i4.9008": {
+    "doi": "https://doi.org/10.30811/jpl.v24i4.9008",
+    "doi_clean": "10.30811/jpl.v24i4.9008",
+    "title": "Experimental evaluation of Anadara granosa seashell waste as a functional filler in phenolic resin-based composite brake pads",
+    "pub_date": "2026-08-21",
+    "journal": "Jurnal POLIMESIN",
+    "publisher": null,
+    "authors": [
+      "Martinus Heru Palmiyanto",
+      "Febrianto Amri Ristadi",
+      "Kaleb Priyanto",
+      "Adi Nugroho",
+      "Bambang Hari Priyambodo"
+    ],
+    "abstract": "The use of waste-derived fillers in friction materials is being explored to reduce dependence on conventional synthetic constituents in automotive brake pads. This study aims to investigate the potential of Anadara granosa seashell (SS) waste as a functional filler in phenolic resin-based composite brake pads. Shell powder was calcined at 500 °C for 3 hours and characterized by X-Ray Diffraction (XRD). Brake pad specimens containing SS of 20%, 25%, 30%, and 35% shell powder by volume were fabricated and evaluated using the pin-on-disc method. XRD analysis confirmed the formation of a calcite phase (CaCO3) after calcination. The average coefficient of friction increased with shell content, from 0.236 for SS20 to 0.286 for SS35, which was attributed to the abrasive characteristics of the filler. The SS 30 specimen exhibited the most stable friction behavior, with a coefficient of friction of 0.25–0.26. The lowest specific wear rate (3.35 × 10⁻⁸ mm³/N·m) was obtained for SS20, whereas the highest value (6.693 × 10⁻⁸ mm³/N·m) was observed for SS35. The higher wear rate at SS35 was associated with reduced binder content and fiber pullout. Overall, the SS30 composition provided a balance between friction stability and wear resistance under the tested conditions, indicating the potential of Anadara granosa seashell waste as a functional filler for phenolic resin-based brake pad composites.",
+    "cited_by": 0,
+    "oa_url": "https://e-jurnal.pnl.ac.id/polimesin/article/download/9008/6383",
+    "query": "railway brake pad friction wear high speed"
+  },
+  "10.1007/s44245-026-00325-5": {
+    "doi": "https://doi.org/10.1007/s44245-026-00325-5",
+    "doi_clean": "10.1007/s44245-026-00325-5",
+    "title": "Suppression of high frequency brake squeal using a centre slotted pad",
+    "pub_date": "2026-08-12",
+    "journal": "Discover Mechanical Engineering",
+    "publisher": "Springer Science+Business Media",
+    "authors": [
+      "N. Vivekanandan",
+      "K. Rajeswari"
+    ],
+    "abstract": "Abstract Brake squeal remains a critical noise–vibration–harshness (NVH) problem in automotive disc brakes because it arises from friction-induced mode coupling and is highly sensitive to contact, boundary, and operating conditions. This study aims to develop and validate a finite-element-based complex eigenvalue analysis (FE–CEA) workflow for predicting high-frequency squeal and identifying an effective structural countermeasure using a centre-slotted brake pad. A three-dimensional finite element model of a hydraulic disc brake assembly was developed and validated using experimental modal analysis (EMA). The validated model was then used to perform complex eigenvalue analysis after static preloading and contact linearisation. Parametric studies were carried out to examine the effects of friction coefficient and brake pressure, followed by numerical screening of ten rotor and pad geometric configurations. The most effective design was experimentally validated using dynamometer tests under controlled operating conditions. The FE model showed good agreement with EMA results, with rotor mode-shape correlation values of MAC $$\\ge 0.85$$ and an assembled-system frequency mismatch below approximately $$3.5\\%$$ . The parametric study identified a critical friction coefficient near $$\\mu \\approx 0.27$$ for instability onset, while increasing brake pressure mainly amplified the instability growth factor. Among the ten configurations, the 10 mm centre-slotted pad suppressed the dominant unstable mode by weakening rotor–pad mode coupling. Experimental validation at 300 rpm, 4 bar, and $${45}\\,^{\\circ }\\text {C}$$ to $${55}\\,^{\\circ }\\text {C}$$ confirmed that the centre-slotted pad eliminated the 6.31 kHz squeal tone and reduced the peak sound pressure level by more than 20 dB(A) over five repeated tests. The results demonstrate that FE–CEA, when supported by modal and acoustic validation, can be used as an effective screening tool for brake squeal mitigation. The proposed centre-slotted pad provides a practical structural modification for suppressing high-frequency squeal while reducing reliance on trial-and-error prototyping.",
+    "cited_by": 0,
+    "oa_url": "https://link.springer.com/content/pdf/10.1007/s44245-026-00325-5.pdf",
+    "query": "railway brake pad friction wear high speed"
+  },
+  "10.1007/s40534-026-00447-2": {
+    "doi": "https://doi.org/10.1007/s40534-026-00447-2",
+    "doi_clean": "10.1007/s40534-026-00447-2",
+    "title": "In-service surface temperature measurement of tread braked wheels with a novel on-board infrared rugged device",
+    "pub_date": "2026-08-01",
+    "journal": "Railway Engineering Science",
+    "publisher": "Springer Science+Business Media",
+    "authors": [
+      "Gianluca Megna",
+      "A. Bracciali",
+      "A. Francesconi"
+    ],
+    "abstract": "Abstract Temperatures reached on railway wheels tread during braking with composite blocks are responsible for extensive damage unknown when cast iron brake blocks were used. The accurate measurement of wheel tread temperature during braking becomes then fundamental to tune models to estimate thermomechanical damage due to the combined thermal and vertical/longitudinal actions at the wheel/rail contact especially in fully loaded conditions. This measurement is not trivial during service braking, as contact (sliding) thermocouples are not reliable in the long term and conventional infrared sensors in the wavelength range 8–14 μm are not suitable for bright steel surfaces. Moreover, thermal cameras with the correct parameters are expensive and too delicate to be installed even temporarily on a freight wagon bogie frame. A low-cost, non-contact measuring device based on a rugged single-spot pyrometer sensitive to the correct infrared emission wavelength (1.5–1.8 μm) was developed. The pyrometer is mounted on a motorized slider continuously spanning the tread surface for a practically unlimited time. The functionality of a prototype was checked during braking sessions on a homologated brake rig, tuning the actual wheel tread emissivity with the help of specific finite element thermal simulations. The device was then mounted on a Y25 bogie and in-service measurements were performed. The paper describes the development and calibration of the device, concluding with the results of the in-service tests.",
+    "cited_by": 0,
+    "oa_url": "https://link.springer.com/content/pdf/10.1007/s40534-026-00447-2.pdf",
+    "query": "railway brake pad friction wear high speed"
+  },
+  "10.31181/dma412026186": {
+    "doi": "https://doi.org/10.31181/dma412026186",
+    "doi_clean": "10.31181/dma412026186",
+    "title": "Acceleration and Regenerative Braking Energy of Electric Trains: A Review for Energy-Management Decision Making",
+    "pub_date": "2026-07-18",
+    "journal": "Decision Making Advances",
+    "publisher": null,
+    "authors": [
+      "Szabolcs Fischer"
+    ],
+    "abstract": "Optimizing traction energy is central to decarbonizing electrified railways, where two quantities dominate a train's electricity balance: energy consumed during acceleration and recovered during regenerative (recuperative) braking. Both are based on calculations or measurements, yet inconsistent definitions, metering boundaries, and reporting conventions make published values difficult to compare for energy-management decision-making. This paper reviews the possibilities for calculating and measuring electric locomotives and multiple units across 100 publications. A two-axis framework crosses energy type with analytical task, cross-cut by alternating versus direct-current supply and locomotive-hauled versus distributed-traction trains. For acceleration, it covers the multiplicative correction-factor method, effective mass and running resistance formulations, traction-measuring cars, onboard logging, optical character recognition, inertial sensors, and machine learning. For regeneration, it contrasts analytical, simulation-based, and data-driven calculations with onboard, wayside, and hybrid measurements, network receptivity, and usable energy. Measured energy depends strongly on sampling rate and metering boundary; wayside measurements underestimate recovery on direct-current systems; multiple units recover more efficiently than locomotive-hauled trains; and driving style and timetable structure dominate. Representative magnitudes recur: acceleration-energy correction factors of about 1.3 (range ≈1.25–1.5), regenerative-chain efficiencies of roughly 0.70–0.85, and recoverable braking energy of 10–30% of traction energy. The chief obstacle to comparability and reliable decision-making is methodological rather than technological; high-frequency, position-synchronized measurement, multi-train simulation, train-specific efficiency data, and harmonized metrics define best practice.",
+    "cited_by": 0,
+    "oa_url": "https://www.dma-journal.org/index.php/dema/article/download/186/73",
+    "query": "train regenerative braking energy optimization timetable"
+  },
+  "10.26552/com.c.2026.042": {
+    "doi": "https://doi.org/10.26552/com.c.2026.042",
+    "doi_clean": "10.26552/com.c.2026.042",
+    "title": "The Test-Based Evaluation of the Diagnostic Accuracy of Brake Systems in Passenger Cars",
+    "pub_date": "2026-07-10",
+    "journal": "Communications - Scientific letters of the University of Zilina",
+    "publisher": "University of Zulia",
+    "authors": [
+      "Vasyl Ravlyuk",
+      "Juraj Gerlici",
+      "Аlyona Lovska",
+      "Yaroslav Derevianchuk"
+    ],
+    "abstract": "In this article is dealt with the ways of improving the diagnostic accuracy of braking systems of passenger cars, taking into account the operational factors. A diagnostic system that monitors the pneumatic processes and transmits the data in real time has been implemented. The method proposed has provided an increase of reliability from 83.1% to 87.6%.",
+    "cited_by": 0,
+    "oa_url": "http://komunikacie.uniza.sk/doi/10.26552/com.C.2026.042.pdf",
+    "query": "railway brake pad friction wear high speed"
+  },
+  "10.3390/ma19132831": {
+    "doi": "https://doi.org/10.3390/ma19132831",
+    "doi_clean": "10.3390/ma19132831",
+    "title": "A Calibrated Modelling Approach for Predicting Dry Friction Wear of Copper-Free Composite Friction Materials",
+    "pub_date": "2026-07-02",
+    "journal": "Materials",
+    "publisher": "Multidisciplinary Digital Publishing Institute",
+    "authors": [
+      "Grzegorz Mieczkowski",
+      "Andrzej Borawski",
+      "Dariusz Szpica"
+    ],
+    "abstract": "This study presents a calibrated modelling approach for predicting the abrasive wear of copper-free composite friction materials. Four formulations were analysed, including a copper-containing reference material and three experimental compositions in which copper was replaced by different aluminium/polytetrafluoroethylene ratios. Dry ball-cratering tests were performed to determine the apparent wear-rate coefficient under controlled laboratory conditions. The copper-containing reference material showed the lowest wear-rate coefficient, kc = 80.655 × 10−14 m2·N−1, whereas the copper-free formulations reached kc = 111.811 × 10−14 m2·N−1, 98.586 × 10−14 m2·N−1 and 90.579 × 10−14 m2·N−1 for S2, S3 and S4, respectively. Thus, copper replacement increased the apparent wear-rate coefficient by approximately 12–39%, depending on the Al/PTFE ratio. The obtained data were used to develop and compare four calibrated predictive models. Among them, the modified Hertz–Archard model, which included effective hardness and contact-related descriptors, provided the best agreement with the experimental data. This model achieved MAPE = 1.5%, RMSE = 2.181 × 10−14 m2·N−1 and a maximum absolute error of 4.3%, with all predictions within the ±5% error band. The results indicate that the proposed calibration framework can support preliminary screening and ranking of copper-free friction-material formulations under the adopted dry ball-cratering conditions.",
+    "cited_by": 0,
+    "oa_url": "https://doi.org/10.3390/ma19132831",
+    "query": "carbon ceramic brake disc railway"
+  },
+  "10.15802/stp2026/363402": {
+    "doi": "https://doi.org/10.15802/stp2026/363402",
+    "doi_clean": "10.15802/stp2026/363402",
+    "title": "Improvement of Braking Processes for Passenger Trains by Increasing the Energy Efficiency of Locomotive Brakes",
+    "pub_date": "2026-06-29",
+    "journal": "Science and Transport Progress",
+    "publisher": "Dnipropetrovsk National University of Railway Transport named after academician V. Lazaryan",
+    "authors": [
+      "М. І. Капіца",
+      "Д. М. Кислий",
+      "D. V. Bobyr",
+      "A. Y. Desiak",
+      "D. O. Samylyk"
+    ],
+    "abstract": "Purpose. This comprehensive study aims to theoretically calculate and experimentally demonstrate the effectiveness of a new braking system that combines rheostatic braking (RB) with magnetic rail brakes (MRB). The improvement consists in powering the MRB electromagnets not from an external source, but directly from the traction motors (TMs) operating in generator mode during RB. This approach allows for the rational use of energy that is usually dissipated in rheostats. Separately, the article examines the main design and operational shortcomings of the traditional shoe brake on TEP70 series passenger diesel locomotives and scientifically substantiates the feasibility of using MRB in conjunction with a disc brake to improve efficiency and safety. Methodology. A detailed mathematical method has been developed for calculating the braking characteristics of a train under conditions of joint operation of the proposed combined system. The methodology includes the use of refined friction coefficients for a system where the MRB electromagnet functions as an active load, replacing the rheostat, and operates simultaneously with the disc brake. This allows for accurate modeling of the braking system’s behavior at various speeds and under different conditions. Findings. The theoretical calculations performed, which take into account the new, integrated friction coefficient, fully confirmed the technical and economic feasibility of the proposed system. The calculation of the required power generated by the electric motor in generator mode for the guaranteed and efficient power supply of the MRB electromagnets was successfully carried out. Originality. It lies in the conceptual combination of two independent types of brakes, which allows for increased efficiency through integrated energy utilization (optimized energy consumption). This combination allows for a significant increase in the overall efficiency of the train’s braking system, ensures more stable braking, and, critically, substantially reduces the intense wear of brake shoes and the thermal load on the wheel sets. Practical value. Improving the braking system is a direct and significant contribution to enhancing rail transport safety, reducing accidents, and improving traffic safety. Additionally, reduced pad wear leads to savings in rolling stock and lower operating costs. The rational use of energy, which is converted into heat during braking, increases the overall energy efficiency of rolling stock operation.",
+    "cited_by": 0,
+    "oa_url": "https://stp.ust.edu.ua/article/download/363402/351214",
+    "query": "railway brake pad friction wear high speed"
+  },
+  "10.3390/powders5030026": {
+    "doi": "https://doi.org/10.3390/powders5030026",
+    "doi_clean": "10.3390/powders5030026",
+    "title": "A Review of High Wear-Resistant Fe-Based Laser Clad Coatings: Alloy Design, Process Optimization and Post-Treatment",
+    "pub_date": "2026-07-20",
+    "journal": "Powders",
+    "publisher": null,
+    "authors": [
+      "Jianzhi Chen",
+      "Zhihao Han",
+      "Fanmin Shang",
+      "Changshan Zhou",
+      "Liyi Wang"
+    ],
+    "abstract": "High-wear-resistant iron-based clad layers demonstrate substantial application potential in aerospace, automotive, and industrial equipment due to their excellent mechanical properties and extended service life. Laser cladding has emerged as a pivotal technology for the additive manufacturing and repair of critical components, characterized by rapid cooling rates, narrow heat-affected zones, and dense microstructures. However, fabricating high-wear-resistant Fe-based clad layers remains challenging, particularly in achieving a trade-off among hardness, wear resistance, and toughness. Excessively high hardness often compromises toughness, increasing susceptibility to cracking and reducing service reliability, whereas insufficient hardness undermines functional performance and shortens service life. This review synthesizes recent advances in microstructural design, control, and optimization of high-wear-resistant Fe-based clad layers, focusing on powder alloying design, process parameter optimization, and post-cladding strengthening treatments. The strengthening mechanisms and performance characteristics of key alloying elements, specifically Cr, B, Nb, Mo, and Ti, are summarized, and the effects of laser power, scanning speed, and powder feeding rate on the microstructure and properties are systematically discussed. Furthermore, the influence of post-treatment processes, including turning, grinding, ultrasonic rolling, and heat treatment, on wear resistance enhancement is also addressed. Finally, future development directions for laser cladding of high-wear-resistant Fe-based clad layers are proposed.",
+    "cited_by": 0,
+    "oa_url": "https://www.mdpi.com/2674-0516/5/3/26/pdf?version=1784528001",
+    "query": "carbon ceramic brake disc railway"
+  },
+  "10.18245/ijaet.1924457": {
+    "doi": "https://doi.org/10.18245/ijaet.1924457",
+    "doi_clean": "10.18245/ijaet.1924457",
+    "title": "Thermo-kinetic wear regime mapping of C/SiC automotive brake discs: a physics-based model for abrasive–oxidative mechanism transition",
+    "pub_date": "2026-06-22",
+    "journal": "International Journal of Automotive Engineering and Technologies",
+    "publisher": null,
+    "authors": [
+      "Emre Burak Ertuş"
+    ],
+    "abstract": "Carbon fiber reinforced silicon carbide (C/SiC) ceramic brake discs offer superior wear resistance under normal driving conditions yet suffer accelerated material loss at elevated temperatures due to carbon oxidation. This study presents a thermo-kinetic wear model that couples a lumped-capacitance thermal solver with the Archard equation for mechanical (abrasive) wear and Arrhenius kinetics for oxidative wear, using exclusively published material data for short-fibre liquid-silicon-infiltrated (LSI) C/SiC. The contact pressure is derived from the vehicle deceleration through an exact torque balance, ensuring energy conservation between the vehicle kinetic energy and the frictional heat input. Two representative braking scenarios are simulated; a single emergency stop from 130 km/h with 10 m/s² deceleration and a five-cycle winding road scenario from 130 to 60 km/h with 7 m/s² deceleration and 15 s cooling intervals. The emergency stop produces a peak temperature of 210°C and a modelled abrasive wear depth of approximately 0.022 μm. The cyclic scenario induces progressive thermal ratcheting; the oxidation onset temperature (400°C) is first exceeded during the fourth cycle, and by the fifth cycle the peak temperature reaches 474°C with an oxidative wear fraction of 20%. Steady-state wear regime maps in T–v space at 2 MPa reveal that the abrasive-to-oxidative transition occurs in a narrow temperature band of 520–585°C and is nearly velocity-independent. The cycle by cycle analysis demonstrates that the transition from purely abrasive to mixed-mechanism wear occurs within a single additional braking cycle once the onset threshold is crossed, underscoring the importance of the regime maps as predictive design tools for identifying the critical thermal boundary. Sensitivity analysis confirms that the regime boundary shifts by only ≈44 °C over the 1–3 MPa pressure range and is robust to activation energy variations of ±30 kJ/mol.",
+    "cited_by": 0,
+    "oa_url": "https://doi.org/10.18245/ijaet.1924457",
+    "query": "carbon ceramic brake disc railway"
+  },
+  "10.3390/ma19122611": {
+    "doi": "https://doi.org/10.3390/ma19122611",
+    "doi_clean": "10.3390/ma19122611",
+    "title": "Determination of the Effective Parameters for Estimating the Temperature Mode at Braking",
+    "pub_date": "2026-06-17",
+    "journal": "Materials",
+    "publisher": "Multidisciplinary Digital Publishing Institute",
+    "authors": [
+      "A.A. Yevtushenko"
+    ],
+    "abstract": "A methodology for determining two parameters was proposed: the effective depth of heat penetration, and the thickness of the surface layer accumulating a given amount of heat. Explicit formulas allowing estimation of the values of these parameters for a semi-infinite body heated by heat flux with a variable time profile of intensity were obtained. Ten time profiles corresponding to different types of braking were analysed. The obtained results can be used at the design stage to determine the temperature mode and then to select materials for the friction elements of a disc braking system.",
+    "cited_by": 0,
+    "oa_url": "https://www.mdpi.com/1996-1944/19/12/2611/pdf?version=1781699943",
+    "query": "carbon ceramic brake disc railway"
+  },
+  "10.3390/lubricants14050198": {
+    "doi": "https://doi.org/10.3390/lubricants14050198",
+    "doi_clean": "10.3390/lubricants14050198",
+    "title": "Novel Alternative Particle Systems for Managing Friction in the Wheel/Rail Interface",
+    "pub_date": "2026-05-12",
+    "journal": "Lubricants",
+    "publisher": "Multidisciplinary Digital Publishing Institute",
+    "authors": [
+      "William Skipper",
+      "A. Chalisey",
+      "Roger Lewis"
+    ],
+    "abstract": "At present, silica sand particles are used on GB railways for traction enhancement. In this study, novel particle systems with a range of properties were assessed to see if there was potential for particles to be more widely used in friction management. The tests were carried out at representative contact pressures, using the High Pressure Torsion (HPT) approach. Particles were applied to dry, wet and leaf-contaminated interfaces. A strong relationship was found between particle hardness and traction. Particle systems were identified that could be used to lubricate the interface (friction < 0.1) or provide intermediate levels of friction (0.2–0.3), and one that could be used for traction enhancement as an alternative to silica sand (increasing friction to above 0.1 with a leaf layer present).",
+    "cited_by": 1,
+    "oa_url": "https://www.mdpi.com/2075-4442/14/5/198/pdf?version=1778577400",
+    "query": "carbon ceramic brake disc railway"
+  },
+  "10.3390/jcs10040193": {
+    "doi": "https://doi.org/10.3390/jcs10040193",
+    "doi_clean": "10.3390/jcs10040193",
+    "title": "Efficient Prediction and Enhancement in Friction Wear Performance of Synthetic Brake Pads Using Machine Learning",
+    "pub_date": "2026-04-01",
+    "journal": "Journal of Composites Science",
+    "publisher": "Multidisciplinary Digital Publishing Institute",
+    "authors": [
+      "He Xin",
+      "Wangyi Shen",
+      "Feng Ling",
+      "Yushan Wu",
+      "Huan Wang",
+      "Faxiang Qin",
+      "Hua‐Xin Peng",
+      "Peng Xu"
+    ],
+    "abstract": "To tackle traditional synthetic brake pads’ friction instability and performance degradation at high speeds, as well as the costly and time-consuming empirical formula optimization, a multi-stage synergistic optimization (MSSO) framework driven by two-stage machine learning is proposed in this study. The novelty lies in integrating Pearson correlation filtering with Gaussian noise for data enhancement, employing a hybrid sparrow search algorithm-gray neural network model for dataset expansion, and utilizing a red-billed blue magpie optimization-backpropagation neural network for high-precision multi-target prediction. Experimental verification shows that brake pads manufactured using the optimized formulations exhibit improved average friction coefficient and wear rate, with reduced error compared to traditional methods. The friction characterization results of composite brake pads show the features of optimized composite brake pads at the surface microscopic level. This provides an efficient solution for developing lightweight brake materials for high-speed trains.",
+    "cited_by": 2,
+    "oa_url": "https://www.mdpi.com/2504-477X/10/4/193/pdf?version=1775042422",
+    "query": "carbon ceramic brake disc railway"
+  },
+  "10.1007/s44251-025-00114-4": {
+    "doi": "https://doi.org/10.1007/s44251-025-00114-4",
+    "doi_clean": "10.1007/s44251-025-00114-4",
+    "title": "Research status of surface texture suppressing friction induced vibration and noise",
+    "pub_date": "2026-04-01",
+    "journal": "Surface Science and Technology",
+    "publisher": "Springer Science+Business Media",
+    "authors": [
+      "Manhang Wu",
+      "Jiazhe Zhou",
+      "Hossam Zakaria",
+      "Jizhou Kong",
+      "Joseph P. Domblesky",
+      "G. Afsar Hussain",
+      "Hongyu Wei"
+    ],
+    "abstract": "With mechanical systems advancing towards higher speeds, heavier loads and greater precision, the nonlinear friction induced vibration and noise (FIVN) generated at the frictional pair interface has become a critical factor limiting equipment performance. As the energy carrier for the generation and transmission of friction vibration and noise, the performance of the frictional pair interface directly affects the overall stability of the mechanical system. This paper systematically reviews the generation mechanisms of friction vibration and noise, and their correlation with tribological performance and interfacial characteristics. Regarding suppression strategies, it focuses on analyzing the influence of surface texturing regulation on friction, vibration, and noise, along with the underlying mechanisms of these suppression strategies. Concurrently, it categorizes and introduces current mainstream surface texturing fabrication techniques. Finally, based on a summary of existing research on FIVN mechanisms and texturing based suppression, potential future research directions for the study of friction induced vibration and noise mechanisms and the application of surface texturing in FIVN suppression are proposed, aiming to provide insights and a theoretical foundation for research on friction vibration and noise control.",
+    "cited_by": 0,
+    "oa_url": "https://link.springer.com/content/pdf/10.1007/s44251-025-00114-4.pdf",
+    "query": "carbon ceramic brake disc railway"
+  },
+  "10.15282/jmes.20.1.2026.6.0866": {
+    "doi": "https://doi.org/10.15282/jmes.20.1.2026.6.0866",
+    "doi_clean": "10.15282/jmes.20.1.2026.6.0866",
+    "title": "The effect of adding Casuarina equisetifolia fruit powder on the wear, impact strength, and hardness of motorcycle disc brake pad composites",
+    "pub_date": "2026-03-31",
+    "journal": "JOURNAL OF MECHANICAL ENGINEERING AND SCIENCES",
+    "publisher": "Universiti Malaysia Pahang",
+    "authors": [
+      "Nurin Tammima",
+      "Heri Yudiono",
+      "Muhammad Irfan Rifaldi"
+    ],
+    "abstract": "Natural fiber composites are widely studied as an alternative in engineering, especially for tribological applications such as brake pads in the automotive industry. This study analyzes the effect of Casuarina equisetifolia fruit powder on wear, impact strength, and hardness of epoxy matrix brake pads. The research used a true experimental design with a posttest-only control group. The results showed that the 30% CEFP composite was almost equivalent to the control group, with a specific wear value of 8.33×10-4 mm3/kg · m, having a difference of 28.93% from commercial products, an average impact strength value of 2.08×10⁻³ J/mm², a difference of 20.19%, and an average hardness value of 13.4 HV, a difference of 36.04%, which shows potential for low-load automotive applications.",
+    "cited_by": 0,
+    "oa_url": "https://journal.ump.edu.my/jmes/article/download/13035/3950",
+    "query": "carbon ceramic brake disc railway"
+  },
+  "10.3390/mca31040146": {
+    "doi": "https://doi.org/10.3390/mca31040146",
+    "doi_clean": "10.3390/mca31040146",
+    "title": "A Digital Twin for Brake Wear Predictive Maintenance",
+    "pub_date": "2026-08-01",
+    "journal": "Mathematical and Computational Applications",
+    "publisher": "Multidisciplinary Digital Publishing Institute",
+    "authors": [
+      "Luke van Eyk",
+      "Johannes Moes",
+      "B. R. Ellis",
+      "Stephan Schmidt",
+      "P. Stephan Heyns"
+    ],
+    "abstract": "Brake pad wear is governed by coupled thermo-mechanical interactions in which degradation alters braking behaviour. This altered braking behaviour, in turn, affects vehicle dynamics, which, in turn, influences future wear evolution. Existing diagnostic and prognostic approaches typically neglect this dynamics–wear coupling, potentially limiting their ability to accurately predict remaining useful life under evolving operating conditions. This work proposes a digital-twin framework for brake wear prognosis that integrates state estimation, parameter adaptation, and dynamics-aware degradation modelling. The approach combines brake pad volume estimation from vehicle operational data, online identification of the brake wear coefficient through inverse modelling, and forward propagation of degradation using a wear-dependent dynamics model. The proposed digital-twin predictive maintenance framework is evaluated using simulated run-to-failure datasets for a mining load-haul-dumper and compared against data-driven and physics-based predictive maintenance models. Results show that the digital-twin approach improves the accuracy and stability of remaining useful life prediction, particularly under anomalous degradation conditions, and achieves earlier convergence to practically useful predictions. These findings demonstrate that accurate brake wear prognosis requires integrating degradation modelling with vehicle dynamics and online parameter updating. The proposed digital twin provides a practical pathway towards more reliable predictive maintenance in systems where degradation and system behaviour are strongly coupled.",
+    "cited_by": 0,
+    "oa_url": "https://www.mdpi.com/2297-8747/31/4/146/pdf?version=1785572566",
+    "query": "brake disc temperature field thermal stress high-speed train"
+  },
+  "10.3390/math13071022": {
+    "doi": "https://doi.org/10.3390/math13071022",
+    "doi_clean": "10.3390/math13071022",
+    "title": "Fault Detection and Isolation Strategy for Brake Actuation Units of High-Speed Trains Under Variable Operating Conditions",
+    "pub_date": "2025-03-21",
+    "journal": "Mathematics",
+    "publisher": "Multidisciplinary Digital Publishing Institute",
+    "authors": [
+      "Jingxian Ding",
+      "Tianyu Xia",
+      "Xinzhou Wu",
+      "Shize Zheng",
+      "Tianyi Wang"
+    ],
+    "abstract": "The brake system is a key system for the safe operation and stopping of trains. As a core component of brake systems, the brake actuation unit (BAU) is essential for slowing down or stopping trains, and faults in the BAU will affect the safety and efficiency of train operation. In order to detect and locate faults in the BAU in time, a fault detection and isolation (FDI) strategy, based on mutual residuals (MRs), principal component analysis (PCA) and improved reconstruction-based contribution plots (IRBCP), was proposed. Firstly, the structural composition and working principle of the BAU were introduced, and its typical failure modes and effects were analyzed. Secondly, considering that the fault detection threshold is not easy to determine due to the variable operating conditions of the BAU, the steady-state fault feature based on MR was extracted. Thirdly, fault detection and isolation were realized based on PCA and the IRBCP algorithm. Finally, by using the fault injection method, case studies on test-rig experiment data of brake systems were conducted; the fault detection rate was 99% and the effectiveness of the proposed strategy was validated by the test data. The proposed strategy shows fast computing ability, and is suitable for systems with dynamic time-varying and nonlinear characteristics.",
+    "cited_by": 2,
+    "oa_url": "https://www.mdpi.com/2227-7390/13/7/1022/pdf?version=1742552898",
+    "query": "train EBCU fault diagnosis"
+  },
+  "10.55214/25768484.v8i6.3292": {
+    "doi": "https://doi.org/10.55214/25768484.v8i6.3292",
+    "doi_clean": "10.55214/25768484.v8i6.3292",
+    "title": "Investigation of the statistical data on the technical condition of brake equipment components of passenger carriages in operation",
+    "pub_date": "2024-11-25",
+    "journal": "Edelweiss Applied Science and Technology",
+    "publisher": null,
+    "authors": [
+      "Vasyl Ravluk",
+      "Yaroslav Derevianchuk",
+      "Oleksandr Derevyanchuk",
+      "Anna KRYCHUN",
+      "Hanna Kravchenko"
+    ],
+    "abstract": "In the article, a study was conducted on improving the efficiency of braking systems in railway transport. Based on the information obtained regarding the maintenance of passenger cars, an analysis of brake equipment component failures was performed. Key trends and factors determining brake equipment component failures were identified from the collected statistical data for the reporting period. The main brake equipment components with the highest number of failures were highlighted. It was established that a significant portion of transport incidents due to brake failures in passenger cars occurs during operation, negatively impacting traffic safety. The collected data on the failures of electro-pneumatic distributors in passenger cars were systematized using the specialized software package \"STATISTIKA\". The research established that seasonal factors influence the total number of failures. A diagnostic system for the braking equipment of passenger trains was proposed to ensure traffic safety. The diagnostic system allows for the construction and analysis of mathematical models that describe the operational state of the braking equipment of passenger rolling stock as a whole. The diagnostic system enhances the reliability of brake operation, monitors air pressure in the brake line, ensures the inter-repair periods of passenger car components, and reduces the time required to detect failures both en route and during train stops. Recommendations for diagnosing the braking system of passenger trains were developed for continuous inspection and timely identification of failures. Their application will enable the prediction of the lifespan of pneumatic and electro-pneumatic system components in passenger cars, ensure the inter-repair operational periods of cars based on their current technical condition, and enhance traffic safety in railway transport.",
+    "cited_by": 1,
+    "oa_url": "https://learning-gate.com/index.php/2576-8484/article/download/3292/1234",
+    "query": "electro-pneumatic brake valve leakage fault train"
+  },
+  "10.3390/act13040135": {
+    "doi": "https://doi.org/10.3390/act13040135",
+    "doi_clean": "10.3390/act13040135",
+    "title": "A Wear Prediction Framework for Ball-Screw of Electro-Mechanical Brake Unit on Railway Trains",
+    "pub_date": "2024-04-08",
+    "journal": "Actuators",
+    "publisher": "Multidisciplinary Digital Publishing Institute",
+    "authors": [
+      "Tianhe Ma",
+      "Jingjing Weng",
+      "Chun Tian",
+      "Mengling Wu"
+    ],
+    "abstract": "The electro-mechanical brake is a new advancement in railway train braking. Ball-screws are important components of electro-mechanical braking units (EMBUs), and their wear can cause EMBUs to degrade in performance or even fail to function. In this paper, we present a framework for prediction of ball-screw wear with discrete operating conditions as inputs, taking into account the time-varying characteristics of EMBUs. The framework includes determining the contact type, analyzing relative motion, calculating contact deformations, and estimating wear. The contact type is determined based on the quasi-static approach of Hertz theory. A dynamics model using multiple coordinate systems is established to analyze how balls and raceways move in relation to each other. The contact deformations of the ball–raceway contact are determined using numerical calculation. Then, the wear depth increment is calculated using the Archard model. The results of the calculation and the endurance test indicate that the wear on the screw raceway is greater than that on the nut raceway. The effect of velocity is greater than the effect of axial force. The presented calculation framework is reasonable and can be used for predicting EMBU ball-screw wear.",
+    "cited_by": 1,
+    "oa_url": "https://www.mdpi.com/2076-0825/13/4/135/pdf?version=1712570923",
+    "query": "train EBCU fault diagnosis"
+  },
+  "10.1093/iti/liag009": {
+    "doi": "https://doi.org/10.1093/iti/liag009",
+    "doi_clean": "10.1093/iti/liag009",
+    "title": "Simulation Study on Rainy Driving Safety Considering Tire-Road Adhesion",
+    "pub_date": "2026-08-21",
+    "journal": "Intelligent Transportation Infrastructure",
+    "publisher": "Oxford University Press",
+    "authors": [
+      "Lin Feng",
+      "Yunduo Zhao",
+      "Ping Chen",
+      "G Chen",
+      "Kai Hou",
+      "Yiwen Zou",
+      "Dongsheng Zhang",
+      "Lixue Huang",
+      "Bo Tang",
+      "Chao Li",
+      "You Zhan"
+    ],
+    "abstract": "Abstract Hydroplaning induced by water films on wet roads is a major cause of braking failure and loss of vehicle directional stability. To systematically investigate driving safety under rainy conditions, a multi-scale coupled simulation framework was developed. First, a 3D hydroplaning model of a 195/65/R15 radial tire was constructed in ABAQUS using a coupled Euler–Lagrange approach to obtain tire longitudinal force-slip ratio characteristics under different wet conditions. These characteristics were then integrated into a vehicle dynamics model in CarSim, including the vehicle body, suspension, and steering system. Emergency braking scenarios on straight and curved roads were simulated to quantify the effects of water film thickness, initial speed, and curvature radius on braking distance and maximum lateral deviation. Results indicate that braking distance under the water-covered condition increased by 45.8% at 100 km/h, and lateral deviation in curves may pose a significant side-collision risk. Based on the simulations, simulation-derived reference speeds for different curve radii and water-film thicknesses were proposed. The proposed ‘tire-vehicle’ coupled simulation framework provides theoretical support for rainy-day driving safety warnings and road design.",
+    "cited_by": 0,
+    "oa_url": "https://academic.oup.com/iti/advance-article-pdf/doi/10.1093/iti/liag009/70764076/liag009.pdf",
+    "query": "brake Railway Engineering Science"
+  },
+  "10.36948/ijfmr.2026.v08i04.86324": {
+    "doi": "https://doi.org/10.36948/ijfmr.2026.v08i04.86324",
+    "doi_clean": "10.36948/ijfmr.2026.v08i04.86324",
+    "title": "Automatic Pneumatic Bumper & Brake Actuation Before Collision",
+    "pub_date": "2026-08-28",
+    "journal": "International Journal For Multidisciplinary Research",
+    "publisher": null,
+    "authors": [
+      "U Surendra",
+      "S Lingamaiah"
+    ],
+    "abstract": "The technology of pneumatics has gained tremendous importance in the field of work place rationalization and automation from old-fashioned timber works and coalmines to modern machines hops and space robots. It is therefore important that technicians and engineers should have a good Knowledge of pneumatic system, air operated valves and accessories. The aim is to design and develop a control system based an intelligent. Electronically controlled automotive bumper activation system is called \"AUTOMATIC PNEUMATIC BUMPER\". This system is consisting of IR transmitter and Receiver circuit, Control Unit, Pneumatic bumper system. The IR sensor issued to detect the obstacle. There is any obstacle closer to the vehicle (within4feet), the control signal is given to the bumper activation system. The pneumatic bumper system is Used to product the man and vehicle. This bumper activation system is only activated the vehicle speed above 40-50km per hour. This vehicle speed is sensed by the proximity sensor and this signal is given to the control unit and pneumatic bumper activation system.",
+    "cited_by": 0,
+    "oa_url": "https://www.ijfmr.com/papers/2026/4/86324.pdf",
+    "query": "brake Journal of Modern Transportation"
+  },
+  "10.1002/pen.70824": {
+    "doi": "https://doi.org/10.1002/pen.70824",
+    "doi_clean": "10.1002/pen.70824",
+    "title": "Preparation and Properties of Silane‐Modified Polyvinyl Alcohol Fiber Reinforced High‐Wear‐Resistant Rubber Solid Tire Tread Compound",
+    "pub_date": "2026-08-27",
+    "journal": "Polymer Engineering and Science",
+    "publisher": "Wiley",
+    "authors": [
+      "Xi Wang",
+      "Kexin Liu",
+      "Qi Yuan",
+      "Chuansheng Wang",
+      "Dewei Zhang"
+    ],
+    "abstract": "ABSTRACT Rubber‐based solid tire tread compounds suffer from insufficient abrasion resistance, limiting their service life under severe conditions. Here, high‐strength polyvinyl alcohol fiber (PVAF) was surface‐modified with silane coupling agent Si69 to improve its compatibility with a non‐polar NR/SBR matrix. Single‐factor experiments optimized treatment temperature, Si69 concentration, PVAF length, and loading; the optimal levels (70°C, 4 wt% Si69, 3 mm, 2 phr) were then simultaneously applied in a confirmatory experiment to validate performance. Compared with the unfilled compound, the optimized formulation increased crosslink density by 11.2% and extended scorch time by 13.8%, while DIN and Akron abrasion losses decreased by 39.32% and 14.03%, respectively. Wet skid resistance (tan δ at 0°C) remained essentially unchanged, and a modest reduction in rolling resistance (tan δ at 60°C) was observed. These improvements are conditional on the simultaneous use of the four optimized parameters and should not be generalized to all PVAF‐containing formulations. Overall, Si69‐modified PVAF with the optimal parameters proves an effective, cost‐efficient reinforcing filler, offering a new technical pathway for high‐wear‐resistance rubber solid tires.",
+    "cited_by": 0,
+    "oa_url": "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/pen.70824",
+    "query": "brake Chinese Journal of Mechanical Engineering"
+  }
+}

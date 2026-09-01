@@ -126,6 +126,91 @@ def fetch_hn(now):
         log("HN API 失败: %s" % e)
     return items
 
+def fetch_telegram_channels(channels, max_per_channel=15):
+    """从 Telegram 公开频道预览页抓取消息列表。channels: 频道名列表。"""
+    items = []
+    for ch in channels:
+        url = "https://t.me/s/%s" % ch
+        try:
+            req = urllib.request.Request(url, headers={
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+                "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8"
+            })
+            with urllib.request.urlopen(req, timeout=20) as r:
+                html = r.read(500000).decode("utf-8", errors="ignore")
+        except Exception as e:
+            log("Telegram %s 抓取失败: %s" % (ch, e))
+            continue
+        # 按消息块分割：每个消息从 tgme_widget_message_wrap 开始
+        msg_raws = re.split(r'<div class="tgme_widget_message_wrap', html)
+        time_blocks = re.findall(r'<time datetime="([^"]+)"', html)
+        t_idx = 0
+        ch_count = 0
+        for block in msg_raws[1:]:  # 跳过第一个（消息前的页面内容）
+            if ch_count >= max_per_channel:
+                break
+            # 提取消息文本区
+            text_m = re.search(r'<div class="tgme_widget_message_text[^"]*"[^>]*>(.*?)</div>', block, re.S)
+            if not text_m:
+                continue
+            text_html = text_m.group(1)
+            # 提取所有 <a> 的 href 和去标签文本
+            links = re.findall(r'<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>', text_html, re.S)
+            if not links:
+                continue
+            # 第一个链接通常是主文章链接
+            link_url = links[0][0].strip()
+            title_raw = re.sub(r"<[^>]+>", "", links[0][1]).strip()
+            title = re.sub(r"\s+", " ", title_raw).strip()
+            if not title or not link_url or link_url.startswith("?"):
+                # 有些频道第一个链接是标签，取第二个
+                if len(links) > 1:
+                    link_url = links[1][0].strip()
+                    title_raw = re.sub(r"<[^>]+>", "", links[1][1]).strip()
+                    title = re.sub(r"\s+", " ", title_raw).strip()
+                if not title or not link_url:
+                    continue
+            # 跳过 t.me 内部链接（频道自身的消息链接）
+            if "t.me/" in link_url and "/s/" not in link_url:
+                for href, txt in links[1:]:
+                    href = href.strip()
+                    txt_clean = re.sub(r"<[^>]+>", "", txt).strip()
+                    if href and not href.startswith("?") and "t.me/" not in href:
+                        link_url = href
+                        title = re.sub(r"\s+", " ", txt_clean).strip()
+                        break
+                else:
+                    continue
+            # 内容：去标签，拼接整个消息文本
+            content = re.sub(r"<[^>]+>", " ", text_html)
+            content = re.sub(r"\s+", " ", content).strip()
+            # 时间
+            pub_date = ""
+            if t_idx < len(time_blocks):
+                try:
+                    dt = datetime.fromisoformat(time_blocks[t_idx].replace("Z", "+00:00"))
+                    pub_date = dt.strftime("%Y-%m-%d")
+                except Exception:
+                    pub_date = time_blocks[t_idx][:10]
+            t_idx += 1
+            items.append({
+                "title": title[:200],
+                "url": link_url,
+                "content": "Telegram @%s: %s" % (ch, content[:2000]),
+                "publish_date": pub_date,
+                "date_verified": bool(pub_date),
+                "direction": None,
+                "is_preferred": False,
+                "is_explore": False,
+                "source": "telegram",
+                "telegram_channel": ch,
+            })
+            ch_count += 1
+        log("Telegram @%s: %d 条" % (ch, ch_count))
+    log("Telegram 合计 %d 条" % len(items))
+    return items
+
+
 def chunked(seq, n=5):
     for i in range(0, len(seq), n):
         yield seq[i:i + n]
