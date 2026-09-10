@@ -279,6 +279,39 @@ def fetch_telegram_channels(channels, max_per_channel=15):
     return items
 
 
+NODE_BIN = "/Users/qqiang/.hermes/node/bin/node"
+FETCH_ACS_SCRIPT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts", "fetch_acs.mjs")
+
+def fetch_agent_case_share(limit=5):
+    """Agent Case Share AI 新闻日报（MCP 列表 + 页面抓全文，Node 通道）。
+    失败静默返回 []，不阻断其余源。"""
+    items = []
+    try:
+        p = subprocess.run([NODE_BIN, FETCH_ACS_SCRIPT, "--limit", str(limit)],
+                           capture_output=True, text=True, timeout=180)
+        if p.returncode != 0:
+            log("ACS 采集失败(%d): %s" % (p.returncode, (p.stderr or "")[:200]))
+            return items
+        raw = json.loads(p.stdout or "[]")
+    except Exception as e:
+        log("ACS 采集异常: %s" % e)
+        return items
+    for it in raw:
+        items.append({
+            "title": (it.get("title") or "")[:200],
+            "url": it.get("url") or "",
+            "content": it.get("content") or "",
+            "publish_date": it.get("item_date") or "",
+            "date_verified": bool(it.get("item_date")),
+            "direction": "AI",
+            "is_preferred": False,
+            "is_explore": False,
+            "source": "agent_case_share",
+        })
+    log("Agent Case Share AI日报: %d 条" % len(items))
+    return items
+
+
 def chunked(seq, n=5):
     for i in range(0, len(seq), n):
         yield seq[i:i + n]

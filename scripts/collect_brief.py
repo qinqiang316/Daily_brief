@@ -327,6 +327,14 @@ def _main():
     candidates.extend(tg_items)
     src_stats["telegram"] = len(tg_items)
 
+    # Agent Case Share AI 新闻日报（AI 领域优先参考源，2026-09-10 加）
+    acs_items = retrieve.fetch_agent_case_share()
+    for c in acs_items:
+        c["source_label"] = "Agent Case Share AI日报"
+        src_map.setdefault("acs", {"label": "Agent Case Share AI日报", "direction": "AI", "items": []})["items"].append(c)
+    candidates.extend(acs_items)
+    src_stats["agent_case_share"] = len(acs_items)
+
     hn_items = [c for c in candidates if c.get("hn_points") and c.get("url") and "news.ycombinator.com" not in c["url"]]
     hn_items.sort(key=lambda x: x.get("hn_points") or 0, reverse=True)
     for c in hn_items[:rank.HN_FETCH_LIMIT]:

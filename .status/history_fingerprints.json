@@ -1,0 +1,141 @@
+{
+  "dois": [
+    "10.15302/j-sscae-2026.01.007",
+    "10.15302/j-sscae-2026.01.007)",
+    "10.19818/j.cnki.1671-1637.2025.02.001)",
+    "10.19818/j.cnki.1671-1637.2025.02.001",
+    "10.16385/j.cnki.issn.1004-4523.202401020"
+  ],
+  "titles": [
+    "reviewofbrakebywiretechnologyforlowspeedandautonomousvehicles",
+    "researchonwatercoolingcontrolstrategiesandfactorsofbrakediscsundereddycurrentbrakingheatgeneration",
+    "researchoneddycurrentbrakingcontrolstrategyof600kmhhighspeedmaglevtrain",
+    "trainregenerativebrakingenergymanagementstrategy",
+    "vehiclestatebasedcontrolformodernautomotiveplatformsbridgingresearchandindustrialapplications",
+    "我国高速磁浮技术迈向工程实践阶段",
+    "designandanalysisoforthogonalexcitationeddycurrentbrakeforhighspeedtrains",
+    "designofmaglevtraindrivenbyreconnectionelectromagneticlauncher",
+    "developmentofnextgenerationhighspeedrailwayscurrentstatustrendsandsuggestions",
+    "先进轨道交通装备发展成就与未来展望",
+    "轨道不平顺作用下600kmh常导高速磁浮车轨耦合垂向振动分析",
+    "abibliometricmappingstudyonadvancesintheoperationalsafetyofmaglevtrains",
+    "faulttolerantcontrolofgapsensorinhighspeedmaglevvehiclelevitationsystembasedoncharacteristicmodeling",
+    "高速磁悬浮列车技术综述"
+  ],
+  "urls": [
+    "https://www.ncsti.gov.cn/kjdt/kjrd/qtrd_kjrd/202603/t20260327_242171.html",
+    "https://pubs.cstam.org.cn/article/doi/10.16385/j.cnki.issn.1004-4523.202401020",
+    "https://www.sciencedirect.com/science/article/abs/pii/S1474034626002533",
+    "https://www.sciencedirect.com/science/article/pii/S3050814225000251",
+    "https://transport.chd.edu.cn/article/doi/10.19818/j.cnki.1671-1637.2025.02.001",
+    "https://www.engineering.org.cn/sscae/CN/10.15302/J-SSCAE-2026.01.007",
+    "https://www.nature.com/articles/s41598-025-05992-0",
+    "https://www.megaride.eu/wp-content/uploads/2026/01/Vehicle_State-Based_Control_for_Modern_Automotive_Platforms_Bridging_Research_and_Industrial_Applications.pdf",
+    "https://www.sciencedirect.com/science/article/abs/pii/S2352467725001687",
+    "https://www.sciencedirect.com/science/article/pii/S2949867825000911",
+    "https://www.mdpi.com/2032-6653/15/12/581",
+    "https://trid.trb.org/View/1975734",
+    "https://www.sciencedirect.com/science/article/pii/S2214157X25013498",
+    "https://saemobilus.sae.org/papers/design-analysis-orthogonal-excitation-eddy-current-brake-high-speed-trains-2026-99-0513"
+  ],
+  "records": [
+    {
+      "file": "Monthly-Academic-Brief-2026-08.md",
+      "title": "轨道不平顺作用下600 km/h常导高速磁浮车轨耦合垂向振动分析",
+      "url": "https://pubs.cstam.org.cn/article/doi/10.16385/j.cnki.issn.1004-4523.202401020?viewType=HTML",
+      "norm_title": "轨道不平顺作用下600kmh常导高速磁浮车轨耦合垂向振动分析",
+      "norm_url": "https://pubs.cstam.org.cn/article/doi/10.16385/j.cnki.issn.1004-4523.202401020"
+    },
+    {
+      "file": "Monthly-Academic-Brief-2026-08.md",
+      "title": "高速磁悬浮列车技术综述",
+      "url": "https://transport.chd.edu.cn/article/doi/10.19818/j.cnki.1671-1637.2025.02.001",
+      "norm_title": "高速磁悬浮列车技术综述",
+      "norm_url": "https://transport.chd.edu.cn/article/doi/10.19818/j.cnki.1671-1637.2025.02.001"
+    },
+    {
+      "file": "Monthly-Academic-Brief-2026-08.md",
+      "title": "Fault tolerant control of gap sensor in high-speed maglev vehicle levitation system based on characteristic modeling",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S1474034626002533",
+      "norm_title": "faulttolerantcontrolofgapsensorinhighspeedmaglevvehiclelevitationsystembasedoncharacteristicmodeling",
+      "norm_url": "https://www.sciencedirect.com/science/article/abs/pii/S1474034626002533"
+    },
+    {
+      "file": "Monthly-Academic-Brief-2026-08.md",
+      "title": "A bibliometric mapping study on advances in the operational safety of maglev trains",
+      "url": "https://www.sciencedirect.com/science/article/pii/S3050814225000251",
+      "norm_title": "abibliometricmappingstudyonadvancesintheoperationalsafetyofmaglevtrains",
+      "norm_url": "https://www.sciencedirect.com/science/article/pii/S3050814225000251"
+    },
+    {
+      "file": "Monthly-Academic-Brief-2026-08.md",
+      "title": "Development of next-generation high-speed railways: Current status, trends, and suggestions",
+      "url": "https://www.sciencedirect.com/science/article/pii/S2949867825000911",
+      "norm_title": "developmentofnextgenerationhighspeedrailwayscurrentstatustrendsandsuggestions",
+      "norm_url": "https://www.sciencedirect.com/science/article/pii/S2949867825000911"
+    },
+    {
+      "file": "Monthly-Academic-Brief-2026-08.md",
+      "title": "我国高速磁浮技术迈向工程实践阶段",
+      "url": "https://www.ncsti.gov.cn/kjdt/kjrd/qtrd_kjrd/202603/t20260327_242171.html",
+      "norm_title": "我国高速磁浮技术迈向工程实践阶段",
+      "norm_url": "https://www.ncsti.gov.cn/kjdt/kjrd/qtrd_kjrd/202603/t20260327_242171.html"
+    },
+    {
+      "file": "Monthly-Academic-Brief-2026-08.md",
+      "title": "先进轨道交通装备发展成就与未来展望",
+      "url": "https://www.engineering.org.cn/sscae/CN/10.15302/J-SSCAE-2026.01.007",
+      "norm_title": "先进轨道交通装备发展成就与未来展望",
+      "norm_url": "https://www.engineering.org.cn/sscae/CN/10.15302/J-SSCAE-2026.01.007"
+    },
+    {
+      "file": "Monthly-Academic-Brief-2026-08.md",
+      "title": "Design of maglev train driven by reconnection electromagnetic launcher",
+      "url": "https://www.nature.com/articles/s41598-025-05992-0",
+      "norm_title": "designofmaglevtraindrivenbyreconnectionelectromagneticlauncher",
+      "norm_url": "https://www.nature.com/articles/s41598-025-05992-0"
+    },
+    {
+      "file": "Monthly-Academic-Brief-2026-08.md",
+      "title": "Research on Eddy Current Braking Control Strategy of 600 km/h High-Speed Maglev Train",
+      "url": "https://trid.trb.org/View/1975734",
+      "norm_title": "researchoneddycurrentbrakingcontrolstrategyof600kmhhighspeedmaglevtrain",
+      "norm_url": "https://trid.trb.org/View/1975734"
+    },
+    {
+      "file": "Monthly-Academic-Brief-2026-08.md",
+      "title": "Design and Analysis of Orthogonal Excitation Eddy Current Brake for High-Speed Trains",
+      "url": "https://saemobilus.sae.org/papers/design-analysis-orthogonal-excitation-eddy-current-brake-high-speed-trains-2026-99-0513",
+      "norm_title": "designandanalysisoforthogonalexcitationeddycurrentbrakeforhighspeedtrains",
+      "norm_url": "https://saemobilus.sae.org/papers/design-analysis-orthogonal-excitation-eddy-current-brake-high-speed-trains-2026-99-0513"
+    },
+    {
+      "file": "Monthly-Academic-Brief-2026-08.md",
+      "title": "Research on water cooling control strategies and factors of brake discs under eddy current braking heat generation",
+      "url": "https://www.sciencedirect.com/science/article/pii/S2214157X25013498",
+      "norm_title": "researchonwatercoolingcontrolstrategiesandfactorsofbrakediscsundereddycurrentbrakingheatgeneration",
+      "norm_url": "https://www.sciencedirect.com/science/article/pii/S2214157X25013498"
+    },
+    {
+      "file": "Monthly-Academic-Brief-2026-08.md",
+      "title": "Review of Brake-by-Wire Technology for Low-Speed and Autonomous Vehicles",
+      "url": "https://www.mdpi.com/2032-6653/15/12/581",
+      "norm_title": "reviewofbrakebywiretechnologyforlowspeedandautonomousvehicles",
+      "norm_url": "https://www.mdpi.com/2032-6653/15/12/581"
+    },
+    {
+      "file": "Monthly-Academic-Brief-2026-08.md",
+      "title": "Train regenerative braking energy management strategy",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S2352467725001687",
+      "norm_title": "trainregenerativebrakingenergymanagementstrategy",
+      "norm_url": "https://www.sciencedirect.com/science/article/abs/pii/S2352467725001687"
+    },
+    {
+      "file": "Monthly-Academic-Brief-2026-08.md",
+      "title": "Vehicle State-Based Control for Modern Automotive Platforms: Bridging Research and Industrial Applications",
+      "url": "https://www.megaride.eu/wp-content/uploads/2026/01/Vehicle_State-Based_Control_for_Modern_Automotive_Platforms_Bridging_Research_and_Industrial_Applications.pdf",
+      "norm_title": "vehiclestatebasedcontrolformodernautomotiveplatformsbridgingresearchandindustrialapplications",
+      "norm_url": "https://www.megaride.eu/wp-content/uploads/2026/01/Vehicle_State-Based_Control_for_Modern_Automotive_Platforms_Bridging_Research_and_Industrial_Applications.pdf"
+    }
+  ]
+}

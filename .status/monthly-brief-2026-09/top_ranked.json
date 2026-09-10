@@ -1,0 +1,481 @@
+{
+  "rail": [
+    {
+      "title": "Coordinate Decoupling and Gain-Scheduled Control for a Magnetically Levitated Oil-Free Scroll Compressor",
+      "doi": "https://doi.org/10.3390/act15080449",
+      "url": "https://doi.org/10.3390/act15080449",
+      "journal": "Actuators",
+      "pub_date": "2026-08-17",
+      "abstract": "A magnetic-levitation direct-drive oil-free scroll compressor (MLDD-OFSC) eliminates the anti-rotation mechanism to achieve oil-free operation. Still, its large-stroke planar motion introduces strong sensor–DOF coupling and air-gap-dependent stiffness variation that degrade fixed-gain PID performance. This paper proposes a control strategy integrating acceleration feedback linearization, gain-scheduled PID, and coordinate decoupling. An inverse electromagnetic force model is derived to compensate for the nonlinear force–air-gap relationship, linearizing the suspension dynamics. A phase-adaptive gain scheduling law is developed, where gains vary with trajectory phase via a cosine-based mapping. A homogeneous transformation matrix decouples raw sensor signals into independent X, Y, and yaw DOFs. Frequency-domain analysis at three air-gap positions confirms closed-loop stability. Simulations show that the proposed acceleration-linearized gain-scheduled PID (AL_GS_PID) outperforms traditional PID and fixed-gain AL_PID in tracking accuracy. Experiments demonstrate progressive improvement across four configurations—decentralized PID, decoupled PID, fixed-gain AL_PID, and AL_GS_PID—with the full scheme reducing peak errors to 0.043 mm in X and 0.04 mm in Y, corresponding to 74.7% and 33.3% reductions over decentralized PID. These results demonstrate that the proposed strategy effectively addresses coupling and stiffness variation in large-stroke maglev systems under no-load and light-load conditions.",
+      "authors": [
+        "Ce Shi",
+        "Feng Sun",
+        "Jiale Yu",
+        "Xin Li",
+        "Chuan Zhao",
+        "Ran Zhou",
+        "Junjie Jin",
+        "Fangchao Xu",
+        "Rutong Dou",
+        "Ke Li"
+      ],
+      "source": "OpenAlex"
+    },
+    {
+      "title": "Design-Oriented Benchmarking of Sliding Mode Controllers for a Magnetic Levitation System Under Actuator and Sensor Constraints",
+      "doi": "https://doi.org/10.24012/dumf.1888511",
+      "url": "https://dergipark.org.tr/en/download/article-file/5715633",
+      "journal": "DÜMF Mühendislik Dergisi",
+      "pub_date": "2026-07-18",
+      "abstract": "This study examined the control of a single-axis vertical magnetic levitation (MagLev) system under realistic implementation constraints. The system was considered due to its nonlinear dynamics and inherent open-loop instability, which make it suitable for evaluating practical control limitations. Actuator voltage and current saturation, parameter uncertainty, external disturbances, and measurement noise were explicitly incorporated into the analysis. For comparative evaluation, three control strategies were implemented: local linear state feedback control based on an LQR design, fixed-gain sliding mode control, and adaptive sliding mode control. Rather than relying on a single initial condition, controller performance was assessed over ranges of initial positions and velocities using a capture region framework. The effects of parametric uncertainty were systematically investigated through Monte Carlo–based numerical simulations. The results indicated that the linear controller exhibited zero successful captures over the evaluated initial condition grid, while sliding mode controllers achieved restricted but nonzero capture regions under nominal and disturbance conditions. The adaptive mechanism influenced transient behavior but did not substantially expand the feasible operating region due to actuator constraints. Measurement noise was found to degrade controller effectiveness in all cases. These findings emphasize the importance of jointly considering physical constraints and stability properties when evaluating control strategies for magnetic levitation systems.",
+      "authors": [
+        "Ahmet ÇAKANEL",
+        "Mine Menekli",
+        "Yaren Kurum",
+        "Zeynep Yağmur Kurt"
+      ],
+      "source": "OpenAlex",
+      "query": "high-speed maglev suspension levitation control"
+    },
+    {
+      "title": "A sinusoidal-phase positioning method of position and speed measurement for EDS maglev train",
+      "doi": "https://doi.org/10.1088/1361-6501/ae7fa7",
+      "url": "https://iopscience.iop.org/article/10.1088/1361-6501/ae7fa7/pdf",
+      "journal": "Measurement Science and Technology",
+      "pub_date": "2026-06-19",
+      "abstract": "Abstract The electrodynamic suspension magnetic levitation train (EDS Maglev train) is a high-speed transportation mode with speed up to 600 km h −1 . In maglev operation, developing low-cost and accurate position and speed measurement systems is crucial for ensuring train traction control and automatic operation, especially in large-scale line construction. Therefore, a novel method for measuring position and speed is proposed in this study, which exploits the inherent periodic characteristics of levitation coils already installed along the trackside, thereby eliminating the need for additional infrastructure and significantly reducing cost. The circuit equations are established to model the inductive coupling between ground and onboard coils, and the mutual inductance matrix is calculated based on these equations to determine the receiving circuit output. The output signal is processed by the Sinusoidal-Phase Positioning Method proposed in this paper. This method works by concatenating signals from two adjacent coils to form a new cycle and eliminating the third harmonic through differential coils, position estimation is finally accomplished by exploiting the phase relationship of the adjacent coil signals. The proposed method has been validated through experimental testing, and the results show that the positioning error is only 5.2 mm. The experimental results are consistent with the simulation calculation, with a maximum deviation of only 10.3%, thus confirming the feasibility of achieving accurate and economically efficient speed measurement and positioning.",
+      "authors": [
+        "Shuai Liu",
+        "Hongze Xu",
+        "Chuyan Deng",
+        "Yuzhe Zhang",
+        "Jiaxin Zhang"
+      ],
+      "source": "OpenAlex",
+      "query": "high-speed maglev suspension levitation control"
+    },
+    {
+      "title": "Research on PLG System Characteristics of EDS Superconducting Electrodynamic Maglev Train",
+      "doi": "https://doi.org/10.16037/j.1007-869x.20240674",
+      "url": "https://doi.org/https://doi.org/10.16037/j.1007-869x.20240674",
+      "journal": "DOAJ (DOAJ: Directory of Open Access Journals)",
+      "pub_date": "2026-08-01",
+      "abstract": "ObjectiveThe PLG (propulsion, levitation, and guidance) system of the superconducting electrodynamic maglev train features non-contact operation, low energy consumption, high speed and high reliability. It has become an important structural form of new generation high-speed maglev transportation system, holding great theoretical research significance and promising engineering application prospects. Therefore, it is necessary to conduct systematic and in-depth research on this system. MethodThe technical principles of the superconducting electrodynamic maglev train are introduced, and the circuit model of the PLG magnetic levitation system composed of superconducting and track coils are analyzed. Based on circuit and electromagnetic field theories, the energy method is adopted to calculate the PLG forces, including traction force, suspension force, and guidance force during train operation. In accordance with Neumann's formula, the numerical expression of mutual inductance between superconducting coils and track coils varying with train positions is derived, and a magnetic field-circuit-motion coupling model for the PLG maglev system is further established. With the coupling model, the inductive coupling factor between superconducting coils and track coils of the PLG system is investigated, along with the variation characteristics of multi-directional mutual inductance against the lateral displacement offset and vertical displacement of the train. The dynamic variation rules of PLG traction force, suspension force, and guidance force during train operation are also analyzed. Result & Conclusion The research results show that the PLG superconducting electrodynamic maglev system retains the characteristics of conventional superconducting electrodynamic maglev systems, and exhibits superior performance in terms of PLG.",
+      "authors": [
+        "Juanjuan Zhang",
+        "Xiaonong WANG"
+      ],
+      "source": "OpenAlex"
+    },
+    {
+      "title": "Vertical Vibration Reduction of Maglev Vehicles Using Nonlinear Model Predictive Control",
+      "doi": "https://doi.org/10.1002/pamm.70167",
+      "url": "https://onlinelibrary.wiley.com/doi/pdfdirect/10.1002/pamm.70167",
+      "journal": "PAMM",
+      "pub_date": "2026-07-30",
+      "abstract": "ABSTRACT This work presents a novel nonlinear model predictive control (NMPC) strategy for high‐speed Maglev vehicles that explicitly incorporates mechanical suspension dynamics into the control model. Unlike conventional approaches, which often neglect the interaction between levitation magnet and car body motion, the proposed method enables predictive vibration mitigation by modeling both electromagnetic forces and suspension behavior. This integrated approach significantly improves passenger comfort and ride quality by reducing vertical oscillations caused by track irregularities. Moreover, it allows for a more effective tuning of the trade‐off between precise air gap tracking and ride comfort. Simulations based on a detailed multibody model of the Transrapid demonstrate that the method outperforms existing controllers in vibration suppression, making it a promising solution for future high‐speed Maglev applications.",
+      "authors": [
+        "Mario Hermle",
+        "Arnim Kargl",
+        "Peter Eberhard"
+      ],
+      "source": "OpenAlex",
+      "query": "maglev vehicle-track dynamic interaction"
+    },
+    {
+      "title": "Comparative Study on Magnetic Force Characteristics of Permanent Magnet Electromagnetic Hybrid Suspension and Electromagnetic Suspension for Maglev Trains",
+      "doi": "https://doi.org/10.16037/j.1007-869x.20240770",
+      "url": "https://doi.org/https://doi.org/10.16037/j.1007-869x.20240770",
+      "journal": "DOAJ (DOAJ: Directory of Open Access Journals)",
+      "pub_date": "2026-08-01",
+      "abstract": "ObjectiveDuring the operation of EMS (electromagnetic suspension) maglev trains, the electromagnets carry large energizing currents, leading to high energy consumption and severe heat generation. The permanent magnet - electromagnetic hybrid suspension technology is expected to address such problems. Therefore, it is necessary to conduct a comparative study on the magnetic force characteristics of the above two maglev modes to clarify the performance of the hybrid suspension system in terms of levitation force, guidance force, and other aspects. MethodBased on the principles of hybrid suspension and EMS, the theoretical model of the electromagnetic field is derived, and a nonlinear finite-element simulation model is established. Under different suspension gaps and excitation currents, the variations of suspension force in the two maglev modes are investigated. When the maglev vehicle undergoes different lateral displacements, the variations of guidance force in the two modes are studied. Finally, the performance differences in the characteristics of suspension force and guidance force, and stability control between the two modes are analyzed in detail. Result & Conclusion Under the same rated suspension mass, the required excitation current of hybrid suspension is significantly lower than that of EMS, which enables effective control of system energy consumption and heating. The suspension force of hybrid suspension mode exhibits smaller negative stiffness, and varies more gently with the suspension gap change. However, its lower current sensitivity is unfavorable for stable control of the levitation system. There is little difference in the suspension stability between the two modes at lower train speed. With the increase of the train speed, the EMS system demonstrates better suspension stability. The guidance force characteristics of both hybrid suspension and EMS are basically consistent. The guidance force rises with the increase of the vehicle lateral displacement, while the guidance stiffness gradually decreases due to magnetic flux leakage of the system.",
+      "authors": [
+        "Weifeng ZHANG",
+        "Wenfeng Cai",
+        "Lianjun HU"
+      ],
+      "source": "OpenAlex",
+      "query": "high-speed maglev suspension levitation control"
+    },
+    {
+      "title": "SOVEREIGN Project Genesis: SUBTERRANEAN VORTEX COAL BATTERY (SVCB) – System Architecture v1.0 Solid-State Geological Thermal Storage & Autonomous Energy Field Mesh",
+      "doi": "https://doi.org/10.5281/zenodo.21411356",
+      "url": "https://doi.org/10.5281/zenodo.21411356",
+      "journal": "Zenodo (CERN European Organization for Nuclear Research)",
+      "pub_date": "2026-07-17",
+      "abstract": "The Subterranean Vortex Coal Battery (SVCB) is an open-hardware, solid-state geothermal energy storage system designed to replace extractive underground coal gasification (UCG). Instead of burning fossil reserves, the system leverages the massive thermal mass and ultra-low thermal conductivity of undisturbed, deep compressed coal seams to act as a permanent natural insulation jacket. Intermittent surface renewable energy—harvested by maglev wind turbines and vacuum-sealed solar thermal pods—is shunted underground into an array of vertical boreholes. These boreholes contain a retrievable, dual-walled vacuum capsule housing an interlocking basalt heat core, micro-dimpled carbon nanofiber (CNF) vortex tubes, and triadic micro-TEG/TEC/transducer meshes. Power is generated solid-state via the Seebeck effect, achieving exponential efficiency in remote, sub-zero climates where extreme thermal gradients exist between the heated core and the freezing permafrost. The architecture features an integrated \\(N+2\\) redundant neuromorphic smart chip matrix running analog edge-voting logic connected to an atmospheric/geological sensor array. This allows the system to predict and dynamically intercept extreme weather events. During intense storms, the destructive energy of lightning strikes and hurricane force winds is automatically converted via transducers and TEGs into a localized current that polarizes a surface iron-ceramic shielding coat. This creates a hard, self-amplifying Faraday shield that hardens proportionally to the intensity of the storm. To eliminate heavy onsite machinery and wear-and-tear, the permanent well-casing integrates electromagnetic linear coils, enabling hands-free, levitated extraction and drop-in, plug-and-play component sleeve upgrades. Capable of centuries of continuous operation without carbon emissions or chemical degradation, the SVCB offers a resilient blueprint for planetary baseload grid stability. Comprehensive Taxonomy & Indexing Keywords Core Technology & Physics Subterranean Thermal Energy Storage (STES) Thermoelectric Generation (TEG) Thermoelectric Cooling (TEC) The Seebeck Effect The Peltier Effect Direct Piezoelectric Effect Inverse Piezoelectric Effect Magnetostriction Thermal Gradient (\\(\\Delta T\\)) Thermal Conductivity (\\(k\\)) Specific Heat Capacity (\\(c_{p}\\)) Solid-State Energy Storage Geothermal Ground Loops Advanced Materials & Nanotechnology Carbon Nanofibers (CNF) Dragonfly Voronoi Mesh Iron-Carbonyl Ceramic Matrix Polarizable Smart Armor Ferroelectric Composites Magnetorheological Braking Spider-Silk Aerogel Diamond-Tungsten Vacuum Ceramic Skin Gallium Fluid Bridges Self-Healing Vitrimers Dielectric Insulators Mechanical & Civil Engineering Borehole Heat Exchangers (BHE) Directional Drilling / Well Digging Hermetic Vacuum Sealing Double-Walled Outer Casing Electromagnetic Linear Actuators Maglev Frictionless Levitation Plug-and-Play Modular Core Geodesic Interlocking Basalt Micro-fluidic Boundary Layer Disruption Helical Vortex Flow Channels Computing & Cyber-Physical Automation \\(N+2\\) Triple Modular Redundancy (TMR) Neuromorphic Edge Intelligence Hardware Voting Gates Asymmetric Operating Systems Predictive Atmospheric Sensor Array Infrasound Micro-Barometers Electrostatic Field Mills Analog Computing Circuits Cyber-Physical Infrastructure Protection Environmental Science & Energy Grid Economics Zero-Emission Coal Utilization Underground Coal Gasification (UCG) Alternative Carbon Capture, Utilization, and Storage (CCUS) Bypass Baseload Renewable Stabilization Seasonal Thermal Energy Storage (STES) Permafrost Thermal Damming Cryogenic Infrastructure Resiliency CERN Open Hardware License (CERN-OHL-S-2.0) Levelized Cost of Storage (LCOS) Optimization Zero Direct-Carbon Grid Assets Sovereign",
+      "authors": [
+        "David Michael Seagal"
+      ],
+      "source": "OpenAlex"
+    },
+    {
+      "title": "Effect of magnet inclination angle on stability and vibration characteristics of permanent magnet inclined levitation systems",
+      "doi": "https://doi.org/10.1177/13835416261470510",
+      "url": "https://doi.org/https://doi.org/10.1177/13835416261470510",
+      "journal": "International Journal of Applied Electromagnetics and Mechanics",
+      "pub_date": "2026-07-29",
+      "abstract": "Permanent magnet levitation (PML) systems in maglev transportation and logistics generally exhibit transverse negative stiffness, insufficient self-stability, and poor oscillation self-attenuation. To tackle these issues, this study proposes a permanent magnet inclined levitation (PMIL) system, with the permanent magnet (PM) inclination angle as a key parameter. An analytical magnetic force model considering the PM inclination angle is developed, and the dynamic equations are derived. Through eigenvalue analysis, static characteristic analysis, and free/forced/random vibration simulations, the system’s dynamic response laws and nonlinear evolution mechanisms are revealed. Simulations compare dynamic responses of nonlinear and linearized models and evaluate anti-disturbance performance under random excitation. Results show that the inclination angle, levitation gap, and transverse offset jointly determine nonlinear force behaviors. Key parameters, such as system mass and equivalent stiffness coefficients, have critical thresholds that trigger stability transitions. Under small disturbances, the nonlinear model shows slower vibration decay and multi-frequency peaks than the linearized model. Frequency responses exhibit DOF-dependent characteristics: the levitation direction exhibits full-band amplitude variations, while lateral and roll directions only show local differences in the resonant band. Notably, increasing the PM inclination angle monotonically enhances system stability and vibration convergence, with anisotropic regulatory effects. However, the applicability of the linearized model declines significantly as the inclination angle rises, being only valid for small angles. This work establishes a theoretical framework for understanding the nonlinear dynamic behavior of PMIL systems, clarifying the regulatory mechanism of PM inclination angle for system stability and defining the applicable boundaries of the linearized model.",
+      "authors": [
+        "Jing Lü",
+        "Weihua Ma",
+        "Miao Li",
+        "Yaqun Ma"
+      ],
+      "source": "OpenAlex"
+    },
+    {
+      "title": "3D HTS equivalent magnetic susceptibility model and its application in maglev systems",
+      "doi": "https://doi.org/10.1088/1361-6668/ae83e5",
+      "url": "https://iopscience.iop.org/article/10.1088/1361-6668/ae83e5/pdf",
+      "journal": "Superconductor Science and Technology",
+      "pub_date": "2026-06-29",
+      "abstract": "Abstract High-temperature superconducting (HTS) maglev boasts advantages such as self-stabilization, energy efficiency, and environmental friendliness, and thus making it promising for applications in rail transit, superconducting bearings, and superconducting motors. Equivalent magnetic susceptibility is an important electromagnetic property of HTS bulks. In this paper, the functional relationship describing the influence of magnetic field on the equivalent magnetic susceptibility of HTS bulks is derived, and a three-dimensional mechanical calculation model for HTS bulks that avoids solving for currents is established. By establishing a controllable magnetic field environment, research is conducted on the influence of the direction and magnitude of the magnetic field on the magnetic susceptibility of HTS bulks. The results show that within the range of magnetic fields for HTS maglev engineering applications, there is a logarithmic functional relationship between the equivalent magnetic susceptibility and the magnetic field intensity, and an angle-dependent fitting relationship between the equivalent magnetic susceptibility and the magnetic field direction. Then, the magnetic susceptibility model and the three-dimensional force calculation model are verified through experiments. Compared with the existing J c model, the application of the magnetic susceptibility model to HTS magnetic force calculation can significantly reduce the computation time. Furthermore, an intelligent iterative optimization program based on a genetic algorithm was developed, achieving a 3.6% improvement in levitation force. This study not only derives the equivalent magnetic susceptibility of HTS bulks but also provides theoretical guidance for the optimization of magnetic fields in HTS maglev systems.",
+      "authors": [
+        "Mayin Si",
+        "Boyi Zhao",
+        "Zigang Deng",
+        "Jun Zheng"
+      ],
+      "source": "OpenAlex",
+      "query": "maglev vehicle-track dynamic interaction"
+    },
+    {
+      "title": "Event-Triggered Prescribed Performance Control for Maglev Systems Subject to Multiple Constraints",
+      "doi": "https://doi.org/10.3390/e28080934",
+      "url": "https://doi.org/10.3390/e28080934",
+      "journal": "Entropy",
+      "pub_date": "2026-08-20",
+      "abstract": "Maglev trains are susceptible to various types of operational challenges, including track irregularities, load variations, and actuator faults. It is evident that these factors can compromise suspension performance and even pose a serious risk to operational safety. This paper proposes a prescribed performance event-triggered fault-tolerant control method for the electromagnetic suspension system of a maglev train subject to multiple constraints. A projection-based adaptive extended state observer is designed to estimate the unknown gain caused by actuator faults and load variations, as well as the external disturbance. In light of the disparity in upper and lower safety margins inherent to the suspension gap error, arising from track irregularities, an asymmetric prescribed performance function and an error transformation are devised to ensure that the gap tracking error perpetually complies with the asymmetric prescribed performance constraint. In addressing the issue of rapid variations in the suspension gap, the vertical velocity is also constrained through the implementation of prescribed performance, resulting in a joint constraint framework that encompasses both the gap tracking error and the vertical motion. A dynamic event-triggered mechanism has been incorporated into the backstepping design with a view to reducing unnecessary control updates under limited communication resources, while Zeno behavior has been excluded from the closed-loop system. Within this framework, a dynamic gain adjustment mechanism with an explicitly bounded rate of variation is further developed to achieve smoother gain adaptation. The uniform ultimate boundedness of all closed-loop signals is demonstrated through Lyapunov stability analysis under the prescribed multiple constraints. The efficacy of the proposed method is demonstrated through comparative simulation results.",
+      "authors": [
+        "Chenglong Zhu",
+        "Xiaolong Chen",
+        "Xinming Guo",
+        "Wei Sun"
+      ],
+      "source": "OpenAlex"
+    }
+  ],
+  "brake": [
+    {
+      "title": "Fabrication Technology of SiC Particle Reinforced Aluminum Matrix Composite Brake Discs for High-Speed Trains Research Progress",
+      "doi": "https://doi.org/10.62051/ijmsts.v5n4.05",
+      "url": "https://ojs.ijmsts.org/index.php/IJMSTS/article/download/6232/6706",
+      "journal": "International Journal of Materials Science and Technology Studies",
+      "pub_date": "2026-08-27",
+      "abstract": "With low density, high specific strength, favorable thermal conductivity and wear resistance, SiC particle‑reinforced aluminum matrix composites are highly promising candidate materials for lightweight brake discs of high‑speed trains. This paper summarizes the fundamental theories, various preparation technologies and existing engineering challenges of brake discs made from such composites. It illustrates strengthening mechanisms including load transfer, thermal mismatch and dislocation obstruction, and analyzes the influences of SiC/Al interfacial reactions, particle agglomeration and pore defects on the thermo‑mechanical fatigue, fracture and wear properties of materials. The control essentials, advantages and disadvantages, as well as engineering adaptability of processes such as powder metallurgy, stir casting, pressure infiltration, friction stir processing and additive manufacturing are compared. It is indicated that stir casting is suitable for large‑size components; friction stir processing can construct gradient wear‑resistant microstructures; dual‑configuration microstructures and particle surface coatings can achieve synergistic improvement of strength and ductility. Current material applications mainly face bottlenecks including difficult particle dispersion, formation of interfacial brittle phases, initiation of thermal fatigue cracks, and conflicts between manufacturing scale and cost. The research demonstrates that brake discs require coordination between material microstructure regulation and structural thermo‑mechanical coupling design, which provides references for subsequent process optimization and engineering development of SiCp/Al brake discs for high‑speed trains.",
+      "authors": [
+        "Xiangling Wang",
+        "Yuan Wang"
+      ],
+      "source": "OpenAlex",
+      "query": "high-speed train brake disc thermal fatigue wear"
+    },
+    {
+      "title": "AI-Driven Hybrid Battery–Supercapacitor Systems for Electric Vehicles: Performance Analysis and Opportunities",
+      "doi": "https://doi.org/10.3390/wevj17070380",
+      "url": "https://www.mdpi.com/2032-6653/17/7/380/pdf?version=1784726200",
+      "journal": "World Electric Vehicle Journal",
+      "pub_date": "2026-07-22",
+      "abstract": "The rapid adoption of electric vehicles (EVs) has intensified the demand for advanced energy storage technologies capable of delivering high energy density, high power density, enhanced safety, and extended service life. Although lithium-ion batteries remain the dominant energy storage technology for EVs, their limited power capability, thermal degradation, and accelerated aging under high transient loads constrain vehicle performance. Battery–supercapacitor hybrid energy storage systems (HESSs) have emerged as a promising solution by combining the high energy density of batteries with the high-power density and rapid charge–discharge capability of supercapacitors. However, the increasing complexity of HESS architecture requires intelligent energy management strategies to optimize power allocation, battery protection, thermal regulation, and overall system efficiency. Existing review papers primarily address individual aspects of HESS architecture, battery management, or artificial intelligence (AI)-based control, leaving a lack of a unified review integrating these topics. This paper addresses this gap by reviewing 181 publications published between 2020 and 2026, covering HESS architectures, conventional and AI-driven energy management strategies, machine learning, deep learning, reinforcement learning, battery state estimation, diagnostics, prognostics, thermal management, and fault diagnosis. The reviewed studies are critically analyzed to assess the impact of AI on battery lifetime, regenerative braking, charging performance, thermal behavior, and energy efficiency. The review further identifies emerging research directions, including explainable AI, digital twins, federated learning, edge intelligence, vehicle-to-grid integration, and cybersecurity-aware energy management. The findings indicate that AI-based approaches generally demonstrate greater adaptability, predictive capability, and battery protection than conventional methods under dynamic operating conditions, although challenges related to computational complexity, real-time implementation, data availability, explainability, cybersecurity, and standardization remain significant barriers to large-scale deployment.",
+      "authors": [
+        "Stella N. Arinze",
+        "Augustine O. Nwajana"
+      ],
+      "source": "OpenAlex",
+      "query": "train regenerative braking mechanical braking coordination"
+    },
+    {
+      "title": "Design and Experimental Evaluation of an Arduino-Based Regenerative Braking System for Electric Vehicles",
+      "doi": "https://doi.org/10.66710/ijersem.v2i8.1",
+      "url": "https://ijersem.com/wp-content/uploads/2026/08/12803.pdf",
+      "journal": "International Journal of Emerging Research in Science Engineering and Management",
+      "pub_date": "2026-08-04",
+      "abstract": "Regenerative braking is an effective technique for improving the energy efficiency of electric vehicles by recovering a portion of the kinetic energy that is otherwise dissipated as heat during braking. This paper presents the design and implementation of an Arduino-based regenerative braking system developed as a low-cost prototype for demonstrating the fundamental principles of energy recovery in electric vehicles. The proposed system consists of an Arduino Uno, a DC BO motor, a motor driver, a 12 V rechargeable battery, an LCD display, LEDs, and a regulated power supply. During normal operation, the motor drives the wheel assembly, while during braking it functions as a generator to convert rotational kinetic energy into electrical energy, which is stored in the battery. The Arduino controller manages the transition between driving and braking modes and provides real-time monitoring of system operation through the display unit. Experimental evaluation confirms the successful recovery and storage of braking energy while demonstrating stable system operation under different braking conditions. The developed prototype provides a simple, economical, and educational platform for understanding regenerative braking technology and its role in enhancing energy utilization, reducing energy losses, and promoting sustainable electric vehicle development. The proposed system can serve as a foundation for future studies involving intelligent braking control, battery management, and optimized energy recovery strategies.",
+      "authors": [
+        "V Vamsi Krishna",
+        "A Venkatesh",
+        "P Sreenivasulu",
+        "M Talpagiri"
+      ],
+      "source": "OpenAlex"
+    },
+    {
+      "title": "Human centered artificial intelligence for smart city traffic coordination",
+      "doi": "https://doi.org/10.1007/s44163-026-02062-w",
+      "url": "https://link.springer.com/content/pdf/10.1007/s44163-026-02062-w.pdf",
+      "journal": "Discover Artificial Intelligence",
+      "pub_date": "2026-08-28",
+      "abstract": "Abstract Smart city traffic systems increasingly rely on edge intelligence and distributed learning to coordinate vehicles and infrastructure. However, many existing approaches prioritize system-level optimization while overlooking how humans perceive, interpret, and respond to automated decisions, limiting efficiency and real-world adoption. This paper proposes a human-centric edge intelligence framework that integrates federated reinforcement learning (FRL) with interpretable human–machine interfaces for urban traffic coordination. Vehicles and signalized intersections operate as decentralized learning agents, collaboratively optimizing traffic flow while retaining data locally. Human-centered constraints are embedded directly into the learning process through reward design and action-space restrictions, ensuring that system decisions can be expressed as clear, actionable guidance via augmented reality head-up displays and voice prompts. We present a layered edge architecture and a smart-intersection scenario to demonstrate how sensing, learning, communication, and human interaction are jointly coordinated. A simulation-based evaluation pipeline using SUMO and CARLA is introduced to examine corridor-level traffic dynamics, visual perception scenarios, and human-facing advisory interactions. SUMO is used for microscopic traffic-flow and signal-control modeling, while CARLA supports visual validation of safety-critical events and interface-level driver advisories. A dedicated SUMO–CARLA workflow diagram is provided to clarify how traffic-state generation, FRL decision-making, visual scenario reconstruction, and HMI advisory evaluation are connected. To ground the design in real-world evidence, we additionally report a descriptive trajectory analysis of the public NGSIM Peachtree Street dataset; this analysis characterizes speed, acceleration, and following-headway behavior and motivates the proposed reward and advisory-trigger design, but it is a descriptive/motivational analysis of existing trajectory data rather than an evaluation of the proposed FRL framework. This paper is explicitly positioned as a conceptual and methodological framework contribution: no FRL policy has been trained, no SUMO–CARLA simulation has been executed, and no quantitative comparison or ablation results are reported. These experiments constitute the planned next phase of this research program. Because the framework is part of an ongoing security-sensitive smart-city research effort, deployment-specific control interfaces and protected configuration details are reported at an abstracted level, while the non-sensitive simulation structure, evaluation metrics, and agent-level learning process are described for reproducibility. The proposed framework provides a practical pathway for evaluating intelligent mobility systems that balance decentralized optimization, privacy preservation, interpretability, scalability, and human-aligned operation.",
+      "authors": [
+        "Swarnamouli Majumdar",
+        "Anjali Awasthi",
+        "Lorant Andras Szolga"
+      ],
+      "source": "OpenAlex",
+      "query": "train braking control algorithm"
+    },
+    {
+      "title": "Physics-guided modeling and semi-active control of magnetorheological actuators for quadruped locomotion",
+      "doi": "https://doi.org/10.1088/1361-665x/ae9e72",
+      "url": "https://iopscience.iop.org/article/10.1088/1361-665X/ae9e72/pdf",
+      "journal": "Smart Materials and Structures",
+      "pub_date": "2026-08-25",
+      "abstract": "Abstract Magnetorheological actuators (MRAs) provide current-dependent resistance that can be used for load support and damping in legged robots, but their nonlinear, hysteretic, and history-dependent torque response makes them difficult to model and schedule during locomotion. This paper presents MRA-aware Semi- Active Locomotion (MRA-SAL), a physics-guided modeling and control framework for MR_Go-SAL, a quadruped robot equipped with calf-joint MRAs. MRA- SAL separates the semi-active function of the MRA into current-regulated stance holding and velocity-opposing disturbance damping. A current-aware Bouc–Wen model with a PG-RLSTM residual term predicts the dynamic MRA torque, while a pre-yield current–torque fit estimates the holding capacity. The resulting model is embedded into the Isaac Gym low-level torque loop for actuator-aware policy training, while the MRA-SAL scheduler is deployed on hardware.The PG-RLSTM achieves the lowest prediction error, with an average RMSE of 0.355 Nm on ten unseen actuator trajectories. Current-sweep disturbance tests show consistent attenuation trends in simulation and hardware: as current increases from 0 to 1.5 A, the minimum CoM height increases by 14.7% and 14.3%, respectively, while the peak downward velocity magnitude decreases by 19.3% and 35.4%. Locomotion experiments show COT reductions of 20.2–25.4% at 0.3 m/s and 21.3–24.9% at 0.5 m/s relative to baseline MR_Go. Across three repeated 300 m field tasks, MR_Go-SAL reduces mean battery SoC depletion from 59.3 ±1.5 to 52.5 ±2.0 percentage points relative to the matched MR_Go baseline. In the field-task thermal comparison, the mean temperature rise across the four calf motors decreases from 22.25 ◦C for MR_Go to 11.50 ◦C for MR_Go-SAL.",
+      "authors": [
+        "Erwin Ang Tien Yew",
+        "Wenbo Li",
+        "Zhehan Tao",
+        "Zirui Chen",
+        "Zhongyuan Kong",
+        "Liang Zhang",
+        "S. S. Sun"
+      ],
+      "source": "OpenAlex"
+    },
+    {
+      "title": "Entropy generation analysis of frictional heat-induced thermomechanical dissipation in railway brake discs",
+      "doi": "https://doi.org/10.1016/j.csite.2026.108375",
+      "url": "https://www.sciencedirect.com/science/article/pii/S2214157X26007380/pdf",
+      "journal": "Case Studies in Thermal Engineering",
+      "pub_date": "2026-07-23",
+      "abstract": "This study proposes an entropy-generation-based approach for quantifying frictional heat-induced thermomechanical dissipation in railway brake discs during service. The total entropy generation is decomposed into thermal and mechanical components, corresponding to irreversible heat transfer and plastic deformation, respectively. A three-dimensional thermomechanical brake disc model is developed and validated against full-scale bench test results, and is then used to investigate the spatial and temporal entropy generation characteristics under multiple braking scenarios. The results show that entropy generation increases markedly with the initial braking speed, while the dominant dissipation mechanism varies with location and service period. During braking, thermal entropy generation is mainly concentrated in the mid-radius region of the friction surface because of intense heat input and steep temperature gradients. During cooling, the contribution of the radiating ribs becomes more prominent as heat is transferred from the disc body to the surrounding air, for the element in radiating rib region, more than 70% of the thermal entropy generation is accumulated during cooling. Mechanical entropy generation is primarily localized near bolt-hole edges and radiating-rib corners, where geometric discontinuities and interface constraints promote stress concentration and plastic strain accumulation. At higher initial speeds, the mechanical entropy generated during the cooling period becomes increasingly important and should not be neglected in thermomechanical damage evaluation, for the element in bolt-hole region, its cooling-period contribution increases from 28.75% at 250 km/h to 58.40% at 350 km/h. The proposed entropy-generation approach converts thermal and mechanical dissipation into a consistent quantitative metric, enabling integrated identification of thermally critical regions, fatigue-prone locations, and potential design-improvement targets in railway brake discs.",
+      "authors": [
+        "Jiacheng Shen",
+        "Jianyong Zuo",
+        "Shize Zheng",
+        "Yu Pan"
+      ],
+      "source": "OpenAlex",
+      "query": "high-speed train brake disc thermal fatigue wear"
+    },
+    {
+      "title": "Asperity-Coupled Flash Heating, Stress Oscillation, and Synergistic Plastic Dissipation in Dual-Roughness Disc-Pad Brake Interfaces",
+      "doi": "https://doi.org/10.62051/ijmee.v8n5.02",
+      "url": "https://wepub.org/index.php/IJMEE/article/download/6208/6709",
+      "journal": "International Journal of Mechanical and Electrical Engineering",
+      "pub_date": "2026-07-06",
+      "abstract": "To investigate the local flash temperature, stress oscillations, and elastoplastic energy dissipation induced by asperity interactions on both sides of a high-speed train disc brake, a three-dimensional transient thermo-mechanically coupled finite element model of a dual-roughness disc-pad interface was established. A fixed Weierstrass-Mandelbrot fractal morphology was used to evaluate temperature, von Mises stress, thermal penetration depth, thermoelastic power, plastic dissipation, and frequency-domain responses. The peak temperatures of the brake disc and brake pad reached 1409.5 °C and 1571.9 °C, respectively, and the corresponding peak von Mises stresses were 1079.4 MPa and 1024.6 MPa. The dominant stress frequency was 3395.6 Hz, with a relative oscillation amplitude of 312.10%. Plastic power accounted for approximately 32% and 37% of the theoretical input power in the disc and pad, respectively. Misaligned asperity contact and repeated jumps in contact stiffness jointly caused near-surface heat accumulation, high-frequency instability, and synergistic plastic dissipation.",
+      "authors": [
+        "Pengfei Cui",
+        "Ye Wang"
+      ],
+      "source": "OpenAlex",
+      "query": "high-speed train brake disc thermal fatigue wear"
+    },
+    {
+      "title": "ANALISIS KEAUSAN JENIS-JENIS KAMPAS REM BELAKANG SEPEDA MOTOR DOUBLE DISC BRAKE",
+      "doi": "https://doi.org/10.51878/cendekia.v6i4.13705",
+      "url": "https://jurnalp4i.com/index.php/cendekia/article/download/13705/9167",
+      "journal": "CENDEKIA Jurnal Ilmu Pengetahuan",
+      "pub_date": "2026-08-14",
+      "abstract": "ABSTRACT Braking reliability in motorcycles is not only related to the ability to generate braking force but also to the ability of brake pads to maintain their thickness under repeated friction. Differences in material characteristics are examined in this study by comparing Original Equipment Manufacturer (OEM), Original Equipment Supplier (OES), and Aftermarket brake pads. Testing was conducted on a 2016 Honda Vario 150 motorcycle equipped with a hydraulic rear disc brake under operating conditions of 4,000 RPM, a braking pressure of 2.5 bar, and a duration of 30 minutes per cycle, with five repetitions. Changes in brake pad thickness were measured using a digital caliper and descriptively compared in terms of wear progression, final wear value, and wear percentage. The testing pattern revealed that all three types of brake pads experienced increased wear, although the intensity varied. At the end of the test, OEM brake pads exhibited 0.34 mm of wear with a wear percentage of 4.75%, while OES reached 1.01 mm and 12.29%; Aftermarket reached 1.05 mm and 11.73%. These differences place OEM brake pads as having the highest wear resistance under the applied testing conditions. The findings indicate that material characteristics play an important role in maintaining brake pad durability during repeated braking. ABSTRAK Keandalan pengereman pada sepeda motor tidak hanya berkaitan dengan kemampuan menghasilkan gaya pengereman, tetapi juga dengan kemampuan kampas rem mempertahankan ketebalannya selama menerima gesekan berulang. Perbedaan karakteristik material menjadi perhatian dalam penelitian ini melalui perbandingan kampas Original Equipment Manufacturer (OEM), Original Equipment Supplier (OES), dan Aftermarket. Pengujian dilakukan pada sepeda motor Honda Vario 150 tahun 2016 yang menggunakan rem cakram belakang hidrolik dengan kondisi operasi 4.000 RPM, tekanan pengereman 2,5 bar, dan durasi 30 menit untuk setiap siklus, dengan lima kali pengulangan. Perubahan ketebalan kampas diamati menggunakan jangka sorong digital, kemudian dibandingkan secara deskriptif melalui perkembangan keausan, nilai keausan akhir, dan persentase keausan. Pola pengujian memperlihatkan bahwa ketiga jenis kampas mengalami peningkatan keausan, tetapi intensitasnya tidak seragam. Pada akhir pengujian, OEM memiliki keausan 0,34 mm dengan persentase 4,75%, sedangkan OES mencapai 1,01 mm dan 12,29%; Aftermarket mencapai 1,05 mm dan 11,73%. Perbedaan tersebut menempatkan OEM sebagai kampas dengan ketahanan aus paling baik dalam kondisi pengujian yang diterapkan. Temuan ini mengindikasikan bahwa pemilihan karakteristik material berperan dalam mempertahankan ketahanan kampas selama pengereman berulang.",
+      "authors": [
+        "Muhamad Fadli"
+      ],
+      "source": "OpenAlex"
+    },
+    {
+      "title": "Torque Coordination Control for Dual-Drive-Axle Electric Commercial Vehicles Under Wheel-Speed Signal Loss",
+      "doi": "https://doi.org/10.3390/electronics15153398",
+      "url": "https://www.mdpi.com/2079-9292/15/15/3398/pdf?version=1785563749",
+      "journal": "Electronics",
+      "pub_date": "2026-08-01",
+      "abstract": "For 6 × 4 dual-drive-axle battery electric tractors subject to intermediate-axle wheel-speed signal loss, the drive-wheel slip state is difficult to determine under adhesion-limited driving conditions, which can readily lead to drive torque distribution mismatch between the intermediate and rear axles and excessive slip of the intermediate-axle drive wheels. To address the above problems, this paper proposes a torque coordination control method for dual-drive-axle battery electric commercial vehicles. First, a drive-axle slip ratio is constructed based on the motor speed of the drive axle to enable axle-level characterization of the drive-axle slip state under wheel-speed signal loss. Second, the drive-axle slip state is identified using the local variation relationship between the ground driving force and the drive-axle slip ratio, and the reference slip ratio of the drive axle and the wheel-end transmissible torque limit are determined. Then, a hierarchical torque coordination control method is established. In the upper layer, with convergence of the drive-axle slip ratios of the intermediate and rear axles as the objective, the wheel-end transmissible torque limit is introduced for inter-axle drive torque distribution and constraint handling. In the lower layer, super-twisting sliding mode control is employed to perform anti-slip correction on the target torque of the drive axle. Finally, the proposed method is validated in a TruckSim/Simulink co-simulation environment. The results show that, under drive-wheel speed signal loss, the proposed method can achieve reasonable drive torque distribution between the intermediate and rear axles under adhesion-limited driving conditions, suppress excessive slip of the drive axles, and improve the smoothness of the vehicle longitudinal response.",
+      "authors": [
+        "Hsin Guan",
+        "Pengcheng Xue",
+        "Jun Zhan",
+        "Hao Jin",
+        "Zhang Mingwei"
+      ],
+      "source": "OpenAlex",
+      "query": "train regenerative braking mechanical braking coordination"
+    },
+    {
+      "title": "Design and Development of an Electromagnetic Braking System: A Study on Contactless Eddy-Current Retardation",
+      "doi": "https://doi.org/10.48175/ijarsct-37263",
+      "url": "https://doi.org/10.48175/ijarsct-37263",
+      "journal": "International Journal of Advanced Research in Science Communication and Technology",
+      "pub_date": "2026-06-27",
+      "abstract": "The rising concern of safety, energy efficiency, and decreased maintenance in today’s transportation system is making researchers search for alternative ways of braking systems that are beyond the traditional method based on friction. The design, analysis, and conceptual development of the Electromagnetic Braking System (EMBS), which utilizes electromagnetic induction and eddy current generation as means of achieving non-contact retardation, have been discussed in this paper. The EMBS prototype includes two controlled electromagnets, a rotor motor, a metal disc, and an additional fan to take care of thermal losses. When the electromagnets are powered up, the varying magnetic flux will induce eddy currents in the spinning disc; according to Lenz’s Law, the eddy currents will produce an opposing magnetic field, which will result in retarding force without the necessity of any mechanical contact. Mechanical and structural design calculations related to support structure, shaft, bearings, chain drive, and motor selection have been made, taking into account the limitations of allowable stress and buckling. The literature review of ten recent publications on rotor materials, magnets, heat dissipation, and smart control systems was done in order to make informed decisions about the system’s design. It is clear from the comparative analysis that the suggested EMBS can decrease the rate of wear by 70-90% and the rate of degradation caused by heat by 60-80% compared to traditional friction brakes while enhancing the smoothness of the process.",
+      "authors": [
+        "Mahadev E. Biradar Kartik S. Choudhary",
+        "Prof. V. T. Pawar Nidhi A. Bhele"
+      ],
+      "source": "OpenAlex",
+      "query": "linear eddy current brake maglev train"
+    }
+  ],
+  "cross": [
+    {
+      "title": "Directional commensurability stabilizes structural superlubricity in patterned mesoscale interfaces",
+      "doi": null,
+      "url": "https://arxiv.org/abs/2608.29141v1",
+      "journal": "arXiv (2608.29141v1)",
+      "pub_date": "2026-08-29",
+      "abstract": "Structural superlubricity, arising from lattice incommensurability, offers a promising route to eliminate friction and associated energy losses in mechanical systems. In real-world systems, roughness and wear currently pose severe limitations on its robustness and especially the contact size. Here, we consider patterned surfaces as a possible route to overcome some of these limitations. We show that the simplest choice of patterning, contacts made up of two incommensurate triangular-triangular patterns, fails at elevated loads because of the small number of load-bearing contacts, causing the maximum local contact pressure to exceed the strength of the superlubric coating. We introduce a square-triangular patterned interface that increases the number of load-bearing contacts and organizes them into continuous contact lines. When sliding along specific directions relative to these lines, superlubricity is maintained at significantly higher loads by reducing pressure-induced coating failure while also remaining somewhat tolerant to surface imperfections. These findings establish a mechanism for stabilizing structural superlubricity against coating failure and a design principle for engineering low-friction interfaces with enhanced load-bearing capacity and defect tolerance.",
+      "authors": [
+        "Viet Hung Ho",
+        "Ge Li",
+        "Melisa M. Gianetti",
+        "Bjørn Haugen",
+        "Graham L. W. Cross",
+        "Astrid S. de Wijn"
+      ],
+      "source": "arXiv",
+      "query": "all:\"tribological dynamics\" OR all:\"friction interface\""
+    },
+    {
+      "title": "Tribological performance of advanced materials and coatings for aerospace bearings: A review of challenges, mechanisms, and synergistic design",
+      "doi": "https://doi.org/10.1016/j.rsurfi.2026.100950",
+      "url": "https://www.sciencedirect.com/science/article/pii/S2666845926002424/pdf",
+      "journal": "Results in Surfaces and Interfaces",
+      "pub_date": "2026-08-25",
+      "abstract": "Modern aero-engines are continuously evolving toward higher thrust-to-weight ratios, which impose extreme service environments characterized by ultra-high DN values, elevated temperatures, heavy loads, and lubricant-starved conditions on main shaft bearings. Consequently, traditional bearing steels and single-lubrication systems are increasingly challenged in meeting requirements for long-term reliability under these conditions. This paper systematically reviews recent advances in aerospace bearing materials, covering the evolution of substrates from traditional GCr15 steels to high-nitrogen steels, ceramics, and composites, together with functional coatings such as DLC, transition-metal dichalcogenides, and environmentally adaptive systems. Particular emphasis is placed on their tribological properties, operating boundaries, and multiscale damage mechanisms under extreme environments. The review further highlights the mechanical compatibility of the substrate–coating–interface system, including the coupled effects of coating hardness, elastic modulus, thickness, residual stress, interfacial adhesion, substrate support, and thermal mismatch on cracking, delamination, and rolling-contact fatigue. Finite element analysis, XFEM/CZM, molecular dynamics, and related multiscale approaches are discussed as complementary tools for interpreting contact and interfacial damage mechanisms. In addition, the transferability of coupon-scale tribological results to component- and bearing-level performance is critically assessed. Finally, current engineering-validation gaps and future directions toward physics-informed, data-assisted, cross-scale design and lifetime prediction of high-performance aerospace bearing surfaces are summarized.",
+      "authors": [
+        "Li CUI",
+        "Xiaoyang Ji",
+        "Xin Wang",
+        "Ning Li"
+      ],
+      "source": "OpenAlex",
+      "query": "friction interface nonlinear tribological dynamics"
+    },
+    {
+      "title": "Investigation of high-temperature tribological behaviour of Al-7075/TiO2 composites",
+      "doi": "https://doi.org/10.1016/j.measurement.2026.122983",
+      "url": "https://www.sciencedirect.com/science/article/pii/S026322412602693X/pdf",
+      "journal": "Measurement",
+      "pub_date": "2026-08-23",
+      "abstract": "Aluminium-based metal matrix composites (MMCs) are widely used in high-temperature engineering applications, yet their tribological performance under varying thermal and mechanical conditions remains inadequately understood. This study investigates the high-temperature dry sliding behaviour of stir-cast Al-7075/TiO 2 composites and integrates artificial neural network (ANN) modelling with improved grey wolf optimiser (I-GWO)-based multi-objective optimisation. Tribological experiments were conducted over a temperature range of 50–250°C, sliding speeds of 0.94–2.20 m s⁻ 1 , normal loads of 20–60 N, and TiO 2 reinforcement contents of 2–10 wt% to evaluate the specific wear rate (SWR) and coefficient of friction (COF). The experimental results revealed distinct temperature-dependent wear transitions. Mild abrasive wear dominated at temperatures below 100°C for composites containing 2–4 wt% TiO 2 , whereas mixed abrasive–adhesive wear became predominant between 150 and 250°C. Severe adhesive–abrasive wear accompanied by matrix softening and particle pull-out was observed at 250°C under higher loads and TiO 2 contents ≥ 8 wt%. ANN models with selected architectures of 4–9-6–1 and 4–10-6–1 were employed as surrogate interpolation models to represent the nonlinear relationships between the process parameters and tribological responses within the investigated experimental domain. The ANN-assisted I-GWO analysis computationally identified candidate operating conditions within the investigated design space, with controlled temperatures and moderate TiO 2 contents showing potentially favourable model-estimated trade-offs between wear and friction. The Pareto-optimal solutions illustrate the trade-off between SWR and COF and provide computational guidance for selecting candidate operating conditions for subsequent experimental assessment. The combined experimental, ANN-based surrogate modelling, and I-GWO analysis approach provides a framework for interpreting the tribological behaviour of Al-7075/TiO 2 composites and identifying candidate conditions for subsequent experimental assessment.",
+      "authors": [
+        "Shadab Ahmad",
+        "Fengjun Chen",
+        "J. Ding",
+        "Yebing Tian",
+        "Shanay Rab"
+      ],
+      "source": "OpenAlex",
+      "query": "friction interface nonlinear tribological dynamics"
+    },
+    {
+      "title": "Finite-time synchronization of neuronal networks based on double-power sliding mode control",
+      "doi": "https://doi.org/10.1088/1402-4896/aea067",
+      "url": "https://iopscience.iop.org/article/10.1088/1402-4896/aea067/pdf",
+      "journal": "Physica Scripta",
+      "pub_date": "2026-08-29",
+      "abstract": "Abstract Finite-time synchronization control of discrete neuronal networks with piecewise nonlinear characteristics is a critical and challenging issue in complex network dynamic research. This paper investigates the finite-time synchronization problem of discrete neuronal networks constructed by the Rulkov map, and proposes a novel double-power finite-time sliding mode control strategy. Different from single-power sliding mode control schemes with inherent performance trade-offs, the designed control law integrates super-power and sub-power terms organically. The super-power term accelerates the convergence of sliding variables when system errors are large, while the sub-power term guarantees precise finite-time convergence of system states near the equilibrium point, effectively solving the contradiction between transient response speed and steady-state synchronization accuracy in traditional sliding mode control. A terminal sliding surface matching the discrete network dynamic characteristics is established for each neuron node, and the control law is derived based on system error dynamics with a coupling compensation term added to adapt to the dynamic adjustment of large-scale network coupling relationships. Based on Lyapunov stability theory and discrete finite-time stability theorems, the finite-time convergence of both the reaching phase and sliding phase of the control system is strictly proved, and the explicit upper bound of network synchronization time is deduced, which quantitatively reveals the correlation between synchronization efficiency and system initial states as well as control parameters. Numerical simulations on an 80-node randomly connected network demonstrate the effectiveness of the proposed scheme in achieving rapid error convergence and accurate synchronization, and a systematic parameter study reveals the dominant influence of the low-power gain and the high-power exponent on the synchronization time.",
+      "authors": [
+        "Yong Yang",
+        "Chengye Zou"
+      ],
+      "source": "OpenAlex"
+    },
+    {
+      "title": "High-entropy ceramics for tribology applications: Recent advances and future directions",
+      "doi": "https://doi.org/10.26599/jac.2026.9221365",
+      "url": "https://www.sciopen.com/local/article_pdf/10.26599/JAC.2026.9221365.pdf",
+      "journal": "Journal of Advanced Ceramics",
+      "pub_date": "2026-08-28",
+      "abstract": "Abstract As an emerging class of multifunctional materials, high-entropy ceramics (HECs) exhibit a unique combination of properties that have not yet been fully elucidated, enabled by their distinctive high-entropy design concept. These materials provide valuable scientific insights and significant research potential in the field of tribology. This review critically assesses the tribological performance of HECs across six major categories: carbides, borides, silicides, oxides, nitrides, and MAX phases. Comparative studies among different systems reveal that carbides and nitrides have received far more investigation than silicides and borides, reflecting an unbalanced research landscape. While HECs generally exhibit enhanced wear resistance and adaptive lubrication compared to conventional ceramics, the field currently suffers from a lack of standardized tribological data, insufficient mechanistic understanding of the high-entropy effect, and high synthesis costs. Future efforts should prioritize data-driven rational design, multi-scale mechanistic modeling, and cost-effective manufacturing strategies to accelerate the transition of HECs from laboratory to industrial applications.",
+      "authors": [
+        "Xiande Zheng",
+        "Qichun Sun",
+        "Wei Yan",
+        "Jicheng Li",
+        "Hengzhong Fan",
+        "Jingqing Zhang",
+        "Guoqing Wei",
+        "Yanchun Zhou",
+        "Qiangqiang Zhang",
+        "Weibin Zhang",
+        "Yuan Fang",
+        "Yunfeng Su",
+        "Hongxiang Chen",
+        "Mingliang Li",
+        "Hailong Wang",
+        "Yongsheng Zhang"
+      ],
+      "source": "OpenAlex"
+    },
+    {
+      "title": "Engineering multifunctional epoxy composites through synergistic hybrid Al2O3–SiC reinforcement",
+      "doi": "https://doi.org/10.1016/j.hybadv.2026.100729",
+      "url": "https://www.sciencedirect.com/science/article/pii/S2773207X26001314/pdf",
+      "journal": "Hybrid Advances",
+      "pub_date": "2026-08-25",
+      "abstract": "Hybrid reinforcement has emerged as a viable approach for improving the performance of epoxy composites. This study aims to evaluate the synergistic effects of hybrid Al 2 O 3 –SiC reinforcement with different filler ratios on the thermal, mechanical, and tribological performance of epoxy composites. Hybrid epoxy composites containing different Al 2 O 3 /SiC filler ratios (25/5, 20/10, 15/15, 10/20, and 0/30 vol.%) were fabricated using the hand lay-up casting method and comprehensively characterized. The results showed that hybrid reinforcement significantly increased composite performance. The SR composite had the maximum tensile strength (233.95 ± 11 MPa), elastic modulus (17.71 ± 0.4GPa), and during thermal degradation, the least amount of char residue (35.33%). The TH composite outperformed other materials in terms of flexural strength (53.56 ± 8 MPa), modulus (5768±289 MPa), and impact strength (1883.4 ± 160 KJ/m 2 ), showing better energy absorption. AS had the lowest specific wear rate (4.16 × 10 -5 ± 0.3 mm 3 /N·m) during tribological examination, indicating better wear resistance. FTIR, XRD, SEM, and thermal analyzes confirmed the Al 2 O 3 -SiC hybrid reinforcement's structural, morphological, and thermal effects. Overall, the mechanical, thermal, and tribological performance of the produced composites demonstrate their potential for lightweight structural and wear-resistant engineering applications.",
+      "authors": [
+        "Nasmi Herlina Sari",
+        "Suteja Suteja",
+        "Rusdhan Ahmad Ilyas",
+        "Catalin I. Pruncu",
+        "Indra Sopiandi",
+        "Muhammad Nabil Fadhlurrohman Rivlan",
+        "Luciano Lamberti"
+      ],
+      "source": "OpenAlex"
+    },
+    {
+      "title": "Tribochemical and tribomechanical effect of TiO 2 nanoparticle: Different influence on MoDTC and ZDDP additives",
+      "doi": "https://doi.org/10.26599/frict.2026.9441305",
+      "url": "https://www.sciopen.com/local/article_pdf/10.26599/FRICT.2026.9441305.pdf",
+      "journal": "Friction",
+      "pub_date": "2026-08-24",
+      "abstract": "Abstract This study investigates the formulation-dependent tribochemical regulation of TiO2 nanoparticles in molybdenum dithiocarbamate (MoDTC), zinc dialkyldithiophosphate (ZDDP), and their blended lubricant systems. Reciprocating ball-on-disk tribological tests were conducted under a normal load of 20 N, corresponding to Hertzian contact pressure of 1.33 GPa. TiO2 nanoparticles promoted MoS2-rich tribofilm formation in the lubricant with single MoDTC, which led to reduction of both the coefficient of friction and wear of counterparts. Conversely, in the MoDTC-ZDDP blended system, TiO2 drove interfacial reactions toward high-valence Mo oxides and sulfate species, leading to increased wear. Atomic force microscope measurements confirmed that protruded MoS2-rich tribofilm formed by lubricant containing MoDTC and TiO2 exhibited low shear strength, whereas the protruded oxide/sulfate-rich tribofilm formed by lubricant containing MoDTC-ZDDP and TiO2 generated higher local friction. These findings reveal that TiO2 nanoparticles function as selective tribochemical regulators whose effects are governed by interfacial reaction competition and additive compatibility, rather than universally enhancing lubrication performance. This work provides critical mechanistic insights for rational design of nanoparticle-modified lubricant formulations.",
+      "authors": [
+        "Zhikai Fan",
+        "Shanshan Wang",
+        "Xiangyu Ge",
+        "Yanfei Liu",
+        "Wenzhong Wang"
+      ],
+      "source": "OpenAlex"
+    },
+    {
+      "title": "Uniform Lipschitz regularity for two-phase singularly perturbed fully nonlinear elliptic equations",
+      "doi": null,
+      "url": "https://arxiv.org/abs/2608.16653v1",
+      "journal": "arXiv (2608.16653v1)",
+      "pub_date": "2026-08-17",
+      "abstract": "We study sign-changing viscosity solutions of the singularly perturbed fully nonlinear equation $$ F(D^2u_\\varepsilon) = \\fracα{\\varepsilon} β\\left(\\frac{u_\\varepsilon}{\\varepsilon}\\right) \\qquad\\text{in }B_1\\subset\\mathbb R^n, $$ where $F$ is uniformly elliptic and $β\\in C_c (-1,1)$ is nonnegative. We prove the scale-sharp estimate $$ \\|\\nabla u_\\varepsilon\\|_{L^\\infty(B_{1/2})} \\leq C\\left( \\|u_\\varepsilon\\|_{L^\\infty(B_1)}+\\sqrtα\\right), $$ with $C$ depending only on the dimension, the ellipticity constants, and $β$, and independent of $\\varepsilon$ and $α$. This removes a longstanding compactness obstruction in the analysis of fully nonlinear two-phase singular perturbations. The difficulty is structural: at positive $\\varepsilon$ there is neither a free boundary nor a prescribed transmission law, while the general fully nonlinear setting provides no monotonicity formula capable of controlling the interaction of the two phases. The proof develops a diffuse counterpart of the De Silva--Savin decay-versus-Lipschitz alternative. Exact planar transitions furnish the local comparison geometry, and curved-test compactness carries this geometry across collapsing reaction layers. An intrinsic transition-region estimate reduces the problem to linear growth from buffered level boundaries. The resulting dyadic continuation is closed by a large-slope stopping argument: bounded accumulated slopes yield the desired growth directly, whereas unbounded slopes force the effective reaction strength to vanish after normalization and lead to a contradiction. The estimate is quantitatively optimal and supplies the scale-invariant compactness framework required for the subsequent sharp-interface analysis.",
+      "authors": [
+        "Thialita M. Nascimento",
+        "Aelson Sobral",
+        "Eduardo V. Teixeira"
+      ],
+      "source": "arXiv",
+      "query": "all:\"singular perturbation\" AND all:\"control\""
+    },
+    {
+      "title": "Busse balloon deformation and splitting by non-local interaction: the influence of grazing on a Klausmeier vegetation model",
+      "doi": null,
+      "url": "https://arxiv.org/abs/2606.21766v1",
+      "journal": "arXiv (2606.21766v1)",
+      "pub_date": "2026-06-19",
+      "abstract": "Large areas on all continents except Antarctica are covered by dryland vegetation patterns, with wavelengths typically in the range of tens of meters. In models, many wavelengths are simultaneously stable, and we argue that this multi-stability also holds for real world patterns. We then study the shape of the Busse balloon representation of multi-stability for a previously introduced Klausmeier model with non-local grazing. For this we first extend application of singular perturbation to Klausmeier/Gray-Scott models to include non-local interaction, providing analytical control near the homoclinic limit, and then use numerical continuation to demonstrate deformation of Busse balloons away from the typical banana shape, in four non-local grazing regimes. Since the Busse balloon has been invoked to support \"evasion of tipping\", we underscore the importance of the shape of the Busse balloon when inferring ecosystem response to, e.g., climate change.",
+      "authors": [
+        "Eric Siero",
+        "Hannes Uecker"
+      ],
+      "source": "arXiv",
+      "query": "all:\"singular perturbation\" AND all:\"control\""
+    },
+    {
+      "title": "Sparse semi-interpretable networks for discovering nonlinear dynamics with time-varying parameters and switching structures",
+      "doi": "https://doi.org/10.1016/j.chaos.2026.119017",
+      "url": "https://www.sciencedirect.com/science/article/pii/S0960077926011586/pdf",
+      "journal": "Chaos Solitons & Fractals",
+      "pub_date": "2026-08-29",
+      "abstract": "Data-driven equation discovery has emerged as a new focal point in nonlinear dynamics. While significant progress has been made in identifying governing equations of time-invariant dynamical systems, the existing approaches still encounter considerable obstacles when applied to scenarios with time-varying parameters or switching structures. To bridge this gap, this paper introduces a new sparse semi-interpretable network architecture. The framework integrates an interpretable neural network, called SREINet, to identify the backbone of governing equations, with a hypernetwork designed to capture time-varying dynamics and structural transitions. In addition, a periodic pruning mechanism is applied to the hypernetwork’s output to enhance structural sparsity and improve robustness against noise. By performing symbolic regression on the hypernetwork's output, our approach can extract explicit, closed-form governing equations for time-variant and switching nonlinear dynamics. We validate the method across three representative systems with varying levels of nonlinearity and dimensionality, including a Kuramoto oscillator with logarithmic time-varying coupling strength. Finally, we demonstrate that the framework can also be used for early prediction of tipping points.​",
+      "authors": [
+        "Binghang Xiao",
+        "Jianzhe Huang",
+        "Siyuan Xing"
+      ],
+      "source": "OpenAlex",
+      "query": "Koopman operator based nonlinear model predictive control"
+    }
+  ]
+}
