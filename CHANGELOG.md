@@ -1,5 +1,22 @@
 # DailyBrief 脚本变更记录
 
+## 2026-10-08 — 流程加固（小k执行）
+
+审查对象：`scripts/collect_brief.py`、`validate_brief.py`、`like_links.py`、`brief_record.py` 及 `modules/window.py`、`retrieve.py`、`filter.py`、`rank.py`。验收报告见 `docs/流程加固验收.md`，回归测试 `tests/`（51 例全绿）。
+
+| 指标 | 数量 |
+| --- | --- |
+| 确认缺陷 | 6 类（HN 豁免正文/热议日冒充发布日且占满池、validator 跨日错配、缺窗口与正文校验、畸形反斜杠 URL 放行、采集无锁/累积超时、点赞区存在即跳过残留旧链接） |
+| 已直接修复 | 6 类全部 |
+| 实改文件 | modules/filter.py、modules/retrieve.py、modules/rank.py、scripts/collect_brief.py、scripts/validate_brief.py、scripts/like_links.py、scripts/brief_record.py、scripts/likes.py；新增 scripts/replay_candidates.py、tests/（6 文件 51 例）、docs/流程加固验收.md |
+
+- 准入：所有来源统一要求正文 ≥500 字 + 日精度发布日期 + 窗口内，HN 不豁免；HN created_at 仅作 `hn_discussed_at`；窗口外/未知/月精度/未来日期一律拒收（含速览 leftover）
+- 排序：轨交优先 → 日期降序 → HN 积分只在同质量同日内排序；单方向 ≤4（轨交除外）；探索保底生活/健康优先
+- 采集：fcntl 锁、原子落盘、`--reuse-cache` 显式同日缓存复用、空池熔断不覆盖、总预算 480s + 有界并发 4 + 局部故障隔离、run_id 写入候选
+- 校验：文件名日期严格配对（跨日错配 FAIL）、窗口/日精度/word_count 证据校验、run_id 配对、未验证 leftover 零容忍
+- 点赞：`like_links.py` 幂等重建点赞区（旧链接不残留）；`brief_record.py` 跨日守卫 + 幂等 upsert + 原子写
+- 回放：`scripts/replay_candidates.py 2026-10-07` 实测旧池 0/8 合格，`[REPLAY_REFUSED]` 明确拒绝，只读不改历史
+
 ## 2026-09-01 — 首次代码质量检查与修复（小g执行，Hermes复核）
 
 检查对象：`collect_brief.py`、`validate_brief.py`、`like_links.py`、`add_like.py`

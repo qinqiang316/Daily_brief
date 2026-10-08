@@ -28,7 +28,10 @@ DailyBrief/
 │   ├── add_like.py            # 点赞 CLI：按序号/URL 写入点赞
 │   ├── like_server.py         # 点赞 HTTP 服务：点链接即记录（按需启动）
 │   ├── like_ctl.py            # 点赞服务控制：start/stop/status
-│   └── like_links.py          # 简报文末自动追加「👍 点赞」区
+│   ├── like_links.py          # 简报文末点赞区幂等重建（按当前参考资料整体重建）
+│   └── replay_candidates.py   # 历史候选池离线回放（只读体检，不合格明确拒绝）
+├── tests/                     # stdlib unittest 回归测试（mock 离线，python3 -m unittest discover -s tests）
+├── docs/                      # 验收报告（流程加固验收.md 等）
 ├── data/                      # 运行时生成（已 gitignore）
 │   ├── _dedup_urls.json       # 已推送 URL 去重集合（自动维护）
 │   └── likes.json             # 点赞记录（用户偏好，驱动检索增强）
@@ -116,7 +119,7 @@ python3 scripts/add_like.py --stats
 |------|------|
 | 偏好不垄断 | 偏好方向最多 2 条定向查询（基础查询不变） |
 | 数据驱动反方向突破 | 探索优先投空白/低关注方向；无空白时投茧房对立/陌生角度查询；样本不足回退日期轮换 |
-| 探索保底进池 | 候选池为探索内容预留 ≤2 席（`MAX_EXPLORE_SEATS`） |
+| 探索保底进池 | 候选池为探索内容预留 ≤2 席（`MAX_EXPLORE_SEATS`），生活/健康方向优先；生活/健康有合格条目时各保底 ≥1 席（不限探索，计入主题与 HN 上限） |
 | 探索必进简报 | validate 硬校验：候选有探索候选时，简报须收录 ≥1 篇 |
 | 偏好封顶 | 深度总结区「（偏好命中）」条目 ≤8（`MAX_PREF_DEEP`） |
 | 样本门槛 | 点赞 ≥10 且最热方向 ≥40% 才启用偏好优先（`MIN_LIKES_FOR_PREFERENCE` / `MIN_PREF_SHARE`） |
@@ -133,7 +136,9 @@ python3 scripts/add_like.py --stats
 python3 scripts/validate_brief.py
 ```
 
-校验项：① 简报 URL ⊆ 候选池；② 无去重复现；③ 日期未验证不得收录；④ 候选先生成后写简报；⑤ 探索条目必收；⑥ 偏好命中 ≤8。（本机点赞链接 127.0.0.1:8900 已忽略。）
+校验项：① 简报 URL ⊆ 候选池；② 无历史复现；③ 日期未验证不得收录（含速览 leftover，出现即 FAIL）；④ 候选先生成后写简报；⑤ 探索条目必收；⑥ 偏好命中 ≤8；⑦ 简报与候选**按文件名日期严格配对**（跨日错配 FAIL），引用候选日期须日精度且落在候选窗口内、**真实 content 实测 ≥500 字**（word_count 元数据仅参考不得冒充证据）、必须带 `date_source` 日期来源（旧格式布尔位不能冒充验证）；⑧ 候选带 run_id 时简报**必须标注** `<!-- run_id: ... -->` 且一致。（本机点赞链接 127.0.0.1:8900 已忽略。）
+
+采集端准入（2026-10-08 加固，所有来源同一标准、HN 不豁免）：正文 ≥500 字 + 发布日期证据精确到日 + 窗口内，缺一不入推荐池；日期证据链按 **JSON-LD → HTML meta → `<time datetime>` → 署名发布时间标记 → URL 日精度 → 标题日精度** 取证并记录 `date_source`/`date_evidence`/`date_precision`，普通正文第一处日期（常为事件时间）不得冒充发布时间，全部日期过合法日历校验；HN created_at 仅作热议日期，不充当发布日期；畸形 URL 拒收不静默修复；空池熔断不覆盖旧候选；采集有锁、原子落盘、`--reuse-cache` 显式同日缓存复用；正文抓取/存储上限 6000 字符（容下英文 500 词）；**生活/健康有合格条目时各保底 ≥1 席**（不限探索候选，计入主题与 HN 上限）；所有网络阶段共享一个 480s 墙钟截止时间，搜索阶段用派生子预算为正文阶段预留 150s，偏好/轨交/探索方向查询先行，查询临时文件走 tempfile 可指定目录且 finally 清理（单次 socket 超时钳制于剩余预算，属预算化约束而非数学严格硬截止）。历史候选池可用 `python3 scripts/replay_candidates.py <日期>` 离线回放体检。
 
 ---
 

@@ -87,22 +87,45 @@ def load_records():
 
 
 def save_records(records):
-    """写回 brief_records.json。"""
+    """写回 brief_records.json（原子替换，避免半截文件）。"""
+    import tempfile
     os.makedirs(os.path.dirname(RECORDS_FILE), exist_ok=True)
-    with open(RECORDS_FILE, "w", encoding="utf-8") as f:
-        json.dump({"records": records}, f, ensure_ascii=False, indent=2)
+    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(RECORDS_FILE),
+                               prefix=".tmp_records_", suffix=".json")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump({"records": records}, f, ensure_ascii=False, indent=2)
+        os.replace(tmp, RECORDS_FILE)
+    except Exception:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+
+
+def _file_date(path):
+    m = re.search(r"Daily-Brief-(\d{4}-\d{2}-\d{2})", os.path.basename(path or ""))
+    return m.group(1) if m else None
 
 
 def record_brief(brief_path, cand_path):
-    """从候选 JSON + 简报 md 提取元数据并追加记录。
-    同一日期只记录一次（去重）。
-    Returns: 新增记录的 dict，或 None（失败/已存在时）。
+    """从候选 JSON + 简报 md 提取元数据并记录。
+    幂等可重建：同一日期重复记录时替换旧记录（同输入同结果），不重复追加。
+    简报与候选文件名日期不一致（跨日错配）时拒绝记录。
+    Returns: 记录的 dict，或 None（失败/拒绝时）。
     """
     if not brief_path or not os.path.exists(brief_path):
         print("[brief_record] 简报不存在: %s" % brief_path, file=sys.stderr)
         return None
     if not cand_path or not os.path.exists(cand_path):
         print("[brief_record] 候选 JSON 不存在: %s" % cand_path, file=sys.stderr)
+        return None
+
+    # 日期配对守卫：跨日错配拒绝记录
+    bd, cd = _file_date(brief_path), _file_date(cand_path)
+    if bd and cd and bd != cd:
+        print("[brief_record] 跨日错配，拒绝记录：简报 %s ≠ 候选 %s" % (bd, cd), file=sys.stderr)
         return None
 
     # 读候选 JSON
@@ -115,20 +138,23 @@ def record_brief(brief_path, cand_path):
     with open(brief_path, encoding="utf-8", errors="ignore") as fh:
         brief_text = fh.read()
 
-    # 日期
-    today = datetime.now(TZ).strftime("%Y-%m-%d")
-    if generated_at:
+    # 日期：优先候选文件名日期（与简报已配对），回退 generated_at
+    today = cd or datetime.now(TZ).strftime("%Y-%m-%d")
+    if not cd and generated_at:
         try:
             dt = datetime.fromisoformat(generated_at)
             today = dt.strftime("%Y-%m-%d")
         except Exception:
             pass
 
-    # 去重：同一天只记录一次
+    # 幂等 upsert：同日已有记录 → 替换（可重建）；否则追加
     records = load_records()
-    if any(r.get("date") == today for r in records):
-        print("[brief_record] 简报 %s 已有记录，跳过" % today)
-        return None
+    replaced = False
+    for i, r in enumerate(records):
+        if r.get("date") == today:
+            records.pop(i)
+            replaced = True
+            break
 
     # 简报中出现的 URL → 属于哪个 section
     url_section = _map_url_to_section(brief_text)
@@ -215,7 +241,7 @@ def record_brief(brief_path, cand_path):
     records.append(record)
     save_records(records)
 
-    print("[brief_record] 已记录简报 %s（%d 篇文章）" % (today, len(articles)))
+    print("[brief_record] 已%s简报 %s（%d 篇文章）" % ("重建记录" if replaced else "记录", today, len(articles)))
     return record
 
 

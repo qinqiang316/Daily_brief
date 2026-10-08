@@ -4,18 +4,27 @@
 
 用法:
   python3 validate_brief.py [简报.md] [候选.json] [--dedup 去重.json]
-缺省自动探测：最新 Daily-Brief-*.md 与 _candidates/ 下最新候选 JSON。
+缺省自动探测：最新 Daily-Brief-*.md，并严格配对同文件日期的候选 JSON
+（Daily-Brief-<日期>.md ↔ _candidates/Daily-Brief-<日期>-candidates.json）。
+显式传入的两个文件日期不一致 → FAIL（跨日错配）。
 
 校验项（任一项 FAIL → 退出码 1，cron/LLM 不得投递）:
   1. 简报全部 URL（规范化后）⊆ 候选 JSON URL（简报只能用候选池内容）
-  2. 简报 URL 不得命中 _dedup_urls.json（已推送过的内容不得复现）
+  2. 简报 URL 不得命中历史简报 URL（已推送过的内容不得复现）
   3. 候选里 date_verified=false 的 URL 不得出现在简报任何位置
-     （skill 规则：日期未验证不得进深度总结/TLDR/快读，也不得列链接）
   4. 候选 JSON generated_at 必须早于简报 mtime（候选先生成、简报后写）
   5. 防茧房：候选池存在探索候选（is_explore=true 且日期已验证）时，
-     简报必须至少收录 1 篇探索内容（防 LLM 写作时偏好挤掉探索位）
-  6. 防茧房：深度总结区"（偏好命中）"条目 ≤ 上限（默认 8），
-     防止偏好方向垄断（上限与 likes.MAX_PREF_DEEP 一致）
+     简报必须至少收录 1 篇探索内容
+  6. 防茧房：深度总结区"（偏好命中）"条目 ≤ 上限（默认 8）
+  7. 未知日期禁止交付（含速览）：date_verified=false 的 leftover 出现在
+     简报任何位置 → FAIL；候选产物本身携带未验证 leftover → FAIL；
+     leftover 还须日精度、带 date_source/date_evidence、落在候选窗口内
+     （导航页/旧日速览不得旁路）
+  8. 日期配对：简报与候选文件名日期必须一致；简报中引用候选的 publish_date
+     必须落在候选窗口 [window.start, window.end] 内且精确到日；
+     正文质量以真实 content 实际 wc 复核（word_count 元数据仅参考，不得冒充证据）；
+     候选必须带 date_source 日期来源（旧格式只有 bool 位不能冒充验证）
+  9. run_id 配对：候选 JSON 带 run_id 时，简报必须含 <!-- run_id: ... --> 且一致
 """
 import json
 import os
@@ -32,6 +41,17 @@ import collect_brief  # 复用 norm_url / BRIEF_DIR / CAND_DIR / DEDUP_FILE（�
 import likes as likes_mod
 
 CAND_DIR = collect_brief.CAND_DIR
+MIN_WORDS = collect_brief.filter_mod.MIN_WORDS
+DATE_RE = re.compile(r"Daily-Brief-(\d{4}-\d{2}-\d{2})")
+RUN_ID_RE = re.compile(r"<!--\s*run_id:\s*(\S+)\s*-->")
+
+
+def file_date(path):
+    """从文件名提取 Daily-Brief 日期，无日期返回 None。"""
+    if not path:
+        return None
+    m = DATE_RE.search(os.path.basename(path))
+    return m.group(1) if m else None
 
 
 def find_latest(d, prefix, ext):
@@ -74,47 +94,84 @@ def main():
             cand = a
     if not brief:
         brief = find_latest(OUTPUT_DIR, "Daily-Brief-", ".md")
-    if not cand:
-        cand = find_latest(CAND_DIR, "Daily-Brief-", ".json")
     if not brief or not os.path.exists(brief):
         print("FAIL: 找不到简报 %s" % brief)
         return 1
+
+    # 日期配对：简报与候选必须同文件日期，禁止跨日错配
+    brief_date = file_date(brief)
+    if not brief_date:
+        print("FAIL: 简报文件名无日期（要求 Daily-Brief-YYYY-MM-DD.md）: %s" % brief)
+        return 1
+    if cand:
+        cand_date = file_date(cand)
+        if cand_date and cand_date != brief_date:
+            print("FAIL: 跨日错配：简报日期 %s ≠ 候选日期 %s（%s ↔ %s）"
+                  % (brief_date, cand_date, brief, cand))
+            return 1
+    else:
+        cand = os.path.join(CAND_DIR, "Daily-Brief-%s-candidates.json" % brief_date)
     if not cand or not os.path.exists(cand):
-        print("FAIL: 找不到候选 JSON %s" % cand)
+        print("FAIL: 找不到与简报同日期的候选 JSON %s" % cand)
         return 1
 
     errors = []
 
-    # 候选 URL 集合 + 日期未验证集合 + 探索集合
+    # 候选 URL 集合 + 日期未验证集合 + 探索集合 + 逐候选证据
     with open(cand, encoding="utf-8") as f:
         data = json.load(f)
+    generated_at = data.get("generated_at", "")
+    pref_info = data.get("preference", {})
+    window = data.get("window", {}) or {}
+    win_start = str(window.get("start") or "")[:10]
+    win_end = str(window.get("end") or "")[:10]
     cand_urls = set()
     unverified_urls = set()
     explore_urls = set()
     pref_count_in_cand = 0
+    cand_map = {}
     for c in data.get("candidates", []):
         u = collect_brief.norm_url(c.get("url", ""))
         if u:
             cand_urls.add(u)
+            cand_map[u] = c
             if not c.get("date_verified"):
                 unverified_urls.add(u)
             if c.get("is_explore") and c.get("date_verified"):
                 explore_urls.add(u)
             if c.get("is_preferred"):
                 pref_count_in_cand += 1
-    # 未推荐源速览（source_leftovers）：允许进简报参考资料区；日期未验证的
-    # 只能出现在「未推荐来源速览」节且该行必须标注"（日期未验证）"，见下方专项校验
+    # 未推荐源速览（source_leftovers）：允许进简报参考资料区；
+    # 未知日期禁止交付（含速览）：date_verified=false 的 leftover 出现即 FAIL；
+    # 且须日精度、带 date_source、落在候选窗口内（禁止导航页/旧日速览旁路）
     leftover_urls = set()
     leftover_unv = set()
+    leftover_bad = []
     for lo in data.get("source_leftovers", []):
         u = collect_brief.norm_url(lo.get("url", ""))
-        if u:
-            cand_urls.add(u)
-            leftover_urls.add(u)
-            if not lo.get("date_verified"):
-                leftover_unv.add(u)
-    generated_at = data.get("generated_at", "")
-    pref_info = data.get("preference", {})
+        if not u:
+            leftover_bad.append("速览 URL 非法: %s" % str(lo.get("url", ""))[:80])
+            continue
+        cand_urls.add(u)
+        leftover_urls.add(u)
+        if not lo.get("date_verified"):
+            leftover_unv.add(u)
+        pub = lo.get("publish_date") or ""
+        if not pub:
+            continue  # 已由未验证分支报告
+        if lo.get("date_precision") != "day":
+            leftover_bad.append("速览日期非日精度（%s）: %s" % (lo.get("date_precision"), u))
+        if not lo.get("date_source") or not lo.get("date_evidence"):
+            leftover_bad.append("速览缺少日期来源/证据 date_source（布尔位不能冒充验证）: %s" % u)
+        if win_start and pub < win_start:
+            leftover_bad.append("速览日期 %s 早于窗口起点 %s（旧日速览禁止旁路）: %s" % (pub, win_start, u))
+        if win_end and pub > win_end:
+            leftover_bad.append("速览日期 %s 晚于窗口终点 %s: %s" % (pub, win_end, u))
+    if leftover_unv:
+        errors.append("候选产物携带 %d 条日期未验证的未推荐源（采集产物不合格，未知日期禁止交付）: %s"
+                      % (len(leftover_unv), " ".join(sorted(leftover_unv)[:5])))
+    for msg in leftover_bad:
+        errors.append("候选产物速览不合格（采集产物不合格）: %s" % msg)
 
     # 去重集合：排除当前正在校验的简报自身，确保只和历史/其他简报比对
     historical_dedup_urls = set()
@@ -193,21 +250,50 @@ def main():
         errors.append("深度总结区偏好命中 %d 条 > 上限 %d（防信息茧房，探索内容 1-2 篇/天）"
                       % (pref_marks, likes_mod.MAX_PREF_DEEP))
 
-    # 7) 未推荐源速览专项：日期未验证 leftover 只能在速览节、且行内必须标注"（日期未验证）"
-    if leftover_urls:
-        sec_marker = "## 未推荐来源速览"
-        lines = brief_text.splitlines()
-        sec_line_idx = next((i for i, l in enumerate(lines) if sec_marker in l), -1)
-        sec_end_idx = next((i for i, l in enumerate(lines) if l.startswith("## 参考资料") and i > sec_line_idx), len(lines))
-        for idx, line in enumerate(lines):
-            for m in re.findall(r"https?://[^\s)\]>]+", line):
-                u = collect_brief.norm_url(m)
-                if u in leftover_unv:
-                    in_sec = 0 <= sec_line_idx <= idx < sec_end_idx
-                    if not in_sec:
-                        errors.append("未推荐源速览日期未验证链接出现在速览节之外: %s" % u)
-                    elif "日期未验证" not in line:
-                        errors.append("未推荐源速览日期未验证条目缺少标注: %s" % u)
+    # 7) 未知日期禁止交付（含速览）：日期未验证 leftover 出现在简报任何位置 → FAIL
+    if leftover_unv:
+        unv_lo = brief_urls & leftover_unv
+        if unv_lo:
+            errors.append("简报 %d 条未推荐源 URL 日期未验证（未知日期含速览禁止交付）: %s"
+                          % (len(unv_lo), " ".join(sorted(unv_lo)[:8])))
+
+    # 8) 窗口与正文质量证据：简报引用的候选必须 publish_date 精确到日、落在候选窗口内、
+    #    正文 word_count ≥ MIN_WORDS；窗口外不得进深度/TLDR/快读（新采集已不入池，这里兜底校验）
+    for u in sorted(brief_urls & set(cand_map)):
+        c = cand_map[u]
+        pub = c.get("publish_date") or ""
+        if not pub:
+            errors.append("候选无发布日期: %s" % u)
+            continue
+        if c.get("date_precision") != "day":
+            errors.append("候选日期非日精度（%s）: %s" % (c.get("date_precision"), u))
+        if not c.get("date_source"):
+            errors.append("候选缺少日期来源 date_source（旧格式布尔位不能冒充验证）: %s" % u)
+        if win_start and pub < win_start:
+            errors.append("候选日期 %s 早于窗口起点 %s（窗口外不得进深度/TLDR/快读）: %s" % (pub, win_start, u))
+        if win_end and pub > win_end:
+            errors.append("候选日期 %s 晚于窗口终点 %s: %s" % (pub, win_end, u))
+        if c.get("window_outside_days"):
+            errors.append("候选标记窗口外 %d 天，不得进简报: %s" % (c["window_outside_days"], u))
+        declared_wc = c.get("word_count") or 0
+        actual_wc = collect_brief.retrieve.wc(c.get("content") or "")
+        if declared_wc < MIN_WORDS:
+            errors.append("候选正文证据不足（%d 字 < %d）: %s" % (declared_wc, MIN_WORDS, u))
+        elif actual_wc < MIN_WORDS:
+            errors.append("候选正文实测不足（实际 %d 字 < %d，word_count 元数据仅参考不得冒充证据）: %s"
+                          % (actual_wc, MIN_WORDS, u))
+
+    # 9) run_id 配对：候选带 run_id 时简报必须标注且一致（不只是错配拒绝）
+    run_id = data.get("run_id")
+    m_rid = RUN_ID_RE.search(brief_text)
+    if run_id and not m_rid:
+        errors.append("候选带 run_id(%s) 但简报未标注 <!-- run_id: ... -->（新池必须标注）" % run_id)
+    elif m_rid:
+        if not run_id:
+            errors.append("简报带 run_id(%s) 但候选 JSON 无 run_id（候选产物过旧或不匹配）" % m_rid.group(1))
+        elif m_rid.group(1) != run_id:
+            errors.append("run_id 错配：简报 %s ≠ 候选 %s（简报未基于本次候选池撰写）"
+                          % (m_rid.group(1), run_id))
 
     if errors:
         print("FAIL: %d 项违规" % len(errors))

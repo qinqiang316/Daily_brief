@@ -120,7 +120,8 @@ EXPLORE_QUERY_TEMPLATES = {
 
 
 def norm_url(u):
-    """URL 简化规范化（去 fragment/www/追踪参数），与 collect_brief.norm_url 一致语义"""
+    """URL 简化规范化（去 fragment/www/追踪参数），与 collect_brief.norm_url 一致语义；
+    畸形 URL（反斜杠/空白/无 netloc）返回 ""，拒收而非静默修复"""
     if not u:
         return ""
     u = u.strip().strip(".,;:!?)]}\"'")
@@ -130,6 +131,14 @@ def norm_url(u):
         u = "https:" + u
     if u.startswith("http://"):
         u = "https://" + u[len("http://"):]
+    if re.search(r"[\\\s\x00-\x1f\x7f]", u) or not u.startswith(("http://", "https://")):
+        return ""
+    try:
+        from urllib.parse import urlsplit
+        if not urlsplit(u).netloc:
+            return ""
+    except Exception:
+        return ""
     u = re.sub(r"^https://www\.", "https://", u)
     u = u.split("#", 1)[0]
     if "?" in u:

@@ -1,0 +1,97 @@
+{
+  "target_month": "2026-10",
+  "anchor_date": "2026-10-01",
+  "window": [
+    "2026-07-03",
+    "2026-10-01"
+  ],
+  "papers": [
+    {
+      "section": "轨道交通领域",
+      "tier": "强烈推荐",
+      "title": "不同偏航角下高速磁浮列车气动特性的定常与动网格仿真 (Stationary and moving simulations on the aerodynamic performance of high-speed maglev trains under different yaw angles)",
+      "url": "https://doi.org/10.1063/5.0347357",
+      "source": "Physics of Fluids",
+      "doi": "10.1063/5.0347357",
+      "pub_date": "2026-09-22",
+      "evidence": "基于官方摘要"
+    },
+    {
+      "section": "轨道交通领域",
+      "tier": "强烈推荐",
+      "title": "强侧风下高速磁浮列车穿越弧形多孔风障的气动性能 (Aerodynamic performance of high-speed maglev trains traversing arc-shaped porous barriers under crosswind)",
+      "url": "https://doi.org/10.1007/s40534-026-00455-2",
+      "source": "Railway Engineering Science",
+      "doi": "10.1007/s40534-026-00455-2",
+      "pub_date": "2026-09-11",
+      "evidence": "基于官方摘要"
+    },
+    {
+      "section": "轨道交通领域",
+      "tier": "值得一看",
+      "title": "基于多保真度TDNN与物理引导残差学习的铁路转向架响应可靠预测 (Toward Reliable Railway-Bogie Response Prediction Using Multifidelity TDNN and Physics-Informed Residual Learning)",
+      "url": "https://arxiv.org/abs/2609.12018",
+      "source": "arXiv:2609.12018",
+      "pub_date": "2026-09-10",
+      "evidence": "基于全文"
+    },
+    {
+      "section": "轨道交通领域",
+      "tier": "补充参考",
+      "title": "适应轮轨接触几何演化的悬挂参数优化与分级抗蛇行减振器配置 (Suspension parameter optimisation and staged yaw damper configuration adapted to wheel-rail contact geometry evolution)",
+      "url": "https://doi.org/10.1080/00423114.2026.2728165",
+      "source": "Vehicle System Dynamics",
+      "doi": "10.1080/00423114.2026.2728165",
+      "pub_date": "2026-09-03",
+      "evidence": "基于官方摘要"
+    },
+    {
+      "section": "制动系统领域",
+      "tier": "强烈推荐",
+      "title": "面向高速列车的正交励磁涡流制动器设计与分析 (Design and Analysis of Orthogonal Excitation Eddy Current Brake for High-Speed Trains)",
+      "url": "https://doi.org/10.4271/2026-99-0513",
+      "source": "SAE Technical Paper 2026-99-0513",
+      "doi": "10.4271/2026-99-0513",
+      "pub_date": "2026-07-10",
+      "evidence": "基于官方摘要"
+    },
+    {
+      "section": "制动系统领域",
+      "tier": "强烈推荐",
+      "title": "闸片连接结构对高速列车制动磨损与振动行为的影响及优化 (Influence and optimization of the pad connection structure on the braking wear and vibration behaviour of high-speed trains)",
+      "url": "https://doi.org/10.1007/s40534-026-00451-6",
+      "source": "Railway Engineering Science",
+      "doi": "10.1007/s40534-026-00451-6",
+      "pub_date": "2026-08-19",
+      "evidence": "基于官方摘要"
+    },
+    {
+      "section": "制动系统领域",
+      "tier": "值得一看",
+      "title": "固相摩擦增材制造SiCp/Al-Al双层制动盘微观组织与摩擦学性能 (Microstructure and tribological performance of SiCp/Al–Al bi-layer brake discs fabricated by additive friction stir deposition)",
+      "url": "https://doi.org/10.1016/j.wear.2026.206916",
+      "source": "Wear",
+      "doi": "10.1016/j.wear.2026.206916",
+      "pub_date": "2026-07-18",
+      "evidence": "基于官方摘要"
+    },
+    {
+      "section": "跨领域推荐",
+      "tier": "精选推荐1",
+      "title": "机械系统的受控端口-哈密顿 Koopman 算子综合方法 (Port-Hamiltonian Koopman Operator Synthesis for Mechanical Systems)",
+      "url": "https://arxiv.org/abs/2609.17249",
+      "source": "arXiv:2609.17249",
+      "pub_date": "2026-09-15",
+      "evidence": "基于全文"
+    },
+    {
+      "section": "跨领域推荐",
+      "tier": "精选推荐2",
+      "title": "凸差非线性系统配置约束管道模型预测控制 (Configuration-Constrained Tube MPC for Difference-of-Convex Nonlinear Systems)",
+      "url": "https://arxiv.org/abs/2609.07809",
+      "source": "arXiv:2609.07809",
+      "pub_date": "2026-09-07",
+      "evidence": "基于全文"
+    }
+  ]
+}
