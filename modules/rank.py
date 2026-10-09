@@ -89,8 +89,9 @@ def _cheap_precheck(candidates, dedup):
         domain = url.split("/")[2].lower() if "://" in url else ""
         if domain in filter_mod.EXCLUDE_DOMAINS or "/rss" in url or url.rstrip("/").endswith(".rss"): continue
         if domain == "news.ycombinator.com": continue  # HN 讨论页非文章，不入池
-        path = url.split("://", 1)[-1]; path = path.split("/", 1)[1] if "/" in path else ""
-        if not path: continue
+        if filter_mod.is_aggregate_url(url):
+            log("聚合页（首页/频道/列表/导航）不入池: %s" % url)
+            continue
         title = c.get("title", "").strip()
         if domain in ("kk.org", "www.kk.org"):
             p = url.lower().rstrip("/"); is_t = "/thetechnium/" in p and not p.endswith("/thetechnium"); is_c = "/cool-tools/" in p and not p.endswith("/cool-tools")

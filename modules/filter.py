@@ -2,7 +2,7 @@ import json
 import os
 import re
 from datetime import datetime
-from urllib.parse import urlsplit
+from urllib.parse import parse_qs, unquote, urlsplit
 
 from .window import BRIEF_DIR, OUTPUT_DIR, log
 
@@ -47,6 +47,19 @@ def _valid_ymd(y, mo, d):
     except (ValueError, TypeError):
         return False
     return 2000 <= int(y) <= 2100
+
+
+def is_iso_day(value):
+    """产物中的日精度日期必须为完整 YYYY-MM-DD 且是合法日历日。"""
+    if not isinstance(value, str):
+        return False
+    m = re.fullmatch(r"(20\d{2})-(\d{2})-(\d{2})", value)
+    return bool(m and _valid_ymd(*m.groups()))
+
+
+def has_date_provenance(item):
+    return all(isinstance(item.get(k), str) and item[k].strip()
+               for k in ("date_source", "date_evidence"))
 
 
 def _iso_day(y, mo, d):
@@ -122,6 +135,15 @@ def extract_date_evidence(item):
         m = rx.search(url)
         if m and _valid_ymd(*m.groups()):
             return _evidence(_iso_day(*m.groups()), "url", url[:120])
+    m = URL_DATE_MONTHNAME_RE.search(urlsplit(url).path)
+    if m:
+        mo = MONTHS_EN.get(m.group(2).lower()[:3])
+        if mo and _valid_ymd(m.group(1), mo, m.group(3)):
+            return _evidence(_iso_day(m.group(1), mo, m.group(3)), "url", url[:120])
+    # 4.5) slug 内嵌日精度日期（如 ACS digest /news/ai-daily-2026-10-08，明确独立日期）
+    m = SLUG_DATE_RE.search(urlsplit(url).path)
+    if m and _valid_ymd(*m.groups()):
+        return _evidence(_iso_day(*m.groups()), "url", url[:120])
     # 5) 标题日精度
     m = TITLE_DATE_RE.search(title)
     if m:
@@ -141,6 +163,60 @@ def extract_publish_date(item):
     ev = extract_date_evidence(item)
     pub = ev["publish_date"]
     return pub, bool(pub), ev["precision"] == "month"
+
+# 裸栏目名与入口页；news/articles 等也可承载文章，不能因任一父段命中就误杀。
+NAV_SEGMENTS = {
+    "articles", "category", "categories", "channel", "channels", "video", "videos",
+    "people", "company", "companies", "home", "archives", "archive", "posts", "about",
+    "about-us", "uk", "us", "news", "technology", "topics", "topic", "section",
+    "sections", "list", "lists", "tag", "tags", "noticias", "mag", "magazine", "content", "p", "page",
+    "industry", "index", "navigation",
+}
+# 明确的目录路由：日期、数字、HTML 后缀均不能豁免。
+DIRECTORY_SEGMENTS = {
+    "category", "categories", "channel", "channels", "archive", "archives",
+    "topics", "topic", "section", "sections", "list", "lists", "tag", "tags", "page",
+}
+# slug 内嵌日精度日期（如 ACS digest /news/ai-daily-2026-10-08）
+SLUG_DATE_RE = re.compile(r"(?<!\d)(20\d{2})-(\d{2})-(\d{2})(?!\d)")
+# Guardian 式月名日期 /2026/oct/08
+URL_DATE_MONTHNAME_RE = re.compile(
+    r"/(20\d{2})/(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|"
+    r"Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)/(\d{2})(?=/|$)", re.I)
+
+
+def is_aggregate_url(u):
+    """拦截可识别的首页/频道/目录/翻页 URL，不凭单段 slug 或日期猜测文章。
+    普通 news/articles 下的独立 slug、文章 ID、独立日期 digest 可通过；
+    明确目录路由和纯日期目录不可借日期、长数字或 .html 后缀绕过。
+    """
+    if not u or not is_valid_url(u):
+        return False
+    parts = urlsplit(u)
+    segs = [s.lower() for s in unquote(parts.path).split("/") if s]
+    if not segs:
+        return True
+    if any(k.lower() in ("page", "paged") for k in parse_qs(parts.query, keep_blank_values=True)):
+        return True
+    if any(s in DIRECTORY_SEGMENTS for s in segs):
+        return True
+    if any(s == "p" and i + 1 < len(segs) and segs[i + 1].isdigit()
+           and len(segs[i + 1]) <= 3 for i, s in enumerate(segs)):
+        return True  # /p/2 是翻页；/p/<长文章ID> 不因此被拒收
+    last = re.sub(r"\.(?:html?|php)$", "", segs[-1])
+    if last in NAV_SEGMENTS:
+        return True
+    # /2026/、/2026/10/、/2026/oct/08 等日期归档，末尾没有文章 slug。
+    if re.fullmatch(r"20\d{2}(?:[-_]\d{2}){0,2}", last):
+        return True
+    if last in MONTHS_EN and len(segs) >= 2 and re.fullmatch(r"20\d{2}", segs[-2]):
+        return True
+    if last.isdigit() and len(last) <= 2 and any(re.fullmatch(r"20\d{2}", s) for s in segs[:-1]):
+        return True
+    if re.fullmatch(r"20\d{6}", last):
+        return True  # /20261008 纯日期目录，不是独立 digest slug
+    return False
+
 
 # URL 非法字符：反斜杠/空白/控制字符出现即判畸形，拒收而非静默修复
 URL_BAD_CHARS_RE = re.compile(r"[\\\s\x00-\x1f\x7f]")

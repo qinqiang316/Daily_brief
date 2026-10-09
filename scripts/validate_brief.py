@@ -13,18 +13,27 @@
   2. 简报 URL 不得命中历史简报 URL（已推送过的内容不得复现）
   3. 候选里 date_verified=false 的 URL 不得出现在简报任何位置
   4. 候选 JSON generated_at 必须早于简报 mtime（候选先生成、简报后写）
-  5. 防茧房：候选池存在探索候选（is_explore=true 且日期已验证）时，
-     简报必须至少收录 1 篇探索内容
+  5. 防茧房：候选池存在**合格**探索候选（is_explore=true 且通过实际正文 ≥500 字、
+     独立文章（非聚合页）、日精度日期、date_source/date_evidence 齐全、窗口内、
+     合法 URL、未命中历史去重）时，简报必须至少收录 1 篇探索内容；合格探索遗漏仍 FAIL
   6. 防茧房：深度总结区"（偏好命中）"条目 ≤ 上限（默认 8）
   7. 未知日期禁止交付（含速览）：date_verified=false 的 leftover 出现在
      简报任何位置 → FAIL；候选产物本身携带未验证 leftover → FAIL；
-     leftover 还须日精度、带 date_source/date_evidence、落在候选窗口内
-     （导航页/旧日速览不得旁路）
+     leftover 还须日精度、带 date_source/date_evidence、落在候选窗口内、
+     非聚合页（导航页/旧日速览不得旁路）
   8. 日期配对：简报与候选文件名日期必须一致；简报中引用候选的 publish_date
      必须落在候选窗口 [window.start, window.end] 内且精确到日；
      正文质量以真实 content 实际 wc 复核（word_count 元数据仅参考，不得冒充证据）；
-     候选必须带 date_source 日期来源（旧格式只有 bool 位不能冒充验证）
+     候选必须带 date_source 与 date_evidence（旧格式只有 bool 位不能冒充验证）；
+     引用候选不得为聚合页（首页/频道/列表/导航）
   9. run_id 配对：候选 JSON 带 run_id 时，简报必须含 <!-- run_id: ... --> 且一致
+ 10. 拒收协议（可审计）：rejected_candidates 每项须带 url/is_explore/reason/
+     reviewed_by/reviewed_at；拒收 URL 无论出现在正文/参考资料/速览均 FAIL；
+     拒收项不得仍留在 candidates/source_leftovers；严禁靠取消 is_explore 绕过——
+     原池仍有不合格探索时必须先审核移入 rejected_candidates，不得静默忽略；
+     有探索拒收但无合格探索时，须候选 JSON 含 exploration_replenishment
+     （status=exhausted、attempts 为整数1或2、reason 非空文本）且简报注明「探索内容缺货」，
+     才可缩减交付（补抓记录不豁免其余候选的日期/正文/去重硬条件）
 """
 import json
 import os
@@ -123,11 +132,15 @@ def main():
     generated_at = data.get("generated_at", "")
     pref_info = data.get("preference", {})
     window = data.get("window", {}) or {}
-    win_start = str(window.get("start") or "")[:10]
-    win_end = str(window.get("end") or "")[:10]
+    win_start = window.get("start") or ""
+    win_end = window.get("end") or ""
+    window_valid = (collect_brief.filter_mod.is_iso_day(win_start)
+                    and collect_brief.filter_mod.is_iso_day(win_end)
+                    and win_start <= win_end)
+    if not window_valid:
+        errors.append("候选窗口缺失/非法（须为合法日精度日期且 start <= end）")
     cand_urls = set()
     unverified_urls = set()
-    explore_urls = set()
     pref_count_in_cand = 0
     cand_map = {}
     for c in data.get("candidates", []):
@@ -137,10 +150,30 @@ def main():
             cand_map[u] = c
             if not c.get("date_verified"):
                 unverified_urls.add(u)
-            if c.get("is_explore") and c.get("date_verified"):
-                explore_urls.add(u)
             if c.get("is_preferred"):
                 pref_count_in_cand += 1
+    # 拒收协议：rejected_candidates 逐项审计字段校验；拒收 URL 禁止出现在简报任何位置，
+    # 也不得仍留在 candidates/source_leftovers（须移除后移入 rejected_candidates）
+    rejected_urls = set()
+    rejected_explore = []
+    for r in data.get("rejected_candidates") or []:
+        if not isinstance(r, dict):
+            errors.append("拒收记录格式非法（非对象）: %s" % str(r)[:80])
+            continue
+        ru = collect_brief.norm_url(r.get("url", ""))
+        missing = [k for k in ("url", "reason", "reviewed_by", "reviewed_at")
+                   if not str(r.get(k) or "").strip()]
+        if "is_explore" not in r:
+            missing.append("is_explore")
+        if not ru and "url" not in missing:
+            missing.append("url(非法)")
+        if missing:
+            errors.append("拒收记录缺审计字段（%s）: %s"
+                          % (",".join(missing), str(r.get("url"))[:80]))
+        if ru:
+            rejected_urls.add(ru)
+            if r.get("is_explore"):
+                rejected_explore.append(ru)
     # 未推荐源速览（source_leftovers）：允许进简报参考资料区；
     # 未知日期禁止交付（含速览）：date_verified=false 的 leftover 出现即 FAIL；
     # 且须日精度、带 date_source、落在候选窗口内（禁止导航页/旧日速览旁路）
@@ -154,24 +187,31 @@ def main():
             continue
         cand_urls.add(u)
         leftover_urls.add(u)
+        if collect_brief.filter_mod.is_aggregate_url(u):
+            leftover_bad.append("速览为聚合页（首页/频道/列表/导航），非独立文章: %s" % u)
         if not lo.get("date_verified"):
             leftover_unv.add(u)
         pub = lo.get("publish_date") or ""
-        if not pub:
-            continue  # 已由未验证分支报告
+        if not collect_brief.filter_mod.is_iso_day(pub):
+            leftover_bad.append("速览发布日期缺失/非法（要求合法 YYYY-MM-DD）: %s" % u)
+            continue
         if lo.get("date_precision") != "day":
             leftover_bad.append("速览日期非日精度（%s）: %s" % (lo.get("date_precision"), u))
-        if not lo.get("date_source") or not lo.get("date_evidence"):
-            leftover_bad.append("速览缺少日期来源/证据 date_source（布尔位不能冒充验证）: %s" % u)
-        if win_start and pub < win_start:
+        if not collect_brief.filter_mod.has_date_provenance(lo):
+            leftover_bad.append("速览缺少日期来源/证据 date_source/date_evidence（布尔位不能冒充验证）: %s" % u)
+        if window_valid and pub < win_start:
             leftover_bad.append("速览日期 %s 早于窗口起点 %s（旧日速览禁止旁路）: %s" % (pub, win_start, u))
-        if win_end and pub > win_end:
+        if window_valid and pub > win_end:
             leftover_bad.append("速览日期 %s 晚于窗口终点 %s: %s" % (pub, win_end, u))
     if leftover_unv:
         errors.append("候选产物携带 %d 条日期未验证的未推荐源（采集产物不合格，未知日期禁止交付）: %s"
                       % (len(leftover_unv), " ".join(sorted(leftover_unv)[:5])))
     for msg in leftover_bad:
         errors.append("候选产物速览不合格（采集产物不合格）: %s" % msg)
+    still_listed = rejected_urls & cand_urls
+    if still_listed:
+        errors.append("拒收 URL 仍保留在 candidates/source_leftovers（协议要求移除并移入 rejected_candidates）: %s"
+                      % " ".join(sorted(still_listed)[:5]))
 
     # 去重集合：排除当前正在校验的简报自身，确保只和历史/其他简报比对
     historical_dedup_urls = set()
@@ -198,6 +238,8 @@ def main():
     if not brief_urls:
         print("FAIL: 简报中未提取到任何 URL")
         return 1
+    with open(brief, encoding="utf-8", errors="ignore") as fh:
+        brief_text = fh.read()
 
     # 1) 简报 ⊆ 候选（候选池外的 URL 若命中历史去重 → 追加说明，双重违规）
     outside = brief_urls - cand_urls
@@ -221,6 +263,12 @@ def main():
         errors.append("简报 %d 条 URL 日期未验证（不得进任何区）: %s"
                       % (len(unv), " ".join(sorted(unv)[:8])))
 
+    # 3.5) 拒收 URL 无论出现在正文/参考资料/速览均禁止交付
+    rej_hit = brief_urls & rejected_urls
+    if rej_hit:
+        errors.append("简报 %d 条 URL 已被审核拒收（rejected_candidates，任何区域出现均禁止）: %s"
+                      % (len(rej_hit), " ".join(sorted(rej_hit)[:8])))
+
     # 4) 候选先生成
     if generated_at:
         try:
@@ -234,15 +282,40 @@ def main():
         except Exception as e:
             errors.append("候选时间解析失败: %s" % e)
 
-    # 5) 防茧房：候选池有探索候选 → 简报必须收录 ≥1 篇探索
-    explore_hit = brief_urls & explore_urls
-    if explore_urls and not explore_hit:
-        errors.append("候选池有 %d 篇探索候选（%s）但简报未收录任何探索条目（防信息茧房）"
-                      % (len(explore_urls), " ".join(sorted(explore_urls)[:3])))
+    # 5) 防茧房：合格探索候选必须收录 ≥1 篇；有探索拒收但无合格探索时，
+    #    须有界补抓记录 + 简报注明「探索内容缺货」才可缩减交付
+    def _explore_qualified(c, u):
+        """复用缓存严格准入，并叠加探索标记、历史去重与拒收检查。"""
+        return (c.get("is_explore") and u
+                and u not in rejected_urls and u not in historical_dedup_urls
+                and collect_brief._qualified_cache_candidate(c, win_start, win_end))
+
+    qualified_explore = set()
+    for c in data.get("candidates", []):
+        if not c.get("is_explore"):
+            continue
+        u = collect_brief.norm_url(c.get("url", ""))
+        if _explore_qualified(c, u):
+            qualified_explore.add(u)
+        else:
+            errors.append("原候选池仍有不合格探索：须先审核并移入 rejected_candidates，不得静默忽略: %s"
+                          % str(c.get("url", ""))[:160])
+    explore_hit = brief_urls & qualified_explore
+    if qualified_explore and not explore_hit:
+        errors.append("候选池有 %d 篇合格探索候选（%s）但简报未收录任何探索条目（防信息茧房）"
+                      % (len(qualified_explore), " ".join(sorted(qualified_explore)[:3])))
+    if not qualified_explore and rejected_explore:
+        rep = data.get("exploration_replenishment")
+        rep_ok = (isinstance(rep, dict) and rep.get("status") == "exhausted"
+                  and type(rep.get("attempts")) is int and rep["attempts"] in (1, 2)
+                  and isinstance(rep.get("reason"), str) and rep["reason"].strip())
+        if not rep_ok:
+            errors.append("探索候选被拒收且无合格探索：候选 JSON 须含 exploration_replenishment"
+                          "（status=exhausted、attempts=1或2、reason 非空）才可缩减交付")
+        if "探索内容缺货" not in brief_text:
+            errors.append("探索候选被拒收且无合格探索：简报须注明「探索内容缺货」才可缩减交付")
 
     # 6) 防茧房：深度总结区偏好命中 ≤ 上限
-    with open(brief, encoding="utf-8", errors="ignore") as fh:
-        brief_text = fh.read()
     deep_sec = brief_text.split("## 今日热门文章", 1)
     deep_text = deep_sec[1].split("## 今日主题趋势", 1)[0] if len(deep_sec) > 1 else ""
     pref_marks = len(re.findall(r"[（\(]偏好命中[）\)]", deep_text))
@@ -262,16 +335,18 @@ def main():
     for u in sorted(brief_urls & set(cand_map)):
         c = cand_map[u]
         pub = c.get("publish_date") or ""
-        if not pub:
-            errors.append("候选无发布日期: %s" % u)
+        if not collect_brief.filter_mod.is_iso_day(pub):
+            errors.append("候选无发布日期或日期非法（要求合法 YYYY-MM-DD）: %s" % u)
             continue
         if c.get("date_precision") != "day":
             errors.append("候选日期非日精度（%s）: %s" % (c.get("date_precision"), u))
-        if not c.get("date_source"):
-            errors.append("候选缺少日期来源 date_source（旧格式布尔位不能冒充验证）: %s" % u)
-        if win_start and pub < win_start:
+        if not collect_brief.filter_mod.has_date_provenance(c):
+            errors.append("候选缺少日期来源/证据 date_source/date_evidence（旧格式布尔位不能冒充验证）: %s" % u)
+        if collect_brief.filter_mod.is_aggregate_url(u):
+            errors.append("候选为聚合页（首页/频道/列表/导航），非独立文章: %s" % u)
+        if window_valid and pub < win_start:
             errors.append("候选日期 %s 早于窗口起点 %s（窗口外不得进深度/TLDR/快读）: %s" % (pub, win_start, u))
-        if win_end and pub > win_end:
+        if window_valid and pub > win_end:
             errors.append("候选日期 %s 晚于窗口终点 %s: %s" % (pub, win_end, u))
         if c.get("window_outside_days"):
             errors.append("候选标记窗口外 %d 天，不得进简报: %s" % (c["window_outside_days"], u))
@@ -309,9 +384,9 @@ def main():
     pref_dir = pref_info.get("pref_dir")
     explore_dir = pref_info.get("explore_dir")
     likes_count = pref_info.get("likes_count", 0)
-    print("偏好: 方向=%s | 点赞=%d | 候选内偏好=%d | 深度总结标记=%d | 探索: 方向=%s 候选=%d 收录=%d"
+    print("偏好: 方向=%s | 点赞=%d | 候选内偏好=%d | 深度总结标记=%d | 探索: 方向=%s 合格候选=%d 收录=%d 拒收=%d"
           % (pref_dir or "无", likes_count, pref_count_in_cand, pref_marks,
-             explore_dir or "无", len(explore_urls), len(explore_hit)))
+             explore_dir or "无", len(qualified_explore), len(explore_hit), len(rejected_explore)))
     # PASS 后自动记录简报元数据
     brief_record.record_brief(brief, cand)
     return 0

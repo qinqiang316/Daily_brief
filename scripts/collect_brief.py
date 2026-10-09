@@ -81,16 +81,6 @@ LEFTOVER_EXCLUDE_DOMAINS = {
     "tiktok.com", "www.tiktok.com", "b23.tv", "weibo.com", "www.weibo.com",
     "youtube.com", "www.youtube.com", "m.youtube.com",
 }
-# 导航/栏目录页判定（任意段命中即剔；article/column/trends/story/pd/view 等承载段不在表内，天然放行）
-LEFTOVER_NAV_SEG = {
-    "articles", "category", "categories", "channel", "channels", "video", "videos",
-    "people", "company", "companies", "home", "archives", "archive", "posts", "about",
-    "about-us", "uk", "us", "news", "technology", "topics", "topic", "section",
-    "sections", "list", "lists", "tag", "tags", "noticias", "mag", "magazine", "content", "p", "page",
-}
-# 单段 path 仍然可能是文章页的站（其余单段一律按栏目/主页剔）
-LEFTOVER_SINGLE_SEG_OK = {"telegra.ph", "solidot.org", "linux.solidot.org"}
-
 # 特殊源主页/列表页取最新配置（未进候选时优先从主页/列表页提取最新文章）
 HOMEPAGE_LATEST_SOURCES = {
     "jiqizhixin.com": {
@@ -143,7 +133,7 @@ def pick_homepage_latest_item(cfg, dedup, kept_urls, window_start, today, budget
         if url_pattern and not re.search(url_pattern, raw_url):
             continue
         url = filter_mod.norm_url(raw_url)
-        if not url or url in dedup or url in kept_urls:
+        if not url or url in dedup or url in kept_urls or filter_mod.is_aggregate_url(url):
             continue
         domain = url.split("/")[2].lower() if "://" in url else ""
         if domain in filter_mod.EXCLUDE_DOMAINS or domain in LEFTOVER_EXCLUDE_DOMAINS:
@@ -221,30 +211,14 @@ def pick_leftover_item(items, dedup, kept_urls, window_start, today, source_key=
         domain = url.split("/")[2].lower() if "://" in url else ""
         if domain in filter_mod.EXCLUDE_DOMAINS or domain in LEFTOVER_EXCLUDE_DOMAINS or "/rss" in url or url.rstrip("/").endswith(".rss"):
             continue
-        path = url.split("://", 1)[-1]
-        path = path.split("/", 1)[1] if "/" in path else ""
-        if not path:
-            continue
         if "t.me/" in url and "/s/" not in url:
             continue
         title = (it.get("title") or "").strip()
         if not title or title.startswith("http"):
             continue
-        # 栏目/导航页剔除：主页/单段非文章站/导航段（除非整体是文章形态）/翻页目录页
-        segs = [s for s in path.rstrip("/").split("/") if s]
-        query = url.split("?", 1)[1] if "?" in url else ""
-        if not segs or (len(segs) == 1 and domain not in LEFTOVER_SINGLE_SEG_OK):
-            continue
-        # 文章形态：末段是数字/长哈希/以 .html 结尾 → 即使含导航承载段也保留
-        last_seg = segs[-1].lower()
-        article_like = bool(re.search(r"[0-9a-f]{8,}", last_seg)) or last_seg.isdigit() or last_seg.endswith(".html")
-        if article_like and not any(s.lower() in LEFTOVER_NAV_SEG for s in segs[:-1]):
-            pass
-        elif any(s.lower() in LEFTOVER_NAV_SEG for s in segs):
-            continue
-        if any(s.lower() in ("page", "p") and i + 1 < len(segs) and segs[i + 1].isdigit() for i, s in enumerate(segs)):
-            continue
-        if query.startswith("page=") or "&page=" in query:
+        # 聚合页剔除：首页/频道/列表/导航/翻页目录禁止进速览；
+        # 独立文章与带独立日期的 digest（如 ACS）不误杀
+        if filter_mod.is_aggregate_url(url):
             continue
         # 日期：统一 extract_date_evidence 取证；条目自带 publish_date/date_verified 不作数
         # （TG 搬运日不是原文日）。无日精度窗口内证据即跳过。
@@ -353,18 +327,21 @@ def _qualified_cache_candidate(c, win_start, win_end):
     if not isinstance(c, dict):
         return False
     url = c.get("url") or ""
-    if not filter_mod.norm_url(url):
+    if not filter_mod.is_valid_url(url):
         return False
+    if filter_mod.is_aggregate_url(url):
+        return False  # 聚合页（首页/频道/列表/导航）不算合格候选
     pub = c.get("publish_date") or ""
-    if not pub or c.get("date_precision") != "day":
+    if not filter_mod.is_iso_day(pub) or c.get("date_precision") != "day":
         return False
-    if not c.get("date_source") or not c.get("date_evidence"):
+    if not filter_mod.has_date_provenance(c):
         return False
     if not c.get("date_verified"):
         return False
     if c.get("window_outside_days"):
         return False
-    if win_start and win_end and not (win_start <= pub <= win_end):
+    if not (filter_mod.is_iso_day(win_start) and filter_mod.is_iso_day(win_end)
+            and win_start <= pub <= win_end):
         return False
     if retrieve.wc(c.get("content") or "") < MIN_WORDS:
         return False
@@ -376,16 +353,19 @@ def _qualified_cache_leftover(lo, win_start, win_end):
     if not isinstance(lo, dict):
         return False
     url = lo.get("url") or ""
-    if not filter_mod.norm_url(url):
+    if not filter_mod.is_valid_url(url):
         return False
+    if filter_mod.is_aggregate_url(url):
+        return False  # 聚合页速览不合格
     pub = lo.get("publish_date") or ""
-    if not pub or lo.get("date_precision") != "day":
+    if not filter_mod.is_iso_day(pub) or lo.get("date_precision") != "day":
         return False
-    if not lo.get("date_source") or not lo.get("date_evidence"):
+    if not filter_mod.has_date_provenance(lo):
         return False
     if not lo.get("date_verified"):
         return False
-    if win_start and win_end and not (win_start <= pub <= win_end):
+    if not (filter_mod.is_iso_day(win_start) and filter_mod.is_iso_day(win_end)
+            and win_start <= pub <= win_end):
         return False
     return True
 

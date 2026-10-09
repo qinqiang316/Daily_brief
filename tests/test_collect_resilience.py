@@ -266,7 +266,8 @@ class TestHttpFallbackBudgetAndTmpfile(unittest.TestCase):
             self.assertEqual([f for f in os.listdir(d) if "brief_queries" in f], [])
 
     def test_http_fallback_skipped_when_budget_exhausted(self):
-        with mock.patch("modules.retrieve.urllib.request.urlopen") as uo:
+        with mock.patch("modules.retrieve.urllib.request.urlopen") as uo, \
+                mock.patch.object(retrieve, "_get_anysearch_api_key", return_value="test-only-key"):
             self.assertIsNone(retrieve.anysearch_http_batch(
                 [{"query": "q"}], budget=retrieve.Budget(0)))
             uo.assert_not_called()
