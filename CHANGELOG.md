@@ -1,5 +1,13 @@
 # DailyBrief 脚本变更记录
 
+## 2026-10-10：批次隔离、交付凭据与视野拓展
+
+- 每次采集独立 run_id 目录，保存初始候选、审核副本、manifest、最终简报和校验输入快照。
+- 增加 run_agy 与 finalize 入口：批次写入锁、真实超时清理、双重校验、幂等发布、禁止覆盖同日已发布版。
+- 校验使用捕获的输入快照；元数据绑定 run_id、路径和哈希；登记失败禁止交付。
+- 接入美日欧中视野拓展来源及晚点日期证据，限定标题条目只能出现在视野拓展区。
+- Hermes 任务提示词纳入 docs；190 项离线回归测试通过。
+
 ## 2026-10-08 — 流程加固（小k执行）
 
 审查对象：`scripts/collect_brief.py`、`validate_brief.py`、`like_links.py`、`brief_record.py` 及 `modules/window.py`、`retrieve.py`、`filter.py`、`rank.py`。验收报告见 `docs/流程加固验收.md`，回归测试 `tests/`（51 例全绿）。

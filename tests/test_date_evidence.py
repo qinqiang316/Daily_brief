@@ -146,6 +146,18 @@ class TestHtmlMetadataPreserved(unittest.TestCase):
         self.assertEqual(ev["publish_date"], "2026-10-07")  # JSON-LD 最强
         self.assertEqual(ev["date_source"], "json_ld")
 
+    def test_script_release_time_is_day_evidence(self):
+        """晚点文章页的 var release_time='YYYY/MM/DD' 是日精度原文日期，不是列表上的「今天」。"""
+        html = "<html><head><script>var release_time='2026/10/09';</script></head><body>正文</body></html>"
+        md = retrieve.extract_html_metadata(html)
+        self.assertEqual(md["meta"].get("release_time"), "2026/10/09")
+        ev = filter_mod.extract_date_evidence({
+            "url": "https://www.latepost.com/news/dj_detail?id=3753",
+            "title": "踏板", "metadata": md})
+        self.assertEqual(ev["publish_date"], "2026-10-09")
+        self.assertEqual(ev["date_source"], "html_meta")
+        self.assertEqual(ev["precision"], "day")
+
     def test_default_limit_covers_500_english_words(self):
         """默认抓取上限须容下英文 500 词（≈3000+ 字符）。"""
         sig = inspect.signature(retrieve.fetch_article_text)

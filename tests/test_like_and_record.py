@@ -81,7 +81,7 @@ class TestBriefRecord(unittest.TestCase):
         self.brief = os.path.join(self.tmp.name, "Daily-Brief-2026-10-08.md")
         self.cand = os.path.join(self.tmp.name, "Daily-Brief-2026-10-08-candidates.json")
         with open(self.brief, "w", encoding="utf-8") as f:
-            f.write(BRIEF_V1)
+            f.write("<!-- run_id: r1 -->\n" + BRIEF_V1)
         with open(self.cand, "w", encoding="utf-8") as f:
             json.dump({
                 "run_id": "r1", "generated_at": "2026-10-08T01:00:00+08:00",
@@ -115,6 +115,12 @@ class TestBriefRecord(unittest.TestCase):
         other = os.path.join(self.tmp.name, "Daily-Brief-2026-10-07-candidates.json")
         os.rename(self.cand, other)
         self.assertIsNone(brief_record.record_brief(self.brief, other))
+        self.assertEqual(brief_record.load_records(), [])
+
+    def test_run_mismatch_refused(self):
+        with open(self.brief, "w", encoding="utf-8") as f:
+            f.write("<!-- run_id: wrong -->\n" + BRIEF_V1)
+        self.assertIsNone(brief_record.record_brief(self.brief, self.cand))
         self.assertEqual(brief_record.load_records(), [])
 
 

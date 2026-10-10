@@ -26,6 +26,7 @@ import like_ctl
 import like_links
 import likes as likes_mod
 import validate_brief
+import finalize_brief
 
 SOURCES_FILE = os.path.join(ROOT, "data", "sources.json")
 
@@ -59,6 +60,8 @@ def _reconstruct_validate(args):
     argv = list(args.paths or [])
     if args.dedup:
         argv += ["--dedup", args.dedup]
+    if args.no_record:
+        argv.append("--no-record")
     return argv
 
 
@@ -152,8 +155,8 @@ def cmd_status(_args):
 
 def _add_collect(sp):
     p = sp.add_parser("collect", help="采集简报候选（调 collect_brief）")
-    p.add_argument("--window", help="窗口日期（当前透传但不参与计算）")
-    p.set_defaults(func=lambda a: _invoke(collect_brief.main, []))
+    p.add_argument("--reuse-cache", action="store_true", help="显式复用当日有效候选")
+    p.set_defaults(func=lambda a: collect_brief.main(["--reuse-cache"] if a.reuse_cache else []))
 
 
 def _add_discover(sp):
@@ -167,6 +170,7 @@ def _add_validate(sp):
     p = sp.add_parser("validate", help="简报强校验（调 validate_brief）")
     p.add_argument("paths", nargs="*", help="简报.md 与 候选.json（缺省自动探测）")
     p.add_argument("--dedup", help="去重 JSON 路径")
+    p.add_argument("--no-record", action="store_true", help="只校验，不登记为已交付")
     p.set_defaults(func=lambda a: _invoke(
         validate_brief.main, _reconstruct_validate(a)))
 
@@ -268,6 +272,10 @@ def main():
     _add_links(sp)
     _add_status(sp)
     _add_records(sp)
+    p = sp.add_parser("finalize", help="双重校验、保存快照后交付")
+    p.add_argument("brief")
+    p.add_argument("candidates")
+    p.set_defaults(func=lambda a: _invoke(finalize_brief.main, [a.brief, a.candidates]))
 
     args = ap.parse_args()
     if not getattr(args, "func", None):

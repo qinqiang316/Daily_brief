@@ -39,6 +39,9 @@ import json
 import os
 import re
 import sys
+import io
+from contextlib import redirect_stdout
+from pathlib import Path
 from datetime import datetime
 
 BRIEF_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -48,6 +51,7 @@ sys.path.insert(0, SCRIPTS_DIR)
 import brief_record
 import collect_brief  # 复用 norm_url / BRIEF_DIR / CAND_DIR / DEDUP_FILE（模块顶层无副作用）
 import likes as likes_mod
+from modules import run_store
 
 CAND_DIR = collect_brief.CAND_DIR
 MIN_WORDS = collect_brief.filter_mod.MIN_WORDS
@@ -74,9 +78,10 @@ def find_latest(d, prefix, ext):
     return best
 
 
-def extract_urls(md_path):
-    with open(md_path, encoding="utf-8", errors="ignore") as fh:
-        text = fh.read()
+def extract_urls(md_path, text=None):
+    if text is None:
+        with open(md_path, encoding="utf-8", errors="ignore") as fh:
+            text = fh.read()
     urls = set()
     for m in re.finditer(r"https?://[^\s)\]>]+", text):
         u = collect_brief.norm_url(m.group(0))
@@ -90,7 +95,7 @@ def extract_urls(md_path):
     return urls
 
 
-def main():
+def _validate_main(candidate_bytes=None, brief_bytes=None):
     args = list(sys.argv[1:])
     brief, cand, dedup = None, None, collect_brief.DEDUP_FILE
     while args:
@@ -127,8 +132,9 @@ def main():
     errors = []
 
     # 候选 URL 集合 + 日期未验证集合 + 探索集合 + 逐候选证据
-    with open(cand, encoding="utf-8") as f:
-        data = json.load(f)
+    data = json.loads(candidate_bytes if candidate_bytes is not None else Path(cand).read_bytes())
+    brief_text = (brief_bytes if brief_bytes is not None else Path(brief).read_bytes()).decode(
+        "utf-8", errors="ignore")
     generated_at = data.get("generated_at", "")
     pref_info = data.get("preference", {})
     window = data.get("window", {}) or {}
@@ -208,6 +214,41 @@ def main():
                       % (len(leftover_unv), " ".join(sorted(leftover_unv)[:5])))
     for msg in leftover_bad:
         errors.append("候选产物速览不合格（采集产物不合格）: %s" % msg)
+
+    # 视野拓展（horizon）：付费墙/反爬源只收标题+原文发布日期。
+    # 仅允许出现在简报「## 视野拓展」区，禁止进深度总结；日期须日精度、有证据、
+    # 落在本次窗口内，且不得是首页/频道/列表聚合页。
+    horizon_urls = set()
+    horizon_bad = []
+    for hz in data.get("horizon", []):
+        u = collect_brief.norm_url(hz.get("url", ""))
+        if not u:
+            horizon_bad.append("视野拓展 URL 非法: %s" % str(hz.get("url", ""))[:80])
+            continue
+        cand_urls.add(u)
+        horizon_urls.add(u)
+        if not str(hz.get("title") or "").strip():
+            horizon_bad.append("视野拓展缺标题: %s" % u)
+        if collect_brief.filter_mod.is_aggregate_url(u):
+            horizon_bad.append("视野拓展为聚合页（首页/频道/列表/导航），非独立文章: %s" % u)
+        pub = hz.get("publish_date") or ""
+        if not collect_brief.filter_mod.is_iso_day(pub):
+            horizon_bad.append("视野拓展发布日期缺失/非法（要求合法 YYYY-MM-DD）: %s" % u)
+            continue
+        if hz.get("date_precision") != "day":
+            horizon_bad.append("视野拓展日期非日精度（%s）: %s" % (hz.get("date_precision"), u))
+        if not collect_brief.filter_mod.has_date_provenance(hz):
+            horizon_bad.append("视野拓展缺少日期来源/证据 date_source/date_evidence: %s" % u)
+        if window_valid and pub < win_start:
+            horizon_bad.append("视野拓展日期 %s 早于窗口起点 %s: %s" % (pub, win_start, u))
+        if window_valid and pub > win_end:
+            horizon_bad.append("视野拓展日期 %s 晚于窗口终点 %s: %s" % (pub, win_end, u))
+    for msg in horizon_bad:
+        errors.append("候选产物视野拓展不合格（采集产物不合格）: %s" % msg)
+    hz_rej = horizon_urls & rejected_urls
+    if hz_rej:
+        errors.append("拒收 URL 仍保留在 horizon（须移入 rejected_candidates）: %s"
+                      % " ".join(sorted(hz_rej)[:5]))
     still_listed = rejected_urls & cand_urls
     if still_listed:
         errors.append("拒收 URL 仍保留在 candidates/source_leftovers（协议要求移除并移入 rejected_candidates）: %s"
@@ -223,7 +264,10 @@ def main():
             fp = os.path.abspath(os.path.join(OUTPUT_DIR, f))
             if fp == current_brief_abs:
                 continue
+            # Published alias and its identical run snapshot are the same edition.
             try:
+                if Path(fp).read_bytes() == brief_text.encode("utf-8") and RUN_ID_RE.search(brief_text):
+                    continue
                 with open(fp, encoding="utf-8", errors="ignore") as fh:
                     for m in re.finditer(r"https?://[^\s)\]>]+", fh.read()):
                         nu = collect_brief.norm_url(m.group(0))
@@ -234,12 +278,10 @@ def main():
             except Exception as e:
                 errors.append("扫描历史简报 %s 失败: %s" % (f, e))
 
-    brief_urls = extract_urls(brief)
+    brief_urls = extract_urls(brief, text=brief_text)
     if not brief_urls:
         print("FAIL: 简报中未提取到任何 URL")
         return 1
-    with open(brief, encoding="utf-8", errors="ignore") as fh:
-        brief_text = fh.read()
 
     # 1) 简报 ⊆ 候选（候选池外的 URL 若命中历史去重 → 追加说明，双重违规）
     outside = brief_urls - cand_urls
@@ -322,6 +364,45 @@ def main():
     if pref_marks > likes_mod.MAX_PREF_DEEP:
         errors.append("深度总结区偏好命中 %d 条 > 上限 %d（防信息茧房，探索内容 1-2 篇/天）"
                       % (pref_marks, likes_mod.MAX_PREF_DEEP))
+    # 视野拓展条目只允许出现在「## 视野拓展」区：出现在深度总结/TLDR 区 → FAIL
+    if horizon_urls:
+        section = ""
+        misplaced = set()
+        for line in brief_text.splitlines():
+            heading = re.match(r"^##(?!#)\s+(.+)$", line.strip())
+            if heading:
+                section = heading.group(1).strip()
+            line_urls = {collect_brief.norm_url(m.group(0))
+                         for m in re.finditer(r"https?://[^\s)\]>]+", line)}
+            if section != "视野拓展":
+                misplaced.update(line_urls & horizon_urls)
+        if misplaced:
+            errors.append("视野拓展 URL 出现在其它区域（仅允许「## 视野拓展」）: %s"
+                          % " ".join(sorted(misplaced)[:5]))
+        deep_urls = {collect_brief.norm_url(m.group(0))
+                     for m in re.finditer(r"https?://[^\s)\]\>]+", deep_text)}
+        hz_deep = (deep_urls & horizon_urls) - {""}
+        if hz_deep:
+            errors.append("视野拓展条目出现在深度总结区（只允许写「视野拓展」区）: %s"
+                          % " ".join(sorted(hz_deep)[:5]))
+        tldr_urls = {collect_brief.norm_url(m.group(0))
+                     for m in re.finditer(r"https?://[^\s)\]\>]+", brief_text.split("## 今日热门文章", 1)[0])}
+        hz_tldr = (tldr_urls & horizon_urls) - {""}
+        if hz_tldr:
+            errors.append("视野拓展条目出现在 TLDR 区（只允许写「视野拓展」区）: %s"
+                          % " ".join(sorted(hz_tldr)[:5]))
+        quick_part = ""
+        if "## 快速浏览" in brief_text:
+            quick_part = brief_text.split("## 快速浏览", 1)[1]
+            nxt = re.search(r"\n## ", quick_part)
+            if nxt:
+                quick_part = quick_part[:nxt.start()]
+        quick_urls = {collect_brief.norm_url(m.group(0))
+                      for m in re.finditer(r"https?://[^\s)\]\>]+", quick_part)}
+        hz_quick = (quick_urls & horizon_urls) - {""}
+        if hz_quick:
+            errors.append("视野拓展条目出现在快速浏览区（只允许写「视野拓展」区）: %s"
+                          % " ".join(sorted(hz_quick)[:5]))
 
     # 7) 未知日期禁止交付（含速览）：日期未验证 leftover 出现在简报任何位置 → FAIL
     if leftover_unv:
@@ -379,6 +460,7 @@ def main():
         return 1
     print("PASS: 简报 %d 条 URL 全部来自候选池，无去重复现，无日期未验证条目" % len(brief_urls))
     print("未推荐源速览放行 %d 条（source_leftovers）" % len(data.get("source_leftovers", [])))
+    print("视野拓展放行 %d 条（horizon，仅标题+原文发布日期）" % len(data.get("horizon", [])))
     print("简报: %s" % brief)
     print("候选: %s" % cand)
     pref_dir = pref_info.get("pref_dir")
@@ -387,9 +469,61 @@ def main():
     print("偏好: 方向=%s | 点赞=%d | 候选内偏好=%d | 深度总结标记=%d | 探索: 方向=%s 合格候选=%d 收录=%d 拒收=%d"
           % (pref_dir or "无", likes_count, pref_count_in_cand, pref_marks,
              explore_dir or "无", len(qualified_explore), len(explore_hit), len(rejected_explore)))
-    # PASS 后自动记录简报元数据
-    brief_record.record_brief(brief, cand)
     return 0
+
+
+def main():
+    """Validate stable inputs, persist the actual evidence, then record metadata."""
+    args = sys.argv[1:]
+    paths = [a for a in args if not a.startswith("--")]
+    if "--dedup" in args:
+        value = args[args.index("--dedup") + 1:args.index("--dedup") + 2]
+        paths = [p for p in paths if p not in value]
+    brief = next((p for p in paths if p.endswith(".md")), None)
+    cand = next((p for p in paths if p.endswith(".json")), None)
+    brief = brief or find_latest(OUTPUT_DIR, "Daily-Brief-", ".md")
+    if not brief or not os.path.isfile(brief):
+        print("FAIL: 找不到简报 %s" % brief)
+        return 1
+    brief_bytes = Path(brief).read_bytes()
+    day = file_date(brief)
+    rid_match = RUN_ID_RE.search(brief_bytes.decode("utf-8", errors="ignore"))
+    if not cand and day:
+        # Never select a newer daily alias when an exact snapshot is available.
+        cand = (run_store.resolve_candidate(CAND_DIR, day, rid_match.group(1))
+                if rid_match else None)
+        cand = cand or os.path.join(CAND_DIR, "Daily-Brief-%s-candidates.json" % day)
+    if not cand or not os.path.isfile(cand):
+        print("FAIL: 找不到与简报同日期的候选 JSON %s" % cand)
+        return 1
+    candidate_bytes = Path(cand).read_bytes()
+    saved_argv = sys.argv
+    capture = io.StringIO()
+    try:
+        sys.argv = [saved_argv[0], brief, cand] + args
+        with redirect_stdout(capture):
+            rc = _validate_main(candidate_bytes=candidate_bytes, brief_bytes=brief_bytes)
+    except (ValueError, OSError, TypeError) as exc:
+        rc = 1
+        capture.write("FAIL: 校验异常 %s\n" % exc)
+    finally:
+        sys.argv = saved_argv
+    if Path(cand).read_bytes() != candidate_bytes or Path(brief).read_bytes() != brief_bytes:
+        rc = 1
+        capture = io.StringIO("FAIL: 校验过程中候选或简报被修改，禁止交付\n")
+    output = capture.getvalue()
+    try:
+        receipt = run_store.save_validation(cand, brief, candidate_bytes, brief_bytes,
+                                            "PASS" if rc == 0 else "FAIL", output)
+    except (ValueError, OSError) as exc:
+        print("FAIL: 无法保存校验凭据 %s" % exc)
+        return 1
+    print(output, end="")
+    if receipt:
+        print("校验凭据：%s" % receipt)
+    if rc == 0 and "--no-record" not in args and run_store.managed_run(cand) is None:
+        brief_record.record_brief(brief, cand)
+    return rc
 
 
 if __name__ == "__main__":

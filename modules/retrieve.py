@@ -242,6 +242,12 @@ def extract_html_metadata(raw_html):
         if nm and ct and ct.group(1).strip():
             meta[nm.group(1)] = ct.group(1).strip()
     times = [m.group(1).strip() for m in _TIME_TAG_RE.finditer(raw_html)]
+    # 晚点 LatePost 文章页没有 JSON-LD/meta 发布日期，原文日期写在
+    # `var release_time='YYYY/MM/DD'`。只认带年份的日历日，不认「今天」「10月10日」。
+    if "release_time" not in meta:
+        m = re.search(r"\bvar\s+release_time\s*=\s*['\"](20\d{2}[-/]\d{2}[-/]\d{2})['\"]", raw_html)
+        if m:
+            meta["release_time"] = m.group(1)
     return {"json_ld": json_ld, "meta": meta, "time": times}
 
 

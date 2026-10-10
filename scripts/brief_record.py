@@ -8,6 +8,8 @@ import json
 import os
 import re
 import sys
+import hashlib
+from pathlib import Path
 from collections import Counter
 from datetime import datetime, timezone, timedelta
 
@@ -137,6 +139,11 @@ def record_brief(brief_path, cand_path):
     # 读简报 md
     with open(brief_path, encoding="utf-8", errors="ignore") as fh:
         brief_text = fh.read()
+    run_id = cand_data.get("run_id")
+    marker = re.search(r"<!--\s*run_id:\s*(\S+)\s*-->", brief_text)
+    if run_id and (not marker or marker.group(1) != run_id):
+        print("[brief_record] run_id 错配，拒绝记录", file=sys.stderr)
+        return None
 
     # 日期：优先候选文件名日期（与简报已配对），回退 generated_at
     today = cd or datetime.now(TZ).strftime("%Y-%m-%d")
@@ -227,6 +234,11 @@ def record_brief(brief_path, cand_path):
 
     record = {
         "date": today,
+        "run_id": run_id,
+        "brief_path": os.path.abspath(brief_path),
+        "candidate_path": os.path.abspath(cand_path),
+        "brief_sha256": hashlib.sha256(Path(brief_path).read_bytes()).hexdigest(),
+        "candidate_sha256": hashlib.sha256(Path(cand_path).read_bytes()).hexdigest(),
         "generated_at": generated_at,
         "window": _infer_window(brief_text),
         "preference": {

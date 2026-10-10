@@ -114,6 +114,7 @@ class CollectMainCase(unittest.TestCase):
         os.makedirs(self.cand_dir)
         self.patches = [
             mock.patch.object(collect_brief, "CAND_DIR", self.cand_dir),
+            mock.patch.object(collect_brief, "OUTPUT_DIR", os.path.join(self.tmp.name, "output")),
             mock.patch.object(collect_brief, "LOCK_FILE",
                               os.path.join(self.tmp.name, "lock")),
             mock.patch.object(collect_brief.retrieve, "fetch_hn", return_value=[]),
@@ -128,6 +129,9 @@ class CollectMainCase(unittest.TestCase):
             mock.patch.object(collect_brief.filter_mod, "auto_update_dedup",
                               return_value=set()),
             mock.patch.object(window, "get_latest_brief_date", return_value=None),
+            # 视野拓展源隔离：不在此用例发真实网络请求
+            mock.patch.object(collect_brief.horizon, "fetch_horizon",
+                              return_value=([], [], [])),
         ]
         for p in self.patches:
             p.start()

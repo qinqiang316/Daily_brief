@@ -15,13 +15,14 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 from modules.window import BRIEF_DIR, TZ, compute_window, log
 from modules import filter as filter_mod
-from modules import rank, retrieve
+from modules import horizon, rank, retrieve, run_store
 
 # 兼容导出：旧脚本(validate_brief 等)仍引用 collect_brief.DEDUP_FILE / norm_url
 DEDUP_FILE = filter_mod.DEDUP_FILE
 norm_url = filter_mod.norm_url
 
 CAND_DIR = os.path.join(BRIEF_DIR, "_candidates")
+OUTPUT_DIR = os.path.join(BRIEF_DIR, "output")
 LIKES_FILE = os.path.join(BRIEF_DIR, "data", "likes.json")
 MAX_CANDIDATES, MAX_HN, MIN_WORDS = rank.MAX_CANDIDATES, rank.MAX_HN, filter_mod.MIN_WORDS
 
@@ -428,8 +429,23 @@ def _main(argv=None):
     if args.reuse_cache:
         cached = load_valid_cache(out_file, today_s)
         if cached:
+            existing = run_store.candidate_path(CAND_DIR, today_s, cached["run_id"])
+            if existing.is_file():
+                cached = load_valid_cache(str(existing), today_s)
+                if not cached:
+                    print("[COLLECT_FAILED] 批次工作副本已改变且不再合格，禁止用日期别名覆盖审核")
+                    return 1
+                manifest = json.loads((existing.parent / "manifest.json").read_text())
+                cand_path, brief_path = manifest["candidates"], manifest["brief"]
+            else:
+                cand_path, brief_path = run_store.create_run(CAND_DIR, OUTPUT_DIR, today_s, cached)
             print("[CACHE_HIT] 复用同日有效候选缓存（run_id=%s，%d 篇）：%s"
-                  % (cached.get("run_id", "?"), len(cached["candidates"]), out_file))
+                  % (cached.get("run_id", "?"), len(cached["candidates"]), cand_path))
+            print("候选详情 JSON：%s" % cand_path)
+            print("本次简报输出：%s" % brief_path)
+            if (existing.parent / "published.json").is_file():
+                published = json.loads((existing.parent / "published.json").read_text())
+                print('[ALREADY_PUBLISHED] 此批次已发布，不再写作；MEDIA:"%s"' % published["brief_path"])
             return 0
         print("[CACHE_MISS] 无同日有效缓存，执行全新采集")
 
@@ -490,6 +506,18 @@ def _collect(now, today_s, out_file):
     candidates.extend(acs_items)
     src_stats["agent_case_share"] = len(acs_items)
 
+    # 视野拓展源（美国/日本/欧洲/中国）：能抓全文的升级进候选池，
+    # 付费墙/反爬源只留标题+原文发布日期，写进简报「视野拓展」区（2026-10-10 加）
+    hz_promoted, hz_items, hz_unavailable = horizon.fetch_horizon(dedup, window_start, today, budget=search_budget)
+    for c in hz_promoted:
+        c["is_preferred"] = False
+        c["is_explore"] = False
+        src_map.setdefault(c["source_key"], {"label": c["source_label"],
+                                             "direction": c["direction"], "items": []})["items"].append(c)
+    candidates.extend(hz_promoted)
+    src_stats["horizon_fulltext"] = len(hz_promoted)
+    src_stats["horizon"] = len(hz_items)
+
     kept = rank.rank_candidates(
         rank.filter_candidates(candidates, dedup, window_start, today, pref_dir, budget=budget),
         explore_dir)
@@ -512,7 +540,11 @@ def _collect(now, today_s, out_file):
         },
         "candidates": kept,
         "source_leftovers": leftovers,
+        "horizon": hz_items,
+        "horizon_unavailable": hz_unavailable,
     }
+    run_candidate, run_brief = run_store.create_run(CAND_DIR, OUTPUT_DIR, today_s, payload)
+    # Compatibility alias is for status/cache only. Writers use the exact run path below.
     atomic_write_json(out_file, payload)
 
     print("时间窗口：%s ~ %s（触发日 %s，run_id %s）" % (window_start, today, today, run_id))
@@ -530,7 +562,13 @@ def _collect(now, today_s, out_file):
     print("未推荐源 %d 个（无文章入选，各取 1 条有日期证据的最新内容）：" % len(leftovers))
     for lo in leftovers:
         print("  - [%s] %s | %s | %s" % (lo["source"], lo["title"], lo["publish_date"], lo["url"]))
-    print("候选详情 JSON：%s" % out_file)
+    print("视野拓展 %d 条（付费墙/反爬源，仅标题+原文发布日期，只写简报「视野拓展」区）：" % len(hz_items))
+    for hz in hz_items:
+        print("  - [%s｜%s] %s | %s | %s" % (hz["source_label"], hz["region"], hz["title"], hz["publish_date"], hz["url"]))
+    for un in hz_unavailable:
+        print("  ! 缺货：[%s｜%s] %s" % (un["source_label"], un["region"], un["reason"]))
+    print("候选详情 JSON：%s" % run_candidate)
+    print("本次简报输出：%s" % run_brief)
     return 0
 
 

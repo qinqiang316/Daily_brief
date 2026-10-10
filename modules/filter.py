@@ -37,7 +37,8 @@ BYLINE_MARK_RE = re.compile(
 # metadata 中视为发布时间的键（优先级从左到右在调用处控制）
 META_DATE_KEYS = ("datePublished", "datepublished", "article:published_time",
                   "parsely-pub-date", "sailthru.date", "pubdate", "publishdate",
-                  "publish_date", "date", "dcterms.date", "dc.date", "dc.date.issued")
+                  "publish_date", "release_time", "date", "dcterms.date",
+                  "dc.date", "dc.date.issued")
 
 
 def _valid_ymd(y, mo, d):
@@ -71,7 +72,7 @@ def _parse_meta_date(raw):
     if not raw:
         return None
     s = str(raw).strip()
-    m = re.search(r"(20\d{2})-(\d{1,2})-(\d{1,2})", s)
+    m = re.search(r"(20\d{2})[-/](\d{1,2})[-/](\d{1,2})", s)
     if m and _valid_ymd(*m.groups()):
         return _iso_day(*m.groups())
     m = EN_DATE_YMD_RE.search(s)

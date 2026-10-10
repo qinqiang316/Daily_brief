@@ -36,7 +36,7 @@ DailyBrief/
 │   ├── _dedup_urls.json       # 已推送 URL 去重集合（自动维护）
 │   └── likes.json             # 点赞记录（用户偏好，驱动检索增强）
 ├── _candidates/               # 候选 JSON（过程文件，已 gitignore）
-└── Daily-Brief-YYYY-MM-DD.md  # 简报输出（已 gitignore）
+└── output/                    # 已发布日期入口及 runs/{run_id}/ 草稿/最终快照（已 gitignore）
 ```
 
 > `modules/` 是采集端逻辑的模块化拆分（M1 阶段成果）；`scripts/collect_brief.py` 目前是总入口。
@@ -59,6 +59,33 @@ DailyBrief/
 ---
 
 ## 工作流
+
+### 批次隔离与可追溯交付（2026-10-10）
+
+每次采集保存到 `_candidates/runs/{run_id}/`：`collected.json` 是不可覆盖的初始快照，
+`Daily-Brief-{date}-candidates.json` 是审核/补抓工作副本，`manifest.json` 指定本次两个精确路径。
+简报草稿放在 `output/runs/{run_id}/Daily-Brief-{date}.md`。采集 stdout 输出这两个路径，
+Hermes 与 agy 必须使用它们，不能使用按日期的候选别名写作。
+
+```bash
+# 把采集输出的精确路径传给 agy；prompt 必须含两个路径、窗口和 run_id
+python3 scripts/run_agy.py '<本次候选路径>' '<本次prompt文件>' --timeout 1200
+# 主席读草稿、核对原文，等 agy 真正退出后统一交付
+python3 scripts/finalize_brief.py '<本次简报路径>' '<本次候选路径>'
+```
+
+同批次 agy 与发布共享写入锁；等待窗口超时不代表进程结束，不能直接重试。
+真实超时结束 agy 子进程组，退出码非零才允许重试。finalize 会预检、重建点赞区、复检，
+保存最终候选和简报快照，再发布当日入口；已有当日发布版时拒绝被新批次覆盖。
+交付使用它返回的 `MEDIA` 最终快照路径。
+
+每次校验在批次的 `validation/` 下保留完整输入、哈希、run_id 和 PASS/FAIL 输出。
+自动选池优先匹配简报 run_id 的快照；已发布快照优先于审核工作副本。
+记录模块也核对 run_id 并保留精确路径与哈希。校验通过不等同于摘要事实已核实，
+主席仍须读草稿与原文。Hermes 定时任务完整提示词见 [docs/hermes-dailybrief-task.txt](docs/hermes-dailybrief-task.txt)。
+
+核心脚本独立存储批次；`_candidates/Daily-Brief-{date}-candidates.json` 仅是最新采集缓存，
+`output/Daily-Brief-{date}.md` 是已发布版入口。旧数据不会自动冒充有快照的新批次。
 
 ```
 cron（或手动）──▶ collect_brief.py（窗口→去重→搜索→硬过滤→候选池+偏好/探索标记）
@@ -160,7 +187,7 @@ python3 scripts/validate_brief.py
 - [ ] **新源发现**：跳出既有固定源，发现新增量信息源及其高质量文章（新增量方向）
 - [ ] **细粒度偏好画像**：从 6 大方向细化到关键词/话题/学科级
 - [ ] **反方向拓展**：基于兴趣分布，刻意推荐对抗性/陌生角度内容
-- [ ] 统一 CLI 入口（脱离 cron 也可手动运行）
+- [x] 统一 CLI 入口（scripts/dailybrief.py，包含 collect/validate/finalize）
 
 详见 [IDEA.md](IDEA.md) 了解完整设计理念与演进方向。
 

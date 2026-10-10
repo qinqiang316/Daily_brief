@@ -240,5 +240,90 @@ class TestValidateLeftover(ValidateCase):
         self.assertEqual(self.run_validate([brief, cand]), 1)
 
 
+class TestValidateHorizon(ValidateCase):
+    """视野拓展（horizon）：只收标题+原文发布日期，仅允许写「## 视野拓展」区。"""
+
+    def good_horizon(self, **kw):
+        hz = {
+            "title": "视野外文", "url": "https://hz.example.com/2026/10/08/hz",
+            "domain": "hz.example.com", "source_label": "Railway Gazette",
+            "region": "欧洲", "direction": "轨道交通",
+            "publish_date": "2026-10-08", "date_verified": True,
+            "date_source": "feed_pubdate", "date_evidence": "pubDate=Thu, 08 Oct 2026",
+            "date_precision": "day", "snippet": "摘要",
+        }
+        hz.update(kw)
+        return hz
+
+    def test_verified_horizon_allowed_and_no_body_required(self):
+        """付费墙源只给标题+原文发布日期：无 500 字正文也可放行（不进深度区）。"""
+        brief = self.write_brief()
+        cand = self.write_cand(cand_payload(horizon=[self.good_horizon()]))
+        self.assertEqual(self.run_validate([brief, cand]), 0)
+
+    def test_horizon_missing_date_rejected(self):
+        brief = self.write_brief()
+        hz = self.good_horizon()
+        hz.pop("date_source")
+        cand = self.write_cand(cand_payload(horizon=[hz]))
+        self.assertEqual(self.run_validate([brief, cand]), 1)
+
+    def test_horizon_outside_window_rejected(self):
+        brief = self.write_brief()
+        cand = self.write_cand(cand_payload(
+            horizon=[self.good_horizon(publish_date="2026-09-01")]))
+        self.assertEqual(self.run_validate([brief, cand]), 1)
+
+    def test_horizon_aggregate_page_rejected(self):
+        brief = self.write_brief()
+        cand = self.write_cand(cand_payload(
+            horizon=[self.good_horizon(url="https://hz.example.com/2026/10/08/")]))
+        self.assertEqual(self.run_validate([brief, cand]), 1)
+
+    def test_horizon_in_deep_section_rejected(self):
+        """视野拓展条目混进深度总结区 → FAIL（只允许写「视野拓展」区）。"""
+        path = os.path.join(self.out_dir, "Daily-Brief-2026-10-08.md")
+        with open(path, "w", encoding="utf-8") as f:
+            f.write("# Daily Brief 2026-10-08\n<!-- run_id: 20261008T010000-abcd1234 -->\n"
+                    "## 今日热门文章\n"
+                    "- [视野外文](https://hz.example.com/2026/10/08/hz)\n\n"
+                    "## 今日主题趋势\n趋势句。\n\n"
+                    "## 参考资料\n- [1] [好文章](%s)\n" % GOOD_URL)
+        cand = self.write_cand(cand_payload(horizon=[self.good_horizon()]))
+        self.assertEqual(self.run_validate([path, cand]), 1)
+
+    def test_horizon_in_tldr_rejected(self):
+        """视野拓展条目写进 TLDR 区 → FAIL。"""
+        path = os.path.join(self.out_dir, "Daily-Brief-2026-10-08.md")
+        with open(path, "w", encoding="utf-8") as f:
+            f.write("# Daily Brief 2026-10-08\n<!-- run_id: 20261008T010000-abcd1234 -->\n"
+                    "**今日速览 (TLDR)**\n"
+                    "- 视野外文 https://hz.example.com/2026/10/08/hz\n\n"
+                    "## 今日热门文章\n正文 [好文章](%s)\n\n"
+                    "## 今日主题趋势\n趋势句。\n\n"
+                    "## 参考资料\n- [1] [好文章](%s)\n" % (GOOD_URL, GOOD_URL))
+        cand = self.write_cand(cand_payload(horizon=[self.good_horizon()]))
+        self.assertEqual(self.run_validate([path, cand]), 1)
+
+    def test_horizon_in_quick_section_rejected(self):
+        """视野拓展条目写进快速浏览 → FAIL。"""
+        path = os.path.join(self.out_dir, "Daily-Brief-2026-10-08.md")
+        with open(path, "w", encoding="utf-8") as f:
+            f.write("# Daily Brief 2026-10-08\n<!-- run_id: 20261008T010000-abcd1234 -->\n"
+                    "## 今日热门文章\n正文 [好文章](%s)\n\n"
+                    "## 今日主题趋势\n趋势句。\n\n"
+                    "## 快速浏览\n- [视野外文](https://hz.example.com/2026/10/08/hz)\n\n"
+                    "## 参考资料\n- [1] [好文章](%s)\n" % (GOOD_URL, GOOD_URL))
+        cand = self.write_cand(cand_payload(horizon=[self.good_horizon()]))
+        self.assertEqual(self.run_validate([path, cand]), 1)
+
+    def test_horizon_in_other_sections_rejected(self):
+        for heading in ("今日主题趋势", "值得深读的观点", "参考资料"):
+            with self.subTest(heading=heading):
+                brief = self.write_brief(extra="\n## %s\nhttps://hz.example.com/2026/10/08/hz\n" % heading)
+                cand = self.write_cand(cand_payload(horizon=[self.good_horizon()]))
+                self.assertEqual(self.run_validate([brief, cand]), 1)
+
+
 if __name__ == "__main__":
     unittest.main()

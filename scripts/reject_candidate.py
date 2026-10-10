@@ -30,7 +30,7 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from modules.window import TZ  # noqa: E402
-from modules import filter as filter_mod  # noqa: E402
+from modules import filter as filter_mod, run_store  # noqa: E402
 import collect_brief  # noqa: E402  复用 CAND_DIR / atomic_write_json（模块顶层无副作用）
 
 
@@ -58,6 +58,10 @@ def list_rejected(cand_path):
 
 def reject(cand_path, url, reason, reviewed_by):
     """把命中条目从 candidates/source_leftovers 移入顶层 rejected_candidates。"""
+    directory = run_store.managed_run(cand_path)
+    if directory and (directory / "published.json").exists():
+        print("[REJECT_FAILED] 批次已发布，禁止修改审核证据")
+        return 1
     nu = filter_mod.norm_url(url)
     if not nu:
         print("[REJECT_FAILED] URL 非法: %s" % str(url)[:80])
