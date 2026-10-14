@@ -91,16 +91,17 @@ class RunCase(unittest.TestCase):
         self.assertEqual(json.loads(receipt.read_text())["status"], "FAIL")
         self.assertFalse(self.records.exists())
 
-    def test_finalize_stores_evidence_and_publishes_immutable_attachment(self):
+    def test_finalize_publishes_original_path_and_removes_run_files(self):
         cand, brief = self.create()
         final = Path(finalize_brief.finalize(cand, brief))
-        self.assertIn("final", final.parts)
-        self.assertEqual(final.read_bytes(), (self.output / brief.name).read_bytes())
-        self.assertEqual(len(list((cand.parent / "validation").glob("*/receipt.json"))), 2)
+        self.assertEqual(final, self.output / brief.name)
+        self.assertNotIn("runs", final.parts)
+        self.assertFalse(cand.parent.exists())
+        self.assertFalse(brief.parent.exists())
         record = brief_record.load_records()[0]
         self.assertEqual(record["run_id"], "first")
         self.assertEqual(record["brief_path"], str(final))
-        self.assertEqual(self.check([final]), 0)  # Its publication alias is not historical reuse.
+        self.assertEqual(self.check([final]), 0)  # Dated cache remains; run files do not.
         self.assertEqual(finalize_brief.finalize(cand, brief), str(final))
         self.assertEqual(len(brief_record.load_records()), 1)
 
@@ -113,13 +114,22 @@ class RunCase(unittest.TestCase):
             finalize_brief.finalize(cand2, brief2)
         self.assertEqual((self.output / brief.name).read_bytes(), before)
 
-    def test_tampered_published_candidate_refused(self):
+    def test_tampered_published_alias_refused(self):
         cand, brief = self.create()
-        finalize_brief.finalize(cand, brief)
-        final_cand = cand.parent / "final" / cand.name
-        final_cand.write_text("{}")
+        alias = Path(finalize_brief.finalize(cand, brief))
+        alias.write_text(alias.read_text() + "\n")
         with self.assertRaises(ValueError):
             finalize_brief.finalize(cand, brief)
+
+    def test_tampered_snapshot_before_record_refused(self):
+        cand, brief = self.create()
+        with mock.patch.object(brief_record, "record_brief", return_value=None):
+            with self.assertRaises(ValueError):
+                finalize_brief.finalize(cand, brief)
+        (cand.parent / "final" / cand.name).write_text("{}")
+        with self.assertRaises(ValueError):
+            finalize_brief.finalize(cand, brief)
+        self.assertTrue((cand.parent / "published.json").is_file())
 
     def test_busy_writer_prevents_finalize(self):
         cand, brief = self.create()

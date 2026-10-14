@@ -76,16 +76,14 @@ python3 scripts/finalize_brief.py '<本次简报路径>' '<本次候选路径>'
 
 同批次 agy 与发布共享写入锁；等待窗口超时不代表进程结束，不能直接重试。
 真实超时结束 agy 子进程组，退出码非零才允许重试。finalize 会预检、重建点赞区、复检，
-保存最终候选和简报快照，再发布当日入口；已有当日发布版时拒绝被新批次覆盖。
-交付使用它返回的 `MEDIA` 最终快照路径。
+保存最终候选和简报到原来的 `output/Daily-Brief-{date}.md`，确认登记成功后删除本次 runs 过程目录。已有当日发布版时拒绝被新批次覆盖。交付使用它返回的 `MEDIA`，即该日期文件，不要把过程目录路径交给用户。
 
-每次校验在批次的 `validation/` 下保留完整输入、哈希、run_id 和 PASS/FAIL 输出。
-自动选池优先匹配简报 run_id 的快照；已发布快照优先于审核工作副本。
-记录模块也核对 run_id 并保留精确路径与哈希。校验通过不等同于摘要事实已核实，
+校验在发布前核对本次输入、哈希和 run_id。确认发布并清理过程目录后，不再保留 validation 快照。
+记录模块核对 run_id，并保存日期文件路径与哈希。校验通过不等同于摘要事实已核实，
 主席仍须读草稿与原文。Hermes 定时任务完整提示词见 [docs/hermes-dailybrief-task.txt](docs/hermes-dailybrief-task.txt)。
 
-核心脚本独立存储批次；`_candidates/Daily-Brief-{date}-candidates.json` 仅是最新采集缓存，
-`output/Daily-Brief-{date}.md` 是已发布版入口。旧数据不会自动冒充有快照的新批次。
+`_candidates/Daily-Brief-{date}-candidates.json` 是当日候选缓存。
+`output/Daily-Brief-{date}.md` 是已发布简报。隔离目录只在生成过程中使用，确认后删除。
 
 ```
 cron（或手动）──▶ collect_brief.py（窗口→去重→搜索→硬过滤→候选池+偏好/探索标记）
