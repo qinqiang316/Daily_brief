@@ -111,10 +111,11 @@ def _file_date(path):
     return m.group(1) if m else None
 
 
-def record_brief(brief_path, cand_path):
+def record_brief(brief_path, cand_path, html_path=None):
     """从候选 JSON + 简报 md 提取元数据并记录。
     幂等可重建：同一日期重复记录时替换旧记录（同输入同结果），不重复追加。
     简报与候选文件名日期不一致（跨日错配）时拒绝记录。
+    html_path 给定时记录 HTML 交付物路径与哈希（MD 仍为内部 canonical）。
     Returns: 记录的 dict，或 None（失败/拒绝时）。
     """
     if not brief_path or not os.path.exists(brief_path):
@@ -249,6 +250,13 @@ def record_brief(brief_path, cand_path):
         "articles": articles,
         "summary": summary,
     }
+    if html_path:
+        hp = Path(html_path)
+        if not hp.is_file():
+            print("[brief_record] HTML 交付物不存在: %s" % html_path, file=sys.stderr)
+            return None
+        record["html_path"] = os.path.abspath(html_path)
+        record["html_sha256"] = hashlib.sha256(hp.read_bytes()).hexdigest()
 
     records.append(record)
     save_records(records)

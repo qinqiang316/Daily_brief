@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 from modules import run_store
+from modules import html_report
 import collect_brief
 import validate_brief
 import like_links
@@ -85,6 +86,12 @@ def _delivered_alias(cand, brief, output_dir):
         raise ValueError("当日已有发布简报，保留旧版；本批次不得覆盖交付路径")
     if hashlib.sha256(alias.read_bytes()).hexdigest() != rec["brief_sha256"]:
         raise ValueError("当日发布入口已变更，禁止覆盖")
+    html_hash = rec.get("html_sha256")
+    if html_hash:
+        html_alias = alias.with_suffix(".html")
+        if (not html_alias.is_file()
+                or hashlib.sha256(html_alias.read_bytes()).hexdigest() != html_hash):
+            raise ValueError("当日 HTML 发布入口已变更，禁止覆盖")
     return alias
 
 
@@ -130,14 +137,28 @@ def _publish_locked(directory, cand, brief, output_dir):
         if (hashlib.sha256(final.read_bytes()).hexdigest() != receipt["brief_sha256"]
                 or hashlib.sha256(final_cand.read_bytes()).hexdigest() != receipt["candidate_sha256"]):
             raise ValueError("已发布快照被修改，禁止交付")
+        final_html = None
+        if receipt.get("html_sha256"):
+            final_html = Path(receipt["html_path"])
+            if (not final_html.is_file()
+                    or hashlib.sha256(final_html.read_bytes()).hexdigest() != receipt["html_sha256"]):
+                raise ValueError("已发布 HTML 快照被修改，禁止交付")
         with run_lock(output_dir):
             if not alias.exists():
                 run_store.atomic_bytes(alias, final.read_bytes())
             elif alias.read_bytes() != final.read_bytes():
                 raise ValueError("当日发布入口已变更，禁止覆盖")
+            html_alias = None
+            if final_html is not None:
+                html_alias = alias.with_suffix(".html")
+                if not html_alias.exists():
+                    run_store.atomic_bytes(html_alias, final_html.read_bytes())
+                elif html_alias.read_bytes() != final_html.read_bytes():
+                    raise ValueError("当日 HTML 发布入口已变更，禁止覆盖")
             cache = _date_cache(directory, cand)
             run_store.atomic_bytes(cache, final_cand.read_bytes())
-            if brief_record.record_brief(str(alias), str(cache)) is None:
+            if brief_record.record_brief(str(alias), str(cache),
+                                         html_path=str(html_alias) if html_alias else None) is None:
                 raise ValueError("简报登记失败，不交付；保留快照供幂等重试")
         return alias
     with run_lock(output_dir):
@@ -152,6 +173,20 @@ def _publish_locked(directory, cand, brief, output_dir):
         if validate(brief, cand):
             raise ValueError("最终校验失败")
         candidate_bytes, brief_bytes = cand.read_bytes(), brief.read_bytes()
+        # HTML 交付物：存在则必须与 canonical MD/候选严格一致才随本批发布；
+        # 批次声明 delivery=html（agent 管线）时缺 HTML 直接拒绝发布。
+        payload = json.loads(candidate_bytes)
+        html_file = Path(html_report.html_for_brief(brief))
+        html_bytes = None
+        if html_file.is_file():
+            ok_html, html_errors = html_report.verify_html(
+                str(html_file), str(brief), str(cand))
+            if not ok_html:
+                raise ValueError("HTML 与 canonical 不一致，禁止发布: %s"
+                                 % "；".join(html_errors[:5]))
+            html_bytes = html_file.read_bytes()
+        elif payload.get("delivery") == "html":
+            raise ValueError("本批次声明 HTML 交付但缺少已验收 HTML: %s" % html_file)
         receipts = list((directory / "validation").glob("*/receipt.json"))
         latest = max(receipts, key=lambda p: p.stat().st_mtime_ns)
         check = json.loads(latest.read_text())
@@ -166,11 +201,21 @@ def _publish_locked(directory, cand, brief, output_dir):
         receipt = {"run_id": manifest["run_id"], "date": manifest["date"],
                    "brief_path": str(final_brief), "candidate_path": str(final_cand),
                    "brief_sha256": bh, "candidate_sha256": ch, "validation_receipt": str(latest)}
+        if html_bytes is not None:
+            final_html = brief.parent / "final" / html_file.name
+            run_store.write_once(final_html, html_bytes)
+            receipt["html_path"] = str(final_html)
+            receipt["html_sha256"] = hashlib.sha256(html_bytes).hexdigest()
         run_store.write_once(directory / "published.json", run_store.json_bytes(receipt))
         run_store.atomic_bytes(alias, brief_bytes)
+        html_alias = None
+        if html_bytes is not None:
+            html_alias = alias.with_suffix(".html")
+            run_store.atomic_bytes(html_alias, html_bytes)
         cache = _date_cache(directory, cand)
         run_store.atomic_bytes(cache, candidate_bytes)
-        if brief_record.record_brief(str(alias), str(cache)) is None:
+        if brief_record.record_brief(str(alias), str(cache),
+                                     html_path=str(html_alias) if html_alias else None) is None:
             raise ValueError("简报登记失败，不交付；保留快照供幂等重试")
         return alias
 

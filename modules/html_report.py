@@ -190,14 +190,16 @@ def verify_html(html_path, brief_path, cand_path):
     with open(brief_path, encoding="utf-8", errors="ignore") as f:
         brief_text = f.read()
     with open(cand_path, encoding="utf-8") as f:
-        payload = json_load(f)
+        payload = json.load(f)
+    with open(html_path, encoding="utf-8", errors="ignore") as f:
+        html_raw = f.read()
 
     scan = scan_html(html_path)
     html_text = scan.text()
 
-    # run_id 一致
+    # run_id 一致（HTML 里以注释/文本标注，查原文）
     m_md = RUN_ID_RE.search(brief_text)
-    m_html = RUN_ID_RE.search(html_text)
+    m_html = RUN_ID_RE.search(html_raw)
     if m_md and (not m_html or m_html.group(1) != m_md.group(1)):
         errors.append("HTML run_id 与 canonical MD 不一致")
 
@@ -276,11 +278,6 @@ def verify_html(html_path, brief_path, cand_path):
         errors.append("HTML 缺「手机端文字点赞」提示")
 
     return (not errors), errors
-
-
-def json_load(fh):
-    import json
-    return json.load(fh)
 
 
 def html_for_brief(brief_path):

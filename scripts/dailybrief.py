@@ -25,6 +25,8 @@ import discover_sources
 import like_ctl
 import like_links
 import likes as likes_mod
+import prepare_brief
+import run_pipeline
 import validate_brief
 import finalize_brief
 
@@ -206,6 +208,21 @@ def _add_status(sp):
     p.set_defaults(func=cmd_status)
 
 
+def _add_prepare(sp):
+    p = sp.add_parser("prepare", help="agent 管线：短时生成批次任务上下文（cron 预运行）")
+    p.set_defaults(func=lambda a: prepare_brief.main([]))
+
+
+def _add_pipeline(sp):
+    p = sp.add_parser("pipeline", help="agent 管线：并行检索+合并+小g写作/HTML（长任务）")
+    p.add_argument("context", help="prepare 生成的 task_context.json")
+    p.add_argument("--lane-timeout", type=int, default=run_pipeline.LANE_TIMEOUT_S)
+    p.add_argument("--writer-timeout", type=int, default=run_pipeline.WRITER_TIMEOUT_S)
+    p.add_argument("--html-timeout", type=int, default=run_pipeline.HTML_TIMEOUT_S)
+    p.set_defaults(func=lambda a: run_pipeline.run(
+        a.context, a.lane_timeout, a.writer_timeout, a.html_timeout))
+
+
 def cmd_records(args):
     """列出简报记录 / 按日期范围查询 / 统计分布。"""
     if args.stats:
@@ -265,6 +282,8 @@ def main():
     )
     sp = ap.add_subparsers(dest="command", title="子命令")
     _add_collect(sp)
+    _add_prepare(sp)
+    _add_pipeline(sp)
     _add_discover(sp)
     _add_validate(sp)
     _add_like(sp)

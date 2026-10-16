@@ -65,6 +65,11 @@ def brief_path(output_dir, day, run_id):
     return Path(output_dir) / "runs" / safe_run_id(run_id) / ("Daily-Brief-%s.md" % day)
 
 
+def html_path(output_dir, day, run_id):
+    candidate_path(output_dir, day, run_id)  # Validate both path components.
+    return Path(output_dir) / "runs" / safe_run_id(run_id) / ("Daily-Brief-%s.html" % day)
+
+
 def create_run(cand_dir, output_dir, day, payload):
     run_id = safe_run_id(payload.get("run_id"))
     path = candidate_path(cand_dir, day, run_id)
@@ -74,7 +79,9 @@ def create_run(cand_dir, output_dir, day, payload):
     out = brief_path(output_dir, day, run_id)
     out.parent.mkdir(parents=True, exist_ok=True)
     manifest = {"run_id": run_id, "date": day, "candidates": str(path.resolve()),
-                "brief": str(out.resolve()), "collected_sha256": hashlib.sha256(content).hexdigest()}
+                "brief": str(out.resolve()),
+                "html": str(html_path(output_dir, day, run_id).resolve()),
+                "collected_sha256": hashlib.sha256(content).hexdigest()}
     write_once(path.parent / "manifest.json", json_bytes(manifest))
     return str(path.resolve()), str(out.resolve())
 
