@@ -1,0 +1,20 @@
+DailyBrief V2独立验收/交付轮。script必须dailybrief-v2-poll.sh，入口pipeline_job.py poll。此轮是新会话，不续接启动轮。
+脚本无待处理结果时输出wakeAgent=false，调度器直接跳过模型。有review_overdue=true的claimed票据：报[CRON_FAILURE]及精确票据，不重复claim或重启；不得把遗留验收当空轮询。
+Script Output为空数组[]：只回复[SILENT]。有运行超期项：首行[CRON_FAILURE]，说明精确票据与PID需主席检查/取消，不重启。禁止重新检索、调用受限kimi、读凭据、覆盖同日发布稿。
+对Script Output列出的一个精确ready/failed票据运行：
+python3 '/Users/qqiang/AI project/05-日常工具/DailyBrief/scripts/pipeline_job.py' claim '精确ticket.json'
+claim失败：停止，不与另一验收进程争抢。
+previous_status=failed：读本票据log确认原因，不拿历史池代替；用pipeline_job.py ack该票据。最终首行只写[CRON_FAILURE]，下一行简述真实原因。
+previous_status=ready：
+1. 仅使用票据brief/candidates/html精确绝对路径，核manifest/run_id/window和上下文hash。禁止按日期别名/最新文件替换输入。
+2. 亲自读canonical MD、候选content和逐URL脚本原文快照/机械复核证据：核正文、日期、哈希、窗口与去重；再由Hermes独立判断标题、分类、摘要归因和语义是否忠于原文。小g作者输出仅是待审候选，不得标成已通过独立复核。发现问题由Hermes直接修正或用 reject_candidate.py 拒收并记录原因；不再调用小g重搜/修正。
+3. 复核结束后，在本批工作候选JSON中记录 `pipeline.semantic_review=complete`；对每个成功车道设置 `agent_review.<lane>.semantic_review`：`status=complete`、`reviewer=Hermes`、真实 `reviewed_at`、`findings`（无问题填空数组）。复核未完成不得finalize。
+4. 若Hermes修改或拒收内容，重跑MD校验、点赞区、controlled_html.write、HTML一致性和真实浏览器验收；新证据写入新目录，不覆盖旧receipt。确认标题/摘要/URL/点赞完整映射、拒收URL不残留、0外部请求/0页面错误。
+5. 阅读实际HTML；HTML必须严格受控模板。HTML由脚本固定模板生成，是交付附件；MD仅内部canonical、文字点赞/去重/审计。
+6. 验收通过，且原进程已真实退出后运行：
+python3 '/Users/qqiang/AI project/05-日常工具/DailyBrief/scripts/finalize_brief.py' '精确brief.md' '精确candidates.json'
+finalize已经保护同日发布、幂等/候选hash、归档、点赞和复检。失败即停止，禁止修改已发布版或换run_id绕过。
+7. finalize成功后读取它实际发布的HTML绝对路径；归档/发布receipt核HTML/MD hash。运行pipeline_job.py ack该票据。
+最终3—5条中文速览、准确窗口与真实缺货/缩减，交付MEDIA:"finalize实际发布的HTML绝对路径"；不要交付已清理的过程文件，不把MD作为用户主附件，不另send消息，由cron系统投递。
+凡验收/finalize失败：首行只写[CRON_FAILURE]，说明真实阻塞，保留claimed票据供主席处理，不自动ack成功或重试。主席验收/机械final预算5分钟；超预算保留待复核，不放宽闸门。
+点赞兼容：用户读简报→like_ctl.py start；文字“点赞 N”→add_like.py --num使用内部canonical。禁止本验收启动或改写生产8900/likes。

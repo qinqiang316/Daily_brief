@@ -63,6 +63,14 @@ def build_default_queries(now):
     fmt = {"month": month, "year": year, "year_month": year_month}
     cn = [{**q, "query": q["query"].format(**fmt)} for q in QUERIES_CN_TEMPLATES]
     intl = [{**q, "query": q["query"].format(**fmt)} for q in QUERIES_INTL_TEMPLATES]
+    # Geographic lanes follow explicitly configured sources, not the legacy
+    # query-array position (which mixed kk.org into CN and thepaper into INTL).
+    foreign_cn = [q for q in cn if 'site:kk.org ' in q['query']]
+    domestic_intl = [q for q in intl if ('site:jiandanxinli.com ' in q['query']
+                     or 'site:thepaper.cn ' in q['query']
+                     or q['query'].startswith('高速铁路 '))]
+    cn = [q for q in cn if q not in foreign_cn] + domestic_intl
+    intl = [q for q in intl if q not in domestic_intl] + foreign_cn
     return cn, intl
 
 
@@ -245,7 +253,7 @@ def pick_leftover_item(items, dedup, kept_urls, window_start, today, source_key=
 def build_source_leftovers(src_map, kept, dedup, window_start, today, budget=None):
     """未推荐源 = 抓到了内容但没有任何一条进候选池的源。每源随机挑 1 条最新内容。
     特殊源主页 extract 的网络请求受总 Budget 控制（budget 透传）。"""
-    kept_urls = {c["url"] for c in kept}
+    kept_urls = {filter_mod.norm_url(c["url"]) for c in kept}
     kept_keys = {c.get("source_key") for c in kept if c.get("source_key")}
     leftovers = []
     for key, info in src_map.items():

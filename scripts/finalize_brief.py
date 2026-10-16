@@ -86,6 +86,20 @@ def _delivered_alias(cand, brief, output_dir):
         raise ValueError("当日已有发布简报，保留旧版；本批次不得覆盖交付路径")
     if hashlib.sha256(alias.read_bytes()).hexdigest() != rec["brief_sha256"]:
         raise ValueError("当日发布入口已变更，禁止覆盖")
+    cache = Path(output_dir).parent / "_candidates" / ("Daily-Brief-%s-candidates.json" % day)
+    # Use the registered exact candidate path (custom roots included).
+    cache = Path(rec.get("candidate_path") or rec.get("candidates_path") or cache)
+    if not cache.is_file() or hashlib.sha256(cache.read_bytes()).hexdigest() != rec.get("candidate_sha256"):
+        raise ValueError("当日候选发布证据已变更，禁止幂等交付")
+    archive = Path(output_dir) / "final" / rec["run_id"]
+    if (archive / "published.json").is_file():
+        proof = json.loads((archive / "published.json").read_text())
+        index_path = archive / "archive_index.json"
+        if hashlib.sha256(index_path.read_bytes()).hexdigest() != proof.get("archive_index_sha256"):
+            raise ValueError("最终归档索引已变更")
+        for rel, digest in json.loads(index_path.read_text())["files"].items():
+            if hashlib.sha256((archive / rel).read_bytes()).hexdigest() != digest:
+                raise ValueError("最终归档证据已变更")
     html_hash = rec.get("html_sha256")
     if html_hash:
         html_alias = alias.with_suffix(".html")
@@ -132,6 +146,10 @@ def _publish_locked(directory, cand, brief, output_dir):
     alias = output_dir / brief.name
     if (directory / "published.json").is_file():
         receipt = json.loads((directory / "published.json").read_text())
+        for working, key in ((directory / "final" / cand.name, "candidate_sha256"),
+                             (brief.parent / "final" / brief.name, "brief_sha256")):
+            if working.exists() and hashlib.sha256(working.read_bytes()).hexdigest() != receipt[key]:
+                raise ValueError("已发布工作快照被修改")
         final = Path(receipt["brief_path"])
         final_cand = Path(receipt["candidate_path"])
         if (hashlib.sha256(final.read_bytes()).hexdigest() != receipt["brief_sha256"]
@@ -164,6 +182,18 @@ def _publish_locked(directory, cand, brief, output_dir):
     with run_lock(output_dir):
         if alias.exists():
             raise ValueError("当日已有发布简报，保留旧版；本批次不得覆盖交付路径")
+        payload = json.loads(cand.read_bytes())
+        run_store.verify_agent_evidence(payload)
+        archive = output_dir / "final" / manifest["run_id"]
+        evidence_dir = archive / "evidence" / "candidates"
+        # Preserve all prompts/logs/raw review/source snapshots before cleanup, and bind paths to them.
+        run_store.archive_tree(directory / "lanes", evidence_dir / "lanes")
+        run_store.archive_tree(directory / "prepare", evidence_dir / "prepare")
+        mappings = [(str(directory / "lanes"), str(evidence_dir / "lanes")),
+                    (str(directory / "prepare"), str(evidence_dir / "prepare"))]
+        payload = run_store.remap_paths(payload, mappings)
+        run_store.atomic_bytes(cand, run_store.json_bytes(payload))
+        run_store.verify_agent_evidence(payload)
         if validate(brief, cand):
             raise ValueError("第一次校验失败")
         ok, msg = like_links.add_like_section(str(brief))
@@ -184,6 +214,8 @@ def _publish_locked(directory, cand, brief, output_dir):
             if not ok_html:
                 raise ValueError("HTML 与 canonical 不一致，禁止发布: %s"
                                  % "；".join(html_errors[:5]))
+            if payload.get("pipeline", {}).get("mode") == "agent":
+                html_report.verify_browser_receipt(directory / "browser", brief, html_file)
             html_bytes = html_file.read_bytes()
         elif payload.get("delivery") == "html":
             raise ValueError("本批次声明 HTML 交付但缺少已验收 HTML: %s" % html_file)
@@ -206,6 +238,36 @@ def _publish_locked(directory, cand, brief, output_dir):
             run_store.write_once(final_html, html_bytes)
             receipt["html_path"] = str(final_html)
             receipt["html_sha256"] = hashlib.sha256(html_bytes).hexdigest()
+        # Durable final is outside runs/; working snapshots remain only for failed registration retry.
+        run_store.archive_tree(directory / "validation", archive / "evidence" / "validation")
+        run_store.archive_tree(directory / "agy", archive / "evidence" / "agy")
+        run_store.archive_tree(directory / "browser", archive / "evidence" / "browser")
+        for proof in directory.glob('chairman-*'):
+            if proof.is_file():
+                run_store.write_once(archive / 'evidence' / 'chairman' / proof.name, proof.read_bytes())
+        if (directory / "html-model-output.html").is_file():
+            run_store.write_once(archive / "evidence" / "html-model-output.html", (directory / "html-model-output.html").read_bytes())
+        for prompt in directory.glob("*prompt.txt"):
+            run_store.write_once(archive / "evidence" / prompt.name, prompt.read_bytes())
+        run_store.write_once(archive / cand.name, candidate_bytes)
+        run_store.write_once(archive / brief.name, brief_bytes)
+        receipt["candidate_path"] = str(archive / cand.name)
+        receipt["brief_path"] = str(archive / brief.name)
+        receipt["validation_receipt"] = str(archive / "evidence" / "validation" / latest.parent.name / "receipt.json")
+        if html_bytes is not None:
+            run_store.write_once(archive / html_file.name, html_bytes)
+            receipt["html_path"] = str(archive / html_file.name)
+        if html_bytes is not None:
+            run_store.write_once(archive / "html_validation.json", run_store.json_bytes({
+                "status": "PASS", "errors": [], "run_id": manifest["run_id"],
+                "html_sha256": receipt["html_sha256"], "candidate_sha256": ch, "brief_sha256": bh}))
+        index = {str(p.relative_to(archive)): hashlib.sha256(p.read_bytes()).hexdigest()
+                 for p in archive.rglob("*") if p.is_file() and p.name not in ("archive_index.json", "published.json")}
+        run_store.write_once(archive / "archive_index.json", run_store.json_bytes({
+            "files": index, "path_mappings": mappings + [(str(directory / "validation"), str(archive / "evidence" / "validation")),
+            (str(directory / "agy"), str(archive / "evidence" / "agy"))]}))
+        receipt["archive_index_sha256"] = hashlib.sha256((archive / "archive_index.json").read_bytes()).hexdigest()
+        run_store.write_once(archive / "published.json", run_store.json_bytes(receipt))
         run_store.write_once(directory / "published.json", run_store.json_bytes(receipt))
         run_store.atomic_bytes(alias, brief_bytes)
         html_alias = None

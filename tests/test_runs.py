@@ -150,7 +150,7 @@ class RunCase(unittest.TestCase):
         prompt.write_text("first " + str(cand) + " " + str(brief))
         with finalize_brief.run_lock(cand.parent), mock.patch.object(run_agy.subprocess, "Popen") as popen:
             with self.assertRaises(ValueError):
-                run_agy.run(cand, prompt)
+                run_agy.run(cand, prompt, fallback=False)
             popen.assert_not_called()
 
     def test_agy_nonzero_is_failure_even_when_artifact_exists(self):
@@ -161,7 +161,7 @@ class RunCase(unittest.TestCase):
         fake.write_text("#!/bin/sh\nexit 7\n")
         fake.chmod(0o700)
         with mock.patch.dict(os.environ, {"DAILYBRIEF_AGY": str(fake)}):
-            self.assertEqual(run_agy.run(cand, prompt), 7)
+            self.assertEqual(run_agy.run(cand, prompt, fallback=False), 7)
         receipt = next((cand.parent / "agy").glob("*.json"))
         self.assertEqual(json.loads(receipt.read_text())["exit_code"], 7)
 
@@ -174,7 +174,7 @@ class RunCase(unittest.TestCase):
         fake.chmod(0o700)
         start = time.monotonic()
         with mock.patch.dict(os.environ, {"DAILYBRIEF_AGY": str(fake)}):
-            self.assertEqual(run_agy.run(cand, prompt, timeout=0.1), 124)
+            self.assertEqual(run_agy.run(cand, prompt, timeout=0.1, fallback=False), 124)
         self.assertLess(time.monotonic() - start, 3)
         with finalize_brief.run_lock(cand.parent):
             pass  # A retry can acquire the lock only after the process was ended.
@@ -213,6 +213,6 @@ class RunCase(unittest.TestCase):
         proc.wait.side_effect = [run_agy.subprocess.TimeoutExpired("agy", 1), -15]
         with mock.patch.object(run_agy.subprocess, "Popen", return_value=proc), \
                 mock.patch.object(run_agy.os, "killpg") as killpg:
-            self.assertEqual(run_agy.run(cand, prompt, timeout=1), 124)
+            self.assertEqual(run_agy.run(cand, prompt, timeout=1, fallback=False), 124)
         self.assertEqual(killpg.call_args_list,
                          [mock.call(12345, run_agy.signal.SIGTERM), mock.call(12345, run_agy.signal.SIGKILL)])

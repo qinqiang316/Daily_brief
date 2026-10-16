@@ -187,6 +187,9 @@ def _validate_main(candidate_bytes=None, brief_bytes=None):
     leftover_unv = set()
     leftover_bad = []
     for lo in data.get("source_leftovers", []):
+        if (data.get('pipeline',{}).get('mode') == 'agent'
+                and collect_brief.retrieve.wc(lo.get('content') or '') < collect_brief.MIN_WORDS):
+            leftover_bad.append('正式流程速览缺少合格真实正文: ' + str(lo.get('url','')))
         u = collect_brief.norm_url(lo.get("url", ""))
         if not u:
             leftover_bad.append("速览 URL 非法: %s" % str(lo.get("url", ""))[:80])

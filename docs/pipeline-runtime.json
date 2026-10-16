@@ -1,0 +1,4 @@
+{
+  "fallback_provider": "openai-codex",
+  "fallback_model": "gpt-6.1-sol"
+}

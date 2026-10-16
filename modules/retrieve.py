@@ -63,7 +63,37 @@ def run_cli(args, timeout=None, budget=None):
         log("CLI 异常: %s" % e)
     return None
 
+def _tool_text(raw):
+    """Unwrap MCP JSON-RPC/SSE content blocks before Markdown parsing.
+    Parsing the serialized envelope sees escaped newlines, so every query
+    silently becomes an empty pool despite HTTP 200.
+    """
+    if isinstance(raw, str):
+        if raw.lstrip().startswith('data:') or '\ndata:' in raw:
+            return '\n'.join(_tool_text(line[5:].strip()) for line in raw.splitlines()
+                             if line.startswith('data:') and line[5:].strip() != '[DONE]')
+        try:
+            value = json.loads(raw)
+        except ValueError:
+            return raw
+        return _tool_text(value)
+    if isinstance(raw, dict):
+        if raw.get('isError') or 'error' in raw:
+            return ''
+        if 'result' in raw:
+            return _tool_text(raw['result'])
+        if raw.get('type') == 'text':
+            return _tool_text(raw.get('text',''))
+        if 'content' in raw:
+            return _tool_text(raw['content'])
+        return ''
+    if isinstance(raw,list):
+        return '\n'.join(_tool_text(block) for block in raw)
+    return ''
+
+
 def parse_search_markdown(md):
+    md = _tool_text(md)
     items = []
     if not md:
         return items
@@ -260,8 +290,8 @@ def fetch_article(url, timeout=15, limit=FETCH_TEXT_LIMIT):
         with urllib.request.urlopen(req, timeout=timeout) as r:
             raw = r.read(500000).decode("utf-8", errors="ignore")
         metadata = extract_html_metadata(raw)
-        raw = re.sub(r"<(script|style|nav|footer|header|aside)[^>]*>.*?</\1>", " ", raw, flags=re.S | re.I)
-        text = re.sub(r"\s+", " ", re.sub(r"&[a-z]+;|<[^>]+>", " ", raw)).strip()
+        from .article_text import extract
+        text = extract(raw)
         if len(text) < 200:
             return None
         return {"text": text[:limit], "metadata": metadata}
@@ -288,14 +318,21 @@ def fetch_texts_parallel(urls, timeout=15, limit=FETCH_TEXT_LIMIT, budget=None,
     if not urls:
         return results
     pending = list(urls)
+    def fetch_one(url):
+        # Submission is not execution: queued work may start minutes later.
+        # Recheck at worker start so shutdown cannot drain an unbounded queue
+        # of network requests after the shared deadline has already expired.
+        if budget and budget.expired():
+            return None
+        eff = budget.timeout(timeout) if budget else timeout
+        return fetcher(url, eff, limit)
     with ThreadPoolExecutor(max_workers=max_workers) as ex:
         futs = {}
         for u in pending:
             if budget and budget.expired():
                 log("正文抓取提前停止（总预算耗尽），剩余 %d 个 URL 未抓" % (len(pending) - len(futs)))
                 break
-            eff = budget.timeout(timeout) if budget else timeout
-            futs[ex.submit(fetcher, u, eff, limit)] = u
+            futs[ex.submit(fetch_one, u)] = u
         for fut, u in futs.items():
             if u in results:
                 continue

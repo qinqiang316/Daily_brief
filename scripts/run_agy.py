@@ -10,11 +10,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
-from modules import run_store
+from modules import run_store, agent_lane, executor
 from finalize_brief import run_lock
 
 
-def run(candidates, prompt, timeout=1200):
+def run(candidates, prompt, timeout=1200, fallback=True, spawn=None):
     cand = Path(candidates).resolve()
     directory = run_store.managed_run(cand)
     if directory is None:
@@ -35,35 +35,29 @@ def run(candidates, prompt, timeout=1200):
         attempt.mkdir(exist_ok=True)
         import uuid
         token = uuid.uuid4().hex
-        prompt_copy, log = attempt / (token + ".txt"), attempt / (token + ".log")
+        logs = attempt / token
+        logs.mkdir()
+        prompt_copy, log = attempt / (token + ".txt"), logs / "run.log"
         run_store.write_once(prompt_copy, content.encode())
         cmd = [os.environ.get("DAILYBRIEF_AGY", "/Users/qqiang/.local/bin/agy"),
-               "--dangerously-skip-permissions", "--print-timeout", "%ss" % timeout]
+               "--dangerously-skip-permissions", "--output-format", "json", "--print-timeout", "%ss" % timeout]
         if os.environ.get("AGY_MODEL"):
             cmd += ["--model", os.environ["AGY_MODEL"]]
         cmd += ["-p", content]
-        with log.open("wb") as fh:
-            proc = subprocess.Popen(cmd, cwd=ROOT, stdout=fh, stderr=subprocess.STDOUT,
-                                    start_new_session=True)
-            try:
-                rc = proc.wait(timeout=timeout)
-            except (subprocess.TimeoutExpired, KeyboardInterrupt):
-                os.killpg(proc.pid, signal.SIGTERM)
-                try:
-                    proc.wait(timeout=5)
-                except subprocess.TimeoutExpired:
-                    os.killpg(proc.pid, signal.SIGKILL)
-                    proc.wait()
-                # Parent may exit after TERM while a descendant ignores it.
-                # Kill any survivors before releasing the batch writer lock.
-                try:
-                    os.killpg(proc.pid, signal.SIGKILL)
-                except ProcessLookupError:
-                    pass
-                rc = 124
+        # Same manifest + writer lock spans original and takeover. No unlocked CLI path.
+        target = Path(manifest["brief"])
+        role = "writer"
+        if "HTML 报告制作" in content:
+            target = target.with_suffix(".html")
+            role = "html"
+        if target.exists():
+            target.unlink()  # Never accept a stale artifact from an earlier attempt.
+        rc, execution = executor.execute("agy", cmd, content, ROOT, log, target,
+                                         timeout, spawn or agent_lane.run_cli_session,
+                                         fallback=fallback, role=role)
         run_store.write_once(attempt / (token + ".json"), run_store.json_bytes(
             {"run_id": manifest["run_id"], "exit_code": rc,
-             "prompt": str(prompt_copy), "log": str(log)}))
+             "prompt": str(prompt_copy), "log": str(log), "execution": execution}))
         print("[AGY_EXIT] rc=%s log=%s" % (rc, log))
         return rc
 
@@ -74,8 +68,12 @@ def main():
     ap.add_argument("prompt")
     ap.add_argument("--timeout", type=int, default=1200)
     args = ap.parse_args()
+    agent_lane.install_cancel_handlers()
     try:
         return run(args.candidates, args.prompt, args.timeout)
+    except KeyboardInterrupt:
+        agent_lane.cancel_sessions()
+        return 130
     except (OSError, ValueError) as exc:
         print("[AGY_FAILED] %s" % exc)
         return 1

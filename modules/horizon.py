@@ -356,6 +356,7 @@ def collect_source(src, dedup, window_start, window_end, budget=None):
         seen.add(url)
         picked.append({
             "title": it["title"][:200], "url": url, "domain": domain,
+            "source_url": _live_url(it['url']),
             "source_key": "horizon:" + src["key"], "source_label": src["label"],
             "region": src["region"], "direction": src["direction"],
             "publish_date": pub, "date_verified": True, "date_source": dsrc,

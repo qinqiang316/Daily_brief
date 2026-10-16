@@ -45,9 +45,27 @@ class _HTMLScan(HTMLParser):
         self._skip = 0
         self.has_viewport = False
         self.style_text = []
+        self.root = {"tag": "root", "attrs": {}, "children": [], "hidden": False}
+        self.stack = [self.root]
+        self.nodes = []
 
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
+        style = a.get("style") or ""
+        hidden = (self.stack[-1]["hidden"] or "hidden" in a or a.get("aria-hidden") == "true"
+                  or bool(re.search(r"display\s*:\s*none|visibility\s*:\s*hidden|opacity\s*:\s*0(?:[; ]|$)", style, re.I)))
+        node = {"tag": tag, "attrs": a, "children": [], "hidden": hidden}
+        self.stack[-1]["children"].append(node)
+        self.nodes.append(node)
+        if tag not in ("meta", "link", "img", "source", "br", "hr", "input", "embed", "wbr"):
+            self.stack.append(node)
+        for key in ("src", "srcset", "poster", "data", "background"):
+            if a.get(key) and not str(a[key]).startswith(("data:", "#")):
+                self.external.append("%s[%s]=%s" % (tag, key, a[key]))
+        if tag == "link" and a.get("href") and not a["href"].startswith(("data:", "#")):
+            self.external.append("link resource")
+        if tag == "meta" and (a.get("http-equiv") or "").lower() == "refresh":
+            self.external.append("meta refresh")
         if tag in ("script", "style"):
             self._skip += 1
         if tag == "a" and a.get("href"):
@@ -61,21 +79,58 @@ class _HTMLScan(HTMLParser):
             self.has_viewport = True
 
     def handle_endtag(self, tag):
+        for i in range(len(self.stack) - 1, 0, -1):
+            if self.stack[i]["tag"] == tag:
+                del self.stack[i:]
+                break
         if tag in ("script", "style") and self._skip:
             self._skip -= 1
 
     def handle_data(self, data):
+        self.stack[-1]["children"].append(data)
         if self._skip:
             if data.strip():
                 self.style_text.append(data)
             return
-        self.text_parts.append(data)
+        if not self.stack[-1]["hidden"]:
+            self.text_parts.append(data)
 
     def text(self):
         return _norm("".join(self.text_parts))
 
     def css(self):
         return " ".join(self.style_text)
+
+
+def node_text(node, omit=()):
+    if isinstance(node, str):
+        return node
+    if node["hidden"] or node["tag"] in ("script", "style", "template") + tuple(omit):
+        return ""
+    return "".join(node_text(c, omit) for c in node["children"])
+
+
+def descendants(node):
+    return [c for c in node["children"] if isinstance(c, dict)] + [d for c in node["children"] if isinstance(c, dict) for d in descendants(c)]
+
+
+def canonical_articles(text):
+    """Full summaries bound to exact citation, not a substring somewhere in the page."""
+    if "## 今日热门文章" not in text:
+        return []
+    section = text.split("## 今日热门文章", 1)[1]
+    section = re.split(r"\n## ", section, maxsplit=1)[0]
+    out = []
+    for block in re.split(r"\n#### ", "\n" + section)[1:]:
+        title, _, body = block.partition("\n")
+        body = re.split(r"\n### ", body)[0]
+        cites = re.findall(r"\[\[(\d+)\]\]\((https?://[^)]+)\)", body)
+        summary = re.sub(r"\[\[\d+\]\]\(https?://[^)]+\)", "", body)
+        # canonical inline emphasis/link syntax -> semantic text
+        summary = re.sub(r"\[([^]]+)\]\([^)]+\)", r"\1", summary)
+        summary = re.sub(r"[*`]", "", summary)
+        out.append({"title": title.strip(), "summary": _norm(summary), "summary_text": summary.strip(), "cites": cites})
+    return out
 
 
 def _norm(s):
@@ -194,6 +249,25 @@ def verify_html(html_path, brief_path, cand_path):
     with open(html_path, encoding="utf-8", errors="ignore") as f:
         html_raw = f.read()
 
+    from modules import controlled_html
+    if controlled_html.MARKER in html_raw:
+        try:
+            if html_raw != controlled_html.render(brief_path, cand_path):
+                errors.append("HTML 受控模板/数据被修改，无法证明可见性")
+        except (ValueError, KeyError, AttributeError) as exc:
+            errors.append("HTML 受控模板生成失败: " + str(exc))
+    else:
+        # Strict compatibility for pre-template fixtures. No arbitrary CSS/classes/ancestors/script.
+        allowed = {"body{font-size:19px;line-height:1.8}a{overflow-wrap:anywhere;word-break:break-word}",
+                   "body{font-size:19px;line-height:1.8;max-width:880px;margin:auto;padding:16px}*{box-sizing:border-box;overflow-wrap:anywhere}a{word-break:break-word}"}
+        styles = re.findall(r"<style[^>]*>(.*?)</style>", html_raw, re.S | re.I)
+        if len(styles) != 1 or re.sub(r"\s+", "", styles[0]) not in allowed:
+            errors.append("HTML 隐藏CSS/任意CSS无法证明可见性；必须用受控模板")
+        preliminary = _HTMLScan(); preliminary.feed(html_raw)
+        if any(n["attrs"].get("style") or any(k.startswith("on") for k in n["attrs"])
+               or n["tag"] in ("script", "svg", "math", "iframe", "object", "template", "form")
+               for n in preliminary.nodes):
+            errors.append("HTML 不允许生成CSS/脚本/隐藏祖先；必须用受控模板")
     scan = scan_html(html_path)
     html_text = scan.text()
 
@@ -240,7 +314,9 @@ def verify_html(html_path, brief_path, cand_path):
     if outside:
         errors.append("HTML %d 条链接不在候选池（未经统一准入/校验）: %s"
                       % (len(outside), " ".join(sorted(outside)[:5])))
-    rej = article_hrefs & rejected_urls
+    decoded_raw = html_lib.unescape(urllib.parse.unquote(html_raw))
+    raw_urls = {filter_mod.norm_url(u.rstrip(".,;，。")) for u in re.findall(r'https?://[^\s<>"\')]+', decoded_raw)}
+    rej = (article_hrefs | raw_urls) & rejected_urls
     if rej:
         errors.append("HTML 出现被拒收 URL（审核拒收内容不得交付）: %s"
                       % " ".join(sorted(rej)[:5]))
@@ -249,13 +325,52 @@ def verify_html(html_path, brief_path, cand_path):
     for nu, (n, title) in sorted(ref_urls.items()):
         if nu not in article_hrefs:
             errors.append("HTML 缺参考资料 [%d] 的原文链接: %s" % (n, nu))
-        if _norm(title) and _norm(title)[:20] not in html_text:
+        if _norm(title) and _norm(title) not in html_text:
             errors.append("HTML 缺参考资料 [%d] 的标题: %s" % (n, title[:40]))
 
-    # 摘要一致性：深度总结正文片段必须在 HTML 可见文本中出现
-    for snip in _md_deep_summaries(brief_text):
-        if snip not in html_text:
-            errors.append("HTML 摘要与 canonical MD 不一致（缺片段: %s…）" % snip[:20])
+    # Strict visible semantic schema: no title/summary can be borrowed from another card.
+    articles = [n for n in scan.nodes if n["tag"] == "article"]
+    canonical = canonical_articles(brief_text)
+    if len(articles) != len(canonical):
+        errors.append("HTML 摘要与 canonical 条目数不一致")
+    used = set()
+    for expected in canonical:
+        cites = expected["cites"]
+        if len(cites) != 1:
+            errors.append("canonical 每篇须有唯一编号引用")
+            continue
+        number, url = cites[0]
+        matching = [n for n in articles if n["attrs"].get("data-ref") == number]
+        if len(matching) != 1 or number in used:
+            errors.append("HTML 摘要与 canonical 编号绑定不一致: " + number)
+            continue
+        used.add(number)
+        article = matching[0]
+        fields = descendants(article)
+        titles = [n for n in fields if n["attrs"].get("data-role") == "title"]
+        summaries = [n for n in fields if n["attrs"].get("data-role") == "summary"]
+        citations = [n for n in fields if n["attrs"].get("data-role") == "citation"]
+        valid = (not article["hidden"] and article["attrs"].get("data-url") == url
+                 and len(titles) == len(summaries) == len(citations) == 1)
+        if valid:
+            title, summary, citation = titles[0], summaries[0], citations[0]
+            valid = (_norm(node_text(title)) == _norm(expected["title"])
+                     and _norm(node_text(summary)) == expected["summary"]
+                     and citation["tag"] == "a" and citation["attrs"].get("href") == url
+                     and _norm(node_text(citation)) == "[%s]原文链接" % number
+                     and _norm(node_text(article, ("details",))) ==
+                     _norm(expected["title"]) + expected["summary"] + "[%s]原文链接" % number)
+        if not valid:
+            errors.append("HTML 摘要与 canonical 完整可见语义/标题/URL/编号不一致: " + number)
+    # Authoritative like block binds number/title/URL, and detects duplicates, 999, and hidden rows.
+    expected_likes = _HTMLScan()
+    expected_likes.feed(build_like_html(refs))
+    likes = [n for n in scan.nodes if n["attrs"].get("id") == "likes"]
+    if len(likes) != 1 or _norm(node_text(likes[0])) != expected_likes.text():
+        errors.append("HTML 点赞映射编号/标题/可见文本不一致")
+    actual_links = [n["attrs"].get("href") for n in scan.nodes if n["tag"] == "a" and n["attrs"].get("href", "").startswith(LIKE_BASE)]
+    if actual_links != expected_likes.hrefs:
+        errors.append("HTML 点赞映射完整编号URL序列不一致")
 
     # 点赞映射：HTML 点赞链接与参考资料一一对应（无拒收 URL 的点赞、无陈旧引用）
     like_urls = like_urls_from_html(scan)
@@ -266,6 +381,18 @@ def verify_html(html_path, brief_path, cand_path):
         errors.append("HTML 含被拒收 URL 的点赞链接")
 
     # 离线/移动端硬性要求
+    # Relative resources are also dependencies; CSS imports/url and executable network constructs fail closed.
+    css_raw = html_lib.unescape(html_raw)
+    if re.search(r"@import|url\s*\(\s*(?![\"']?data:)", css_raw, re.I):
+        scan.external.append("CSS @import/url resource")
+    if re.search(r"(?:fetch|XMLHttpRequest|WebSocket|importScripts)\s*\(|import\s*\(", scan.css()):
+        scan.external.append("script network resource")
+    for n in scan.nodes:
+        if n["attrs"].get("style"):
+            css_raw += n["attrs"]["style"]
+    # Static validation cannot evaluate arbitrary hiding CSS. Refuse it, rather than count hidden text.
+    if controlled_html.MARKER not in html_raw and re.search(r"display\s*:\s*none|visibility\s*:\s*hidden|opacity\s*:\s*0(?:[;} ]|$)|font-size\s*:\s*0|clip(?:-path)?\s*:", css_raw, re.I):
+        errors.append("HTML 隐藏CSS无法证明正文可见，拒绝")
     if scan.external:
         errors.append("HTML 引用外部资源（离线交付禁止 CDN/外链资源）: %s"
                       % " ".join(scan.external[:3]))
@@ -284,3 +411,42 @@ def html_for_brief(brief_path):
     """canonical MD 对应的 HTML 路径（同目录同名 .html）。"""
     base, _ = os.path.splitext(str(brief_path))
     return base + ".html"
+
+
+def verify_browser_receipt(directory, brief, html):
+    """Bind the real browser result to exactly the canonical+HTML being published."""
+    import hashlib
+    from pathlib import Path
+    receipt = None
+    html_hash = hashlib.sha256(Path(html).read_bytes()).hexdigest()
+    md_hash = hashlib.sha256(Path(brief).read_bytes()).hexdigest()
+    # Corrections get a new immutable evidence directory. Never overwrite a
+    # previous browser receipt merely to make its old hash match new content.
+    for path in sorted(Path(directory).rglob('receipt.json')):
+        try:
+            candidate = json.loads(path.read_text())
+        except (ValueError, OSError):
+            continue
+        if (candidate.get('html_sha256') == html_hash
+                and candidate.get('md_sha256') == md_hash):
+            receipt = candidate
+            break
+    if receipt is None:
+        raise ValueError('缺真实浏览器验收receipt或没有匹配当前HTML/MD的凭据')
+    expected = canonical_articles(Path(brief).read_text())
+    bodies = receipt.get('bodies') or []
+    if (receipt.get('ok') is not True or receipt.get('mode') != 'REAL_BROWSER_OFFLINE'
+            or receipt.get('html_sha256') != hashlib.sha256(Path(html).read_bytes()).hexdigest()
+            or receipt.get('md_sha256') != hashlib.sha256(Path(brief).read_bytes()).hexdigest()
+            or receipt.get('mobile') != {'innerWidth': 390, 'scrollWidth': 390, 'bodyWidth': 390}
+            or receipt.get('networkRequests') != [] or receipt.get('pageErrors') != []
+            or receipt.get('directory') is not True or len(bodies) != len(expected)):
+        raise ValueError('浏览器验收未通过或与待发布HTML/MD hash不符')
+    for actual, canonical in zip(bodies, expected):
+        if (len(canonical['cites']) != 1 or actual.get('number') != canonical['cites'][0][0]
+                or actual.get('url') != canonical['cites'][0][1]
+                or actual.get('summaryLength') != len(canonical['summary'])
+                or actual.get('fontSize', 0) < 18 or actual.get('initialVisible') is not True
+                or actual.get('evidenceExpanded') is not True):
+            raise ValueError('浏览器逐篇可见正文/编号URL证据不符')
+    return True

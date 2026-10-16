@@ -5,6 +5,7 @@ import sys
 import tempfile
 
 from . import filter as filter_mod
+from . import region as region_mod
 from .retrieve import anysearch_http_batch, chunked, fetch_texts_parallel, parse_search_markdown, run_cli, wc
 from .window import log
 from . import profile as profile_mod
@@ -87,6 +88,9 @@ def _cheap_precheck(candidates, dedup):
         if url in seen_urls:
             continue
         domain = url.split("/")[2].lower() if "://" in url else ""
+        if c.get('telegram_channel') and domain == 'telegra.ph':
+            log('Telegram搬运页没有原文发布日期证据，拒收: ' + url)
+            continue
         if domain in filter_mod.EXCLUDE_DOMAINS or "/rss" in url or url.rstrip("/").endswith(".rss"): continue
         if domain == "news.ycombinator.com": continue  # HN 讨论页非文章，不入池
         if filter_mod.is_aggregate_url(url):
@@ -121,7 +125,10 @@ def filter_candidates(candidates, dedup, window_start, today, pref_dir, budget=N
 
     # 有界并发统一补抓正文（局部故障隔离 + 总预算）；with_metadata 保留 datePublished/JSON-LD 证据
     need = [x for x in pre if wc(re.sub(r"\s+", " ", x["c"].get("content", "")).strip()) < filter_mod.MIN_WORDS]
-    arts = fetch_texts_parallel([x["url"] for x in need], timeout=12, budget=budget,
+    # Canonical URLs are dedupe keys, not network endpoints. Keep www and
+    # source query parameters while fetching; normalizing first breaks sites
+    # whose bare domain redirects differently or has no working TLS route.
+    arts = fetch_texts_parallel([x['c']['url'] for x in need], timeout=12, budget=budget,
                                 with_metadata=True) if need else {}
 
     kept = []
@@ -131,7 +138,7 @@ def filter_candidates(candidates, dedup, window_start, today, pref_dir, budget=N
         content = re.sub(r"\s+", " ", c.get("content", "")).strip()
         metadata = c.get("metadata") or {}
         if wc(content) < filter_mod.MIN_WORDS:
-            art = arts.get(url)
+            art = arts.get(c['url'])
             # 兼容旧 mock/调用：值可以是正文字符串或 {"text","metadata"} 结构
             if isinstance(art, dict):
                 text, metadata = art.get("text"), art.get("metadata") or metadata
@@ -167,7 +174,9 @@ def filter_candidates(candidates, dedup, window_start, today, pref_dir, budget=N
         hard, reasons = filter_mod.ai_watermark_check(content)
         if hard:
             log("水文硬剔除: %s（%s）" % (title[:40], "，".join(reasons))); continue
-        kept.append({"title": title[:200], "url": url, "domain": domain, "direction": c.get("direction"), "is_preferred": bool(c.get("is_preferred")) or bool(pref_dir and c.get("direction") == pref_dir), "is_explore": bool(c.get("is_explore")), "publish_date": pub, "date_verified": True, "date_source": ev["date_source"], "date_evidence": ev["evidence"], "date_precision": "day", "window_outside_days": 0, "hn_points": c.get("hn_points"), "hn_discussed_at": c.get("hn_discussed_at"), "word_count": wc(content), "watermark_suspect": bool(reasons), "watermark_reasons": reasons, "content": content[:filter_mod.CONTENT_LIMIT], "source_key": c.get("source_key"), "source_label": c.get("source_label")})
+        kept.append({"title": title[:200], "url": url, "domain": domain, "direction": c.get("direction"), "is_preferred": bool(c.get("is_preferred")) or bool(pref_dir and c.get("direction") == pref_dir), "is_explore": bool(c.get("is_explore")), "publish_date": pub, "date_verified": True, "date_source": ev["date_source"], "date_evidence": ev["evidence"], "date_precision": "day", "window_outside_days": 0, "hn_points": c.get("hn_points"), "hn_discussed_at": c.get("hn_discussed_at"), "word_count": wc(content), "watermark_suspect": bool(reasons), "watermark_reasons": reasons, "content": content[:filter_mod.CONTENT_LIMIT], "source_key": c.get("source_key"), "source_label": c.get("source_label"), "region": region_mod.normalized(c.get("region")), "region_provenance": c.get("region_provenance")})
+        kept[-1]['metadata'] = metadata
+        kept[-1]['source_url'] = c.get('source_url') or c['url']
     return kept
 
 def rank_candidates(kept, explore_dir):

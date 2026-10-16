@@ -7,7 +7,7 @@
   - 读取/维护历史去重集合（auto_update_dedup）
   - 读取点赞画像，生成偏好/探索增强查询（样本门槛与现有实现一致）
   - 生成新批次 run_id 与独立批次目录，落盘 task_context + 两路车道任务文件：
-      国内车道 → 小k（kimi CLI），国外车道 → 小g（agy CLI）
+      国内车道、国外车道都走小g（agy CLI），会话互相独立
 
 漫长的 CLI 检索不在此执行；由主席显式启动 scripts/run_pipeline.py 完成
 并行检索、合并候选与小g写作草稿。
@@ -102,7 +102,7 @@ def prepare(now=None, cand_dir=None, output_dir=None):
                                                     "explore_dir": explore_dir,
                                                     "likes_count": likes_count},
                                      "dedup": {"count": len(dedup)}},
-                                    "intl", queries_intl, lanes["intl"]),
+                                    "intl", queries_intl + extra, lanes["intl"]),
         },
         # 确定性采集源仍由脚本函数完成（成熟 HN/RSS/Telegram/ACS 代码复用，
         # 不让模型重复手工做确定性采集），runner 阶段执行

@@ -1,0 +1,6 @@
+DailyBrief V2启动轮（脚本模式no_agent=true）。script必须为dailybrief-v2-launch.sh，实际入口pipeline_job.py launch --cron。脚本落盘唯一票据，末行wakeAgent=false，成功时无模型调用、无消息投递。
+读取Script Output唯一JOB_TICKET绝对路径，读该票据核run_id/context/status。
+禁止collect_brief、重新prepare、默认挑最新文件、手动直接kimi/agy、后台notify无限等待、finalize或发布。
+status=queued/running/ready/claimed：本轮仅回复[SILENT]，独立5分钟poll任务会用新会话验收。
+缺票据/路径不符/启动失败：首行只写[CRON_FAILURE]，下一行说明真实原因。
+不要改cron或全局技能。只更新技能而script仍旧collect，不算切换。

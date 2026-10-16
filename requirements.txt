@@ -4,3 +4,6 @@
 #   ~/.hermes/skills/anysearch/scripts/anysearch_cli.py
 #   ~/.hermes/skills/anysearch/.env
 # 运行解释器：~/.hermes/hermes-agent/venv/bin/python（或任意 python3）
+# 新HTML管线运行时额外要求：PATH 中 Node.js；可 require('playwright') 的已安装 Playwright；
+# 本机 /Applications 下发现的 Chrome/Edge/Chromium。只使用独立headless临时profile。
+# 缺浏览器/Node/Playwright就失败关闭，不把HTTP200当作页面验收。
