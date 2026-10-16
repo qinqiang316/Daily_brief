@@ -1,6 +1,6 @@
 # DailyBrief 管线说明
 
-**2026-10-15现行版本**：两个实际cron、检索与正文证据、原始URL、浏览器依赖等已修复，并完成一份真实报告输出。当前规则、故障证据与验收结果见 [2026-10-15-流程修复.md](2026-10-15-流程修复.md)。启动轮为纯脚本，验收轮全天每5分钟、无待办时不唤醒模型，HTML直接由固定模板生成。
+**2026-10-16现行版本**：每日简报的执行与轻检已合并为一个5分钟调度任务；08:30后启动一次，运行期间脚本轮询，只有 ready/failed 票据唤醒模型。语义检查采用轻量方式，机械准入、校验和发布哈希闸门保留。HTML由固定模板生成。当前流程与验收见本节及 [2026-10-15-流程修复.md](2026-10-15-流程修复.md)。
 
 以下保留昨日交接稿用于追溯；其中“未修改cron”“模型生成HTML”等旧状态和预算分配描述不再代表部署现状。
 
@@ -62,23 +62,19 @@ runner SIGTERM/SIGINT关闭自身登记的CLI组；后台worker硬截止结束ru
 禁止HTTP请求，无CDN，无用户browser/CDP复用，不监听8900。Node/Playwright/Chrome缺失或浏览器失败即停止，HTTP200不构成验收。
 Chrome证据/截图/receipt随本批final归档；HTML是用户附件，MD保留为内部canonical、文字编号点赞、去重和审计源。
 
-## 真实可执行的异步cron切换（只供主席采用）
+## 单一执行+轻检 Cron
 
-不依赖一次cron session保持52分钟或无限续接notify。项目 `scripts/pipeline_job.py` 有launch/work/poll/claim/ack：
+项目 `scripts/pipeline_job.py` 继续负责launch/work/poll/claim/ack；当前只保留一个Hermes cron：
 
-1. launch秒级prepare一次、生成精确票据，启动独立worker后返回；活跃/ready/claimed批次存在时不重复启动。
-2. worker独立运行runner，log、PID、context hash、exit_code、ready/failed状态保存在scratch/dailybrief-jobs/{run_id}/ticket.json。
-3. **第二个每5分钟poll任务**启动全新主席验收轮，读取精确票据；没有完成项输出[SILENT]。
-4. claim互斥认领；主席读取真实MD/候选/body证据/HTML/浏览器receipt，通过才finalize；ack结束票据。
-5. 失败票据必须认领、记录真实原因并ack；claim后主席异常不得盲目重复发布，人工核票据/发布receipt后恢复。
-6. 此脚本不send、不自动finalize。系统cron在新验收轮完成后投递HTML。已发布日期拒绝覆盖。
+1. `dailybrief-v2-combined.sh` 每5分钟执行一次；08:30前不启动。当日已登记发布时静默跳过。
+2. 到08:30后若当日没有已尝试批次，脚本启动一次worker；运行中只轮询，不唤醒模型、不重复搜索。ready/failed票据才交给本轮Hermes处理。
+3. ready票据互斥claim；Hermes做轻量语义检查：核对日期窗口、标题/引用与关键事实有无明显错配，不逐句做法证式复核。脚本机械校验、浏览器凭据、finalize哈希验证仍必须通过。
+4. 通过后finalize并ack精确票据；失败只处理原批次，不自动重搜或另起同日批次。已发布的当日简报保持幂等跳过。
+5. 运行入口使用 `~/.hermes/hermes-agent/venv/bin/python`，保证真实浏览器验收依赖可用。
 
-主席需将 `docs/cron-launch.sh`、`docs/cron-poll.sh` **复制**到 `~/.hermes/scripts/dailybrief-v2-launch.sh` / `dailybrief-v2-poll.sh`（本轮未复制），Hermes cron脚本只允许该目录中的路径。
-现有晨间任务script换成launch wrapper，prompt换成 `docs/cron-v2-launch-prompt.txt`；新增/指定独立poll任务script为poll wrapper、prompt为 `docs/cron-v2-review-prompt.txt`、间隔5分钟。
-如果主席不采用第二个poll任务，则只能手工poll+新会话审核，不可宣称自动异步交付已启用。
+实际单一cron使用 `~/.hermes/scripts/dailybrief-v2-combined.sh` 与 `docs/cron-v2-review-prompt.txt`；旧启动cron已移除，独立poll cron已并入该任务。`docs/cron-launch.sh`、`docs/cron-poll.sh`仅作历史模板，不再分别安装。
 
-官方 [cron](https://hermes-agent.nousresearch.com/docs/user-guide/features/cron) 说明script默认3600秒只限script；独立agent轮有自己的inactivity预算，不能假定background通知会维持原轮。[SILENT]仅成功轮抑制投递，[CRON_FAILURE]必须独占首行。
-本机 `website/docs/guides/cron-script-only.md` 与 `website/docs/user-guide/features/cron.md` 已读；未读取cron私有配置/目标身份，未改cron。
+官方 [cron](https://hermes-agent.nousresearch.com/docs/user-guide/features/cron) 有单轮时限；因此长流水线由独立worker运行，Cron短轮只启动/读状态，ready/failed时才进行轻检与发布。
 
 ## 小x复现（全部离线测试夹具）
 

@@ -1,4 +1,6 @@
 #!/bin/sh
-# Chairman copies this exact wrapper into ~/.hermes/scripts/ after independent acceptance.
+# Combined DailyBrief cron wrapper: one 5-minute task for start and polling.
 cd '/Users/qqiang/AI project/05-日常工具/DailyBrief' || exit 1
-exec python3 scripts/pipeline_job.py launch --cron
+export PYTHONDONTWRITEBYTECODE=1
+export TMPDIR='/Users/qqiang/.hermes/cache/scratch'
+exec '/Users/qqiang/.hermes/hermes-agent/venv/bin/python' scripts/dailybrief_cron_tick.py

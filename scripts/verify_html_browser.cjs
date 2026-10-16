@@ -48,8 +48,52 @@ const assert=(v,msg)=>{if(!v)throw new Error(msg)};
   const first=page.locator('nav [data-target]').first();const target=await first.getAttribute('data-target');await first.click();assert(await page.evaluate(()=>location.hash)==='#'+target,'directory anchor');
   await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:path.join(input.evidence,'mobile-390.png'),fullPage:true});
   await cards.first().locator('details summary').click();await page.screenshot({path:path.join(input.evidence,'mobile-390-expanded.png'),fullPage:true});await cards.first().locator('details summary').click();
-  await page.setViewportSize({width:1280,height:900});const desktop=await widths();assert(desktop.innerWidth===1280&&desktop.scrollWidth===1280,'desktop overflow');await page.screenshot({path:path.join(input.evidence,'desktop-1280.png'),fullPage:true});
+  const desktopPage=await browser.newPage({viewport:{width:1280,height:900}});
+  await desktopPage.goto(pathToFileURL(input.html).href);
+  const desktop=await desktopPage.evaluate(()=>({innerWidth,scrollWidth:document.documentElement.scrollWidth,bodyWidth:document.body.scrollWidth}));
+  assert(desktop.innerWidth===1280&&desktop.scrollWidth===1280,'desktop overflow');
+  await desktopPage.screenshot({path:path.join(input.evidence,'desktop-1280.png'),fullPage:true});
+  await desktopPage.close();
   assert(!requests.length,'external network requests');assert(!errors.length,'browser errors');
-  fs.writeFileSync(path.join(input.evidence,'browser-result.json'),JSON.stringify({ok:true,mode:'REAL_BROWSER_OFFLINE',browser:input.browser,mobile,desktop,bodies,filters,directory:true,networkRequests:requests,pageErrors:errors},null,2));
+  const testedLinks=[];
+  await context.unroute('**/*');
+  await context.route('**/*',route=>{
+   const u=route.request().url();
+   if(/^https?:/.test(u)){
+    route.fulfill({status:200,contentType:'text/html',body:'<!doctype html><title>Mock</title><body>Offline Destination</body>'});
+   }else route.continue();
+  });
+  const tldrLinks=page.locator('#tldr a[href^="http"]');
+  if(await tldrLinks.count()>0){
+   const link=tldrLinks.first();const expectedUrl=await link.getAttribute('href');
+   const [popup]=await Promise.all([context.waitForEvent('page',{timeout:8000}),link.click()]);
+   await popup.waitForLoadState('domcontentloaded');
+   assert(popup.url()===expectedUrl,'TLDR link click destination mismatch: '+popup.url()+' vs '+expectedUrl);
+   testedLinks.push({section:'tldr',text:await link.innerText(),url:popup.url()});
+   await popup.close();
+  }
+  const horizonLinks=page.locator('#horizon a[href^="http"]');
+  if(await horizonLinks.count()>0){
+   const link=horizonLinks.first();const expectedUrl=await link.getAttribute('href');
+   const [popup]=await Promise.all([context.waitForEvent('page',{timeout:8000}),link.click()]);
+   await popup.waitForLoadState('domcontentloaded');
+   assert(popup.url()===expectedUrl,'Horizon link click destination mismatch: '+popup.url()+' vs '+expectedUrl);
+   testedLinks.push({section:'horizon',text:await link.innerText(),url:popup.url()});
+   await popup.close();
+  }
+  const cardCitation=cards.first().locator('[data-role=citation]');
+  const expectedCardUrl=await cardCitation.getAttribute('href');
+  const [cardPopup]=await Promise.all([context.waitForEvent('page',{timeout:8000}),cardCitation.click()]);
+  await cardPopup.waitForLoadState('domcontentloaded');
+  assert(cardPopup.url()===expectedCardUrl,'Card citation click destination mismatch: '+cardPopup.url()+' vs '+expectedCardUrl);
+  testedLinks.push({section:'article',text:await cardCitation.innerText(),url:cardPopup.url()});
+  await cardPopup.close();
+  const pageHtml=await page.content();
+  assert(!/\[\[\d+\]\]\(https?:/.test(pageHtml),'raw [[n]](url) syntax remains unparsed');
+  assert(!/\[[^\]]+\]\(https?:/.test(pageHtml),'raw [title](url) syntax remains unparsed');
+  const totalPre=await page.locator('pre').count();const detailsPre=await page.locator('details pre').count();
+  assert(totalPre===detailsPre,'found <pre> outside details evidence ('+totalPre+' vs '+detailsPre+')');
+  fs.writeFileSync(path.join(input.evidence,'browser-result.json'),JSON.stringify({ok:true,mode:'REAL_BROWSER_OFFLINE',browser:input.browser,mobile,desktop,bodies,filters,directory:true,networkRequests:requests,pageErrors:errors,testedLinks},null,2));
  }finally{await browser.close()}
 })().catch(e=>{console.error(e.stack);process.exitCode=1});
+

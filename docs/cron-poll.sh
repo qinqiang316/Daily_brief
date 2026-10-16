@@ -1,4 +1,4 @@
 #!/bin/sh
-# Separate finite poll cron; never re-run prepare/collect/pipeline here.
-cd '/Users/qqiang/AI project/05-日常工具/DailyBrief' || exit 1
-exec python3 scripts/pipeline_job.py poll --cron
+# Retired: launch and polling were merged into dailybrief-v2-combined.sh.
+printf '%s\n' 'This poll wrapper is retired; use dailybrief-v2-combined.sh.' >&2
+exit 1

@@ -14,7 +14,8 @@ prepare_brief.py 已生成任务上下文；本脚本负责：
   5. 空池熔断（不回退历史池）；单路失败降级并记录 lane_status，如实写进产物
   6. create_run 落盘批次（含 agent_review 复核证据）+ 同日日期别名缓存
   7. 小g写作 canonical MD（run_agy 批次锁）→ 原 validate 校验 → 重建点赞区 → 再校验
-  8. 小g基于同批 JSON+MD 写 HTML → 脚本重建 HTML 点赞区 → HTML↔canonical 一致性校验
+  8. controlled_html.write 按固定模板生成 HTML → HTML↔canonical 一致性校验 → 真实浏览器验收
+  9. 返回 ready 票据，等待 Hermes 轻量语义复核；本脚本不代替主席复核
 
 本脚本不 finalize、不发布：最终交付仍由主席验收后运行 finalize_brief.py。
 
