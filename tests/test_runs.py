@@ -96,6 +96,7 @@ class RunCase(unittest.TestCase):
         final = Path(finalize_brief.finalize(cand, brief))
         self.assertEqual(final, self.output / brief.name)
         self.assertNotIn("runs", final.parts)
+        self.assertEqual({p.name for p in self.output.iterdir()}, {brief.name})
         self.assertFalse(cand.parent.exists())
         self.assertFalse(brief.parent.exists())
         record = brief_record.load_records()[0]
@@ -104,6 +105,17 @@ class RunCase(unittest.TestCase):
         self.assertEqual(self.check([final]), 0)  # Dated cache remains; run files do not.
         self.assertEqual(finalize_brief.finalize(cand, brief), str(final))
         self.assertEqual(len(brief_record.load_records()), 1)
+
+    def test_idempotent_delivery_survives_expired_candidate_and_archive(self):
+        cand, brief = self.create()
+        final = Path(finalize_brief.finalize(cand, brief))
+        record = brief_record.load_records()[0]
+        Path(record["candidate_path"]).unlink()
+        archive = run_store.artifact_root(self.output) / "final" / "first"
+        import shutil
+        shutil.rmtree(archive)
+        self.assertEqual(finalize_brief.finalize(cand, brief), str(final))
+        self.assertIn("## 👍 点赞", final.read_text())
 
     def test_new_run_cannot_overwrite_published_day(self):
         cand, brief = self.create()

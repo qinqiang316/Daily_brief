@@ -16,7 +16,7 @@ START_MINUTE = 30
 
 
 def run_tick(now=None, jobs=None, *, completed_fn=None, poll_fn=None,
-             launch_fn=None, load_fn=None):
+             launch_fn=None, load_fn=None, cleanup_fn=None):
     """Return one deterministic cron action; waiting ticks never wake the model."""
     jobs = Path(jobs or pipeline_job.DEFAULT_JOBS)
     now = now or datetime.now(TZ)
@@ -28,6 +28,10 @@ def run_tick(now=None, jobs=None, *, completed_fn=None, poll_fn=None,
     poll_fn = poll_fn or pipeline_job.poll
     launch_fn = launch_fn or pipeline_job.launch
     load_fn = load_fn or pipeline_job.load
+    if cleanup_fn is None:
+        from cleanup_artifacts import cleanup
+        cleanup_fn = cleanup
+    cleanup_fn()
 
     if completed_fn():
         return {"wakeAgent": False, "reason": "today_already_published"}

@@ -86,12 +86,13 @@ def _delivered_alias(cand, brief, output_dir):
         raise ValueError("当日已有发布简报，保留旧版；本批次不得覆盖交付路径")
     if hashlib.sha256(alias.read_bytes()).hexdigest() != rec["brief_sha256"]:
         raise ValueError("当日发布入口已变更，禁止覆盖")
-    cache = Path(output_dir).parent / "_candidates" / ("Daily-Brief-%s-candidates.json" % day)
-    # Use the registered exact candidate path (custom roots included).
-    cache = Path(rec.get("candidate_path") or rec.get("candidates_path") or cache)
-    if not cache.is_file() or hashlib.sha256(cache.read_bytes()).hexdigest() != rec.get("candidate_sha256"):
+    cache_value = rec.get("candidate_path") or rec.get("candidates_path")
+    cache = Path(cache_value) if cache_value else None
+    # Candidate/archive material is temporary. Its expiry must not invalidate a
+    # registered daily publication; verify it while present, never require it.
+    if cache is not None and cache.is_file() and hashlib.sha256(cache.read_bytes()).hexdigest() != rec.get("candidate_sha256"):
         raise ValueError("当日候选发布证据已变更，禁止幂等交付")
-    archive = Path(output_dir) / "final" / rec["run_id"]
+    archive = run_store.artifact_root(output_dir) / "final" / rec["run_id"]
     if (archive / "published.json").is_file():
         proof = json.loads((archive / "published.json").read_text())
         index_path = archive / "archive_index.json"
@@ -161,7 +162,7 @@ def _publish_locked(directory, cand, brief, output_dir):
             if (not final_html.is_file()
                     or hashlib.sha256(final_html.read_bytes()).hexdigest() != receipt["html_sha256"]):
                 raise ValueError("已发布 HTML 快照被修改，禁止交付")
-        with run_lock(output_dir):
+        with run_lock(run_store.artifact_root(output_dir) / "locks" / "output"):
             if not alias.exists():
                 run_store.atomic_bytes(alias, final.read_bytes())
             elif alias.read_bytes() != final.read_bytes():
@@ -179,12 +180,14 @@ def _publish_locked(directory, cand, brief, output_dir):
                                          html_path=str(html_alias) if html_alias else None) is None:
                 raise ValueError("简报登记失败，不交付；保留快照供幂等重试")
         return alias
-    with run_lock(output_dir):
+    with run_lock(run_store.artifact_root(output_dir) / "locks" / "output"):
         if alias.exists():
             raise ValueError("当日已有发布简报，保留旧版；本批次不得覆盖交付路径")
         payload = json.loads(cand.read_bytes())
         run_store.verify_agent_evidence(payload)
-        archive = output_dir / "final" / manifest["run_id"]
+        archive = run_store.artifact_root(output_dir) / "final" / manifest["run_id"]
+        run_store.mark_created(archive, (directory / ".created_at").read_text().strip()
+                               if (directory / ".created_at").is_file() else None)
         evidence_dir = archive / "evidence" / "candidates"
         # Preserve all prompts/logs/raw review/source snapshots before cleanup, and bind paths to them.
         run_store.archive_tree(directory / "lanes", evidence_dir / "lanes")
@@ -238,7 +241,7 @@ def _publish_locked(directory, cand, brief, output_dir):
             run_store.write_once(final_html, html_bytes)
             receipt["html_path"] = str(final_html)
             receipt["html_sha256"] = hashlib.sha256(html_bytes).hexdigest()
-        # Durable final is outside runs/; working snapshots remain only for failed registration retry.
+        # Final evidence is staged outside output/ and expires with the batch.
         run_store.archive_tree(directory / "validation", archive / "evidence" / "validation")
         run_store.archive_tree(directory / "agy", archive / "evidence" / "agy")
         run_store.archive_tree(directory / "browser", archive / "evidence" / "browser")

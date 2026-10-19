@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Regression tests for controlled HTML link rendering, safe protocols, and browser clicks."""
 import json
+import importlib.util
 import os
 import re
 import tempfile
@@ -9,23 +10,41 @@ from pathlib import Path
 
 from tests.helpers import ROOT, SCRIPTS, long_body
 from modules import controlled_html, html_report
+import add_like
 import verify_html_browser
 
-BRIEF_20261016 = Path(ROOT) / "output/final/20261016T092506-24cd8b57/Daily-Brief-2026-10-16.md"
-CAND_20261016 = Path(ROOT) / "output/final/20261016T092506-24cd8b57/Daily-Brief-2026-10-16-candidates.json"
+BRIEF_20261016 = Path(ROOT) / "output/Daily-Brief-2026-10-16.md"
 
 
 class ControlledHtmlLinkCase(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.tmp_dir = Path(self.tmp.name)
+        refs = add_like.parse_brief_refs(str(BRIEF_20261016))
+        brief_text = BRIEF_20261016.read_text()
+        run_id = html_report.RUN_ID_RE.search(brief_text).group(1)
+        titles = {url: title for title, url in refs.values()}
+        urls = set(titles)
+        urls.update(url.rstrip(".,;，。") for url in re.findall(r"https?://[^\s)>\]]+", brief_text))
+        candidate = {
+            "run_id": run_id,
+            "window": {"start": "2026-10-15", "end": "2026-10-16"},
+            "candidates": [
+                {"title": titles.get(url, url), "url": url, "direction": "其他", "region": "other"}
+                for url in sorted(urls)
+            ],
+            "source_leftovers": [],
+            "horizon": [],
+        }
+        self.candidate_path = self.tmp_dir / "candidate.json"
+        self.candidate_path.write_text(json.dumps(candidate, ensure_ascii=False))
 
     def tearDown(self):
         self.tmp.cleanup()
 
     def test_real_brief_tldr_and_sections_render_proper_anchor_tags(self):
         """Test that the real 2026-10-16 brief renders clickable <a> tags in all sections."""
-        rendered = controlled_html.render(str(BRIEF_20261016), str(CAND_20261016))
+        rendered = controlled_html.render(str(BRIEF_20261016), str(self.candidate_path))
 
         # Check TLDR section
         self.assertIn('<section id="tldr"', rendered)
@@ -56,9 +75,7 @@ class ControlledHtmlLinkCase(unittest.TestCase):
         scan = html_report.scan_html_text = html_report._HTMLScan()
         scan.feed(rendered)
         pre_nodes = [n for n in scan.nodes if n["tag"] == "pre"]
-        for p in pre_nodes:
-            # every pre tag must be inside details
-            self.assertTrue(any("JSON-LD" in str(c) or "meta[" in str(c) or "http" in str(c) for c in p["children"]))
+        self.assertEqual(len(pre_nodes), rendered.count("<details>"))
 
     def test_dangerous_protocols_and_xss_are_sanitized(self):
         """Verify that malicious javascript/data/vbscript links and raw HTML are blocked."""
@@ -119,13 +136,14 @@ class ControlledHtmlLinkCase(unittest.TestCase):
         # Check that the safe link is properly rendered
         self.assertIn('<a href="https://example.com/2026/10/13/good" class="ref-link" target="_blank" rel="noopener noreferrer">[1]</a>', rendered)
 
+    @unittest.skipUnless(importlib.util.find_spec("playwright"), "Real-browser test requires the Hermes Python environment")
     def test_browser_verification_clicks_and_offline_receipt(self):
         """Test full browser verification with link click interception on 2026-10-16 readable revision."""
         target_html = self.tmp_dir / "test-readable.html"
         evidence_dir = self.tmp_dir / "browser_evidence"
-        controlled_html.write(str(BRIEF_20261016), str(CAND_20261016), str(target_html))
+        controlled_html.write(str(BRIEF_20261016), str(self.candidate_path), str(target_html))
 
-        result = verify_html_browser.verify(str(target_html), str(BRIEF_20261016), str(CAND_20261016), str(evidence_dir))
+        result = verify_html_browser.verify(str(target_html), str(BRIEF_20261016), str(self.candidate_path), str(evidence_dir))
         self.assertTrue(result.get("ok"))
         self.assertEqual(result.get("mode"), "REAL_BROWSER_OFFLINE")
         self.assertEqual(result.get("networkRequests"), [])

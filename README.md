@@ -35,11 +35,10 @@ DailyBrief/
 ├── data/                      # 运行时生成（已 gitignore）
 │   ├── _dedup_urls.json       # 已推送 URL 去重集合（自动维护）
 │   └── likes.json             # 点赞记录（用户偏好，驱动检索增强）
-├── _candidates/               # 候选 JSON（过程文件，已 gitignore）
-└── output/                    # 已发布日期入口及 runs/{run_id}/ 草稿/最终快照（已 gitignore）
+└── output/                    # 仅保留正式简报 MD/HTML
 ```
 
-> `modules/` 是采集端逻辑的模块化拆分（M1 阶段成果）；`scripts/collect_brief.py` 目前是总入口。
+> `dailybrief-v2-combined.sh` → `dailybrief_cron_tick.py` → `pipeline_job.py` 是当前定时入口；`run_pipeline.py` 编排批次采集、车道审核、写作与验收准备，`collect_brief.py` 提供采集逻辑。
 
 ---
 
@@ -60,45 +59,35 @@ DailyBrief/
 
 ## 工作流
 
-### 批次隔离与可追溯交付（2026-10-10）
+### 批次隔离与限时暂存（2026-10-17）
 
-每次采集保存到 `_candidates/runs/{run_id}/`：`collected.json` 是不可覆盖的初始快照，
-`Daily-Brief-{date}-candidates.json` 是审核/补抓工作副本，`manifest.json` 指定本次两个精确路径。
-简报草稿放在 `output/runs/{run_id}/Daily-Brief-{date}.md`。采集 stdout 输出这两个路径，
-Hermes 与 agy 必须使用它们，不能使用按日期的候选别名写作。
+正式交付仅写入 `output/Daily-Brief-{date}.md` 与对应 `.html`；`output/` 不放候选、批次目录、发布凭据、验证证据或锁文件。包括 `Monthly-Academic-Brief-*.md` 在内的简报交付文件保留。
+
+每批的候选、原文快照、日志、提示词、浏览器验收与发布凭据放在 `~/.hermes/cache/scratch/dailybrief-artifacts/`，由现有单一 cron tick 清理。未结案的 queued/running/ready/failed/claimed 票据对应材料不清理；其余批次创建满48小时后删除。已ack票据满48小时清理。清理严格限定在专用临时目录，不触碰 `output/` 或目录外文件。
+
+同日防重不依赖临时归档：`data/brief_records.json` 持久登记正式MD/HTML哈希，cron启动前核对登记和留存的简报文件；候选与发布凭据过期后仍能识别已发布版本。简报草稿与候选路径由批次 manifest 指定，均在上述临时区。
 
 ```bash
-# 把采集输出的精确路径传给 agy；prompt 必须含两个路径、窗口和 run_id
+# 写作仍绑定精确候选、prompt 与本批MD路径
 python3 scripts/run_agy.py '<本次候选路径>' '<本次prompt文件>' --timeout 1200
-# 主席读草稿、核对原文，等 agy 真正退出后统一交付
+# 主席审核后 finalize；只把 MD/HTML 放进 output/
 python3 scripts/finalize_brief.py '<本次简报路径>' '<本次候选路径>'
 ```
 
-同批次 agy 与发布共享写入锁；等待窗口超时不代表进程结束，不能直接重试。
-真实超时结束 agy 子进程组，退出码非零才允许重试。finalize 会预检、重建点赞区、复检，
-保存最终候选和简报到原来的 `output/Daily-Brief-{date}.md`，确认登记成功后删除本次 runs 过程目录。已有当日发布版时拒绝被新批次覆盖。交付使用它返回的 `MEDIA`，即该日期文件，不要把过程目录路径交给用户。
-
-校验在发布前核对本次输入、哈希和 run_id。确认发布并清理过程目录后，不再保留 validation 快照。
-记录模块核对 run_id，并保存日期文件路径与哈希。校验通过不等同于摘要事实已核实，
-主席仍须读草稿与原文。Hermes 定时任务完整提示词见 [docs/hermes-dailybrief-task.txt](docs/hermes-dailybrief-task.txt)。
-
-`_candidates/Daily-Brief-{date}-candidates.json` 是当日候选缓存。
-`output/Daily-Brief-{date}.md` 是已发布简报。隔离目录只在生成过程中使用，确认后删除。
+同批次 agy 与发布使用临时区锁；等待超时不代表进程结束，不能直接重试。finalize 完成校验、重建点赞区、复检、登记 MD/HTML 哈希并交付。过程材料最长保留48小时；用户附件只使用 output 中的正式 HTML，canonical MD 同样作为简报交付文档留存。
 
 ```
-cron（或手动）──▶ collect_brief.py（窗口→去重→搜索→硬过滤→候选池+偏好/探索标记）
+单一 cron tick ─▶ 清理满48小时的非活动临时材料
                         │
                         ▼
-                  LLM 读候选 JSON → 写简报 md
+                  独立批次采集/小g选文与写作
                         │
                         ▼
-                  validate_brief.py（PASS 才投递）
+                  脚本校验 → Hermes 轻检 → 受控 HTML/浏览器验收
                         │
                         ▼
-                  like_links.py（简报文末追加点赞区）
-                        │
-                        ▼
-                  交付（TLDR + 附件，含点赞区）→ 你点赞 → 偏好/探索引擎迭代
+                  finalize → output 仅留简报 MD/HTML
+                        └────发布登记与文件哈希供同日防重
 ```
 
 ---

@@ -67,6 +67,7 @@ def prepare(now=None, cand_dir=None, output_dir=None):
         dedup_sha = hashlib.sha256(f.read()).hexdigest()
 
     run_dir = run_store.candidate_path(cand_dir, today_s, run_id).parent
+    run_store.mark_created(run_dir)
     prep_dir = run_dir / PREPARE_DIR_NAME
     lanes = {}
     for lane in ("cn", "intl"):

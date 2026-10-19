@@ -7,7 +7,8 @@ DailyBrief V2单一执行与轻量检查任务。
 2. `ready`：核对 run_id、窗口和票据中的 brief/candidates/html 精确路径。检查采用轻量方式：通读 canonical 简报，抽看原文快照，重点排除标题、日期、引用、关键数字、归因的明显错配；不逐句做法证式复核，不重搜、不再次调用小g。机械准入和校验闸门仍须全部通过。
 3. 没有明显语义问题时，在本批候选写入 `pipeline.semantic_review=complete`，并为每个成功车道写 `status=complete`、`reviewer=Hermes`、真实 `reviewed_at`、`findings=[]`。有明显问题时只在本批直接修正或拒收；内容改变后重跑Markdown校验、点赞区、`controlled_html.write`、HTML一致性与浏览器验收。
 4. 浏览器 receipt 已存在且哈希/窗口有效时直接复用；若仅因运行时缺浏览器依赖而无 receipt，使用 `/Users/qqiang/.hermes/hermes-agent/venv/bin/python`，对票据指定的本批 HTML/MD/candidates 执行 `scripts/verify_html_browser.py`，证据写入本批 `browser/`。不得重跑搜索。
-5. 验收后运行 `scripts/finalize_brief.py`，读取 `output/final/<run_id>/published.json` 并核实 HTML/MD 哈希，再 ack 同一票据。最终中文简短交付 HTML，附件路径取 published receipt 的 `html_path`，使用 `MEDIA:"绝对路径"`。
+5. 每次 cron tick 会在专用临时区运行限时清理：完成且超过48小时的批次与已ack票据删除；queued/running/ready/failed/claimed保留。output目录和目录外文件不在清理范围。
+6. 验收后运行 `scripts/finalize_brief.py`，立即核对临时区 `~/.hermes/cache/scratch/dailybrief-artifacts/final/<run_id>/published.json` 与 output 中 MD/HTML 哈希，再 ack 同一票据。超过48小时后临时凭据会删除；同日防重依赖 `data/brief_records.json` 中的MD/HTML哈希和 output 留存文件。最终中文简短交付 HTML，附件路径使用 output 中正式 HTML，格式 `MEDIA:"绝对路径"`。
 
 `failed`：claim精确票据并看本批log；只做同批可恢复处理。无法恢复则如实报告并ack失败，不自动新建批次、不重复检索。`claimed`超期或脚本错误：不抢占、不重启，报告票据和阻塞。禁止调用Kimi。
 

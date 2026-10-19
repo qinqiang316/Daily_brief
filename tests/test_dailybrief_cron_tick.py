@@ -17,6 +17,7 @@ class DailyBriefCronTickTests(TestCase):
         self.poll = Mock(return_value=[])
         self.launch = Mock(return_value=str(self.jobs / "20261016T083000-test" / "ticket.json"))
         self.load = Mock(return_value={"status": "queued"})
+        self.cleanup = Mock(return_value={"batches": 0, "cache_files": 0, "jobs": 0})
 
     def run_tick(self, now=None):
         return run_tick(
@@ -26,6 +27,7 @@ class DailyBriefCronTickTests(TestCase):
             poll_fn=self.poll,
             launch_fn=self.launch,
             load_fn=self.load,
+            cleanup_fn=self.cleanup,
         )
 
     def test_published_report_short_circuits(self):
@@ -34,6 +36,7 @@ class DailyBriefCronTickTests(TestCase):
         self.assertFalse(result["wakeAgent"])
         self.poll.assert_not_called()
         self.launch.assert_not_called()
+        self.cleanup.assert_called_once()
 
     def test_before_start_time_does_not_launch(self):
         result = self.run_tick(datetime(2026, 10, 16, 8, 29, tzinfo=TZ))

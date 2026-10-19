@@ -215,10 +215,14 @@ class RunnerCounterexamples(RunnerCase):
             self.assertEqual(run_pipeline.run(str(self.ctx_file)), 0)
         cand, brief = self.context['batch']['candidates'], self.context['batch']['brief']
         final = finalize_brief.finalize(cand, brief)
+        html = Path(final).with_suffix('.html')
+        self.assertTrue(html.is_file())
+        self.assertEqual({p.name for p in self.out_dir.iterdir()},
+                         {Path(final).name, html.name})
         cache = self.cand_dir / Path(cand).name
         payload = json.loads(cache.read_text())
         run_store.verify_agent_evidence(payload)  # Paths remain valid after working dirs deleted.
-        archived = self.out_dir / 'final' / self.context['run_id']
+        archived = run_store.artifact_root(self.out_dir) / 'final' / self.context['run_id']
         self.assertTrue((archived / 'published.json').is_file())
         receipt = json.loads((archived / 'published.json').read_text())
         self.assertTrue(Path(receipt['validation_receipt']).is_file())

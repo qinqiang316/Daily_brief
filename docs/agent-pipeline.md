@@ -18,6 +18,8 @@
 国内/国外共享prepare固化的window/run_id/preference/explore和增强查询。
 每车道只调用一次小g作者会话；脚本核对原文快照、正文≥500、日精度日期、窗口、正文一致性/hash、历史去重。产物语义复核状态明确为 `pending_hermes`；ready后由Hermes独立复核，问题直接修正或拒收，不回调小g。
 
+临时产物（工作目录、候选、agent日志、发布凭据、浏览器证据）存放于 `~/.hermes/cache/scratch/dailybrief-artifacts/`，由同一cron tick清理：批次满48小时后删除；queued/running/ready/failed/claimed批次跳过。发布登记的MD/HTML哈希保存在 `data/brief_records.json`，过期材料不影响当日已发布核验。`output/` 只保留正式简报MD/HTML。
+
 ## 故障接管
 
 `modules/executor.py` 在二进制缺失、非零、额度、鉴权、超时、缺产物时，同一步骤原进程组退出后最多启动一次Hermes。
@@ -30,7 +32,7 @@
 检索作者由采集锁覆盖；MD写作由run_agy批次writer锁覆盖；HTML由受控模板脚本生成，无HTML模型会话。
 缺产物接管前删除失败/旧产物，禁止借旧文件成功。非法JSON、run_id错配、源校验/模型复核否决不是换模型触发器。
 Hermes语义复核发现问题时直接改稿或调用拒收入口并重跑机械校验/HTML校验；禁止再次调用小g修正。Hermes transport接管仍只用于小g会话真实故障，不用于内容否决。
-接管reason、原角色、executor、实际model/provider/session、逐次日志/usage/attempts落盘，并归档到final/evidence。usage缺身份/未completed/failed/partial/interrupted不得成功。
+接管reason、原角色、executor、实际model/provider/session、逐次日志/usage/attempts落盘，保存在专用临时区，最多48小时。usage缺身份/未completed/failed/partial/interrupted不得成功。
 
 ## 可计算预算
 
@@ -60,13 +62,13 @@ runner SIGTERM/SIGINT关闭自身登记的CLI组；后台worker硬截止结束ru
 每篇完整摘要绑定标题、编号、原文URL；点赞由脚本绑定全部参考资料，编号999、重复、拒收URL（包括纯文本）均失败。
 `verify_html_browser.py/.cjs` 使用自动发现的本机Chrome及独立临时profile，通过Playwright真实浏览器核每篇正文/祖先样式/字号、390/1280宽度、全部主题×地区筛选组合/统计、目录锚点及details展开。
 禁止HTTP请求，无CDN，无用户browser/CDP复用，不监听8900。Node/Playwright/Chrome缺失或浏览器失败即停止，HTTP200不构成验收。
-Chrome证据/截图/receipt随本批final归档；HTML是用户附件，MD保留为内部canonical、文字编号点赞、去重和审计源。
+Chrome证据/截图/receipt保存在专用临时区，批次创建满48小时后清理；`output/`保留正式简报MD与HTML。
 
 ## 单一执行+轻检 Cron
 
 项目 `scripts/pipeline_job.py` 继续负责launch/work/poll/claim/ack；当前只保留一个Hermes cron：
 
-1. `dailybrief-v2-combined.sh` 每5分钟执行一次；08:30前不启动。当日已登记发布时静默跳过。
+1. `dailybrief-v2-combined.sh` 每5分钟执行一次；每次 tick 先安全清理专用暂存区中已满48小时的非活动材料，再处理启动/发布状态。08:30前不启动。当日已登记发布时静默跳过。
 2. 到08:30后若当日没有已尝试批次，脚本启动一次worker；运行中只轮询，不唤醒模型、不重复搜索。ready/failed票据才交给本轮Hermes处理。
 3. ready票据互斥claim；Hermes做轻量语义检查：核对日期窗口、标题/引用与关键事实有无明显错配，不逐句做法证式复核。脚本机械校验、浏览器凭据、finalize哈希验证仍必须通过。
 4. 通过后finalize并ack精确票据；失败只处理原批次，不自动重搜或另起同日批次。已发布的当日简报保持幂等跳过。

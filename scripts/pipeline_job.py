@@ -49,7 +49,9 @@ def launch(jobs, context=None, spawn=None):
         rid=run_store.safe_run_id(value['run_id'])
         expected=(Path(value['batch']['candidates']).parent/'prepare/task_context.json').resolve()
         if context!=expected: raise ValueError('精确prepare上下文路径不符')
-        if (Path(value['batch']['brief']).parent.parent.parent/Path(value['batch']['brief']).name).exists():
+        import collect_brief
+        published_alias = Path(collect_brief.OUTPUT_DIR) / Path(value['batch']['brief']).name
+        if published_alias.is_file():
             raise ValueError('当日已有发布版，拒绝启动新采集')
         directory=jobs/rid;directory.mkdir()
         ticket=directory/'ticket.json'

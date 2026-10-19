@@ -9,6 +9,30 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_OUTPUT_DIR = (PROJECT_ROOT / "output").resolve()
+_ARTIFACT_ROOT_ENV = os.environ.get("DAILYBRIEF_ARTIFACT_ROOT")
+ARTIFACT_ROOT = (Path(os.path.abspath(Path(_ARTIFACT_ROOT_ENV).expanduser()))
+                 if _ARTIFACT_ROOT_ENV else Path.home() / ".hermes/cache/scratch/dailybrief-artifacts")
+
+
+def artifact_root(output_dir=None):
+    """Return the isolated temp root; test/custom output roots stay isolated too."""
+    if output_dir is not None and not _ARTIFACT_ROOT_ENV:
+        output = Path(output_dir).expanduser().resolve()
+        if output != DEFAULT_OUTPUT_DIR:
+            return output.parent / ".dailybrief-artifacts"
+    return ARTIFACT_ROOT
+
+
+def mark_created(directory, created_at=None):
+    directory = Path(directory)
+    directory.mkdir(parents=True, exist_ok=True)
+    marker = directory / ".created_at"
+    if not marker.exists():
+        write_once(marker, (str(created_at or time.time()) + "\n").encode())
+    return marker
+
 
 class DeadlineBudget:
     """Monotonic pipeline deadline; derived phases can never extend it."""
@@ -248,22 +272,24 @@ def candidate_path(cand_dir, day, run_id):
 
 def brief_path(output_dir, day, run_id):
     candidate_path(output_dir, day, run_id)  # Validate both path components.
-    return Path(output_dir) / "runs" / safe_run_id(run_id) / ("Daily-Brief-%s.md" % day)
+    return artifact_root(output_dir) / "briefs" / "runs" / safe_run_id(run_id) / ("Daily-Brief-%s.md" % day)
 
 
 def html_path(output_dir, day, run_id):
     candidate_path(output_dir, day, run_id)  # Validate both path components.
-    return Path(output_dir) / "runs" / safe_run_id(run_id) / ("Daily-Brief-%s.html" % day)
+    return artifact_root(output_dir) / "briefs" / "runs" / safe_run_id(run_id) / ("Daily-Brief-%s.html" % day)
 
 
 def create_run(cand_dir, output_dir, day, payload):
     run_id = safe_run_id(payload.get("run_id"))
     path = candidate_path(cand_dir, day, run_id)
+    mark_created(path.parent)
     content = json_bytes(payload)
     write_once(path.parent / "collected.json", content)
     write_once(path, content)  # Working copy: reject/replenish only within this run.
     out = brief_path(output_dir, day, run_id)
     out.parent.mkdir(parents=True, exist_ok=True)
+    mark_created(out.parent)
     manifest = {"run_id": run_id, "date": day, "candidates": str(path.resolve()),
                 "brief": str(out.resolve()),
                 "html": str(html_path(output_dir, day, run_id).resolve()),

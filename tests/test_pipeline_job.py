@@ -43,7 +43,8 @@ class JobCase(unittest.TestCase):
         with self.assertRaises(ProcessLookupError): os.kill(value['pipeline_pid'],0)
     def test_published_day_refused_before_launch(self):
         alias=self.root/'output'/self.brief.name;alias.parent.mkdir();alias.write_text('TEST already published')
-        with self.assertRaises(ValueError): pipeline_job.launch(self.jobs,self.context,spawn=mock.Mock())
+        with mock.patch('collect_brief.OUTPUT_DIR', str(alias.parent)), \
+             self.assertRaises(ValueError): pipeline_job.launch(self.jobs,self.context,spawn=mock.Mock())
     def test_early_publication_skips_cron_only_after_exact_hash_check(self):
         import hashlib
         import collect_brief,finalize_brief
@@ -59,6 +60,20 @@ class JobCase(unittest.TestCase):
             self.assertEqual(pipeline_job.completed_today(),alias)
             alias.write_text('tampered')
             with self.assertRaises(ValueError):pipeline_job.completed_today()
+
+    def test_published_check_survives_expired_candidate_and_archive(self):
+        import hashlib,collect_brief,finalize_brief
+        day=pipeline_job.datetime.now(pipeline_job.TZ).strftime('%Y-%m-%d')
+        output=self.root/'output';output.mkdir()
+        alias=output/('Daily-Brief-'+day+'.md');alias.write_text('TEST retained brief')
+        html=alias.with_suffix('.html');html.write_text('TEST retained html')
+        record={'date':day,'run_id':'expired-fixture','brief_sha256':hashlib.sha256(alias.read_bytes()).hexdigest(),
+                'html_sha256':hashlib.sha256(html.read_bytes()).hexdigest(),
+                'candidate_path':str(self.root/'expired'/'candidates.json'),
+                'candidate_sha256':'expired evidence is absent'}
+        with mock.patch.object(collect_brief,'OUTPUT_DIR',str(output)), \
+             mock.patch.object(finalize_brief,'_record_for',return_value=record):
+            self.assertEqual(pipeline_job.completed_today(),alias)
     def test_stage_saturation_preserves_body_writer_html_final(self):
         clock=[0.0]
         with mock.patch('time.monotonic',side_effect=lambda:clock[0]):
