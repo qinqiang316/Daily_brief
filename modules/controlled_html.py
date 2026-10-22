@@ -160,7 +160,7 @@ def render(brief, candidate):
     articles = canonical_articles(text)
     pool = {c['url']: c for k in ('candidates', 'source_leftovers', 'horizon') for c in payload.get(k, [])}
     run_id = RUN_ID_RE.search(text).group(1)
-    choices = sorted({pool.get(a['cites'][0][1], {}).get('direction') or '其他' for a in articles if len(a['cites']) == 1})
+    choices = sorted({pool.get(a['cites'][0][1], {}).get('direction') or '其他' for a in articles if a['cites']})
 
     m_tw = re.search(r'(时间窗口[：:][^\n]+)', text)
     time_window = m_tw.group(1).strip() if m_tw else ''
@@ -212,8 +212,8 @@ def render(brief, candidate):
     # Nav
     out.append('<nav aria-label="目录"><h2>目录</h2>')
     for a in articles:
-        if len(a['cites']) != 1:
-            raise ValueError('canonical 每篇必须唯一引用')
+        if not a['cites']:
+            raise ValueError('canonical 每篇至少需要一个引用')
         n, u = a['cites'][0]
         out.append('<a href="#article-' + esc(n) + '" data-target="article-' + esc(n) + '">[' + esc(n) + '] ' + esc(a['title']) + '</a>')
     out.append('</nav>')

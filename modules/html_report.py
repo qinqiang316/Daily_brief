@@ -336,8 +336,8 @@ def verify_html(html_path, brief_path, cand_path):
     used = set()
     for expected in canonical:
         cites = expected["cites"]
-        if len(cites) != 1:
-            errors.append("canonical 每篇须有唯一编号引用")
+        if not cites:
+            errors.append("canonical 每篇须有至少一个编号引用")
             continue
         number, url = cites[0]
         matching = [n for n in articles if n["attrs"].get("data-ref") == number]
@@ -443,7 +443,7 @@ def verify_browser_receipt(directory, brief, html):
             or receipt.get('directory') is not True or len(bodies) != len(expected)):
         raise ValueError('浏览器验收未通过或与待发布HTML/MD hash不符')
     for actual, canonical in zip(bodies, expected):
-        if (len(canonical['cites']) != 1 or actual.get('number') != canonical['cites'][0][0]
+        if (not canonical['cites'] or actual.get('number') != canonical['cites'][0][0]
                 or actual.get('url') != canonical['cites'][0][1]
                 or actual.get('summaryLength') != len(canonical['summary'])
                 or actual.get('fontSize', 0) < 18 or actual.get('initialVisible') is not True
